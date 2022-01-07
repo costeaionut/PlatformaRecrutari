@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Data;
 
 namespace PlatformaRecrutari.Web
@@ -22,6 +24,9 @@ namespace PlatformaRecrutari.Web
         {
             services.RegisterDataService(Configuration);
             services.AddAutoMapper(typeof(Startup));
+
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<RepositoryContext>();
 
             services.AddControllersWithViews();
             services.AddSpaStaticFiles(configuration =>

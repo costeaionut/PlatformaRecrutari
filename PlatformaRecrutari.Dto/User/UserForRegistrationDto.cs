@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlatformaRecrutari.Dto.UserDto
+namespace PlatformaRecrutari.Dto.User
 {
     public class UserForRegistrationDto
     {

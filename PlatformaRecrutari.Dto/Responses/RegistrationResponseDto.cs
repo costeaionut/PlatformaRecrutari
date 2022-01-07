@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlatformaRecrutari.Dto.ResponsesDto
+namespace PlatformaRecrutari.Dto.Responses
 {
     public class RegistrationResponseDto
     {
