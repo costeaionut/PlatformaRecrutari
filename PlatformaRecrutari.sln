@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformaRecrutari.Web", "PlatformaRecrutari.Web\PlatformaRecrutari.Web.csproj", "{2A9E1060-8BD8-47B4-B9A2-5826E6F42F81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatformaRecrutari.Web", "PlatformaRecrutari.Web\PlatformaRecrutari.Web.csproj", "{2A9E1060-8BD8-47B4-B9A2-5826E6F42F81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformaRecrutari.Data", "PlatformaRecrutari.Data\PlatformaRecrutari.Data.csproj", "{147C7B50-0594-43B0-9042-CD845EA92DAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformaRecrutari.Core", "PlatformaRecrutari.Core\PlatformaRecrutari.Core.csproj", "{BE0EC26C-53DE-445F-9944-1E2E9995EB7E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformaRecrutari.Dto", "PlatformaRecrutari.Dto\PlatformaRecrutari.Dto.csproj", "{BEEA3220-177C-46DC-9378-3AF8ACB25511}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{2A9E1060-8BD8-47B4-B9A2-5826E6F42F81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A9E1060-8BD8-47B4-B9A2-5826E6F42F81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A9E1060-8BD8-47B4-B9A2-5826E6F42F81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{147C7B50-0594-43B0-9042-CD845EA92DAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{147C7B50-0594-43B0-9042-CD845EA92DAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{147C7B50-0594-43B0-9042-CD845EA92DAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{147C7B50-0594-43B0-9042-CD845EA92DAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE0EC26C-53DE-445F-9944-1E2E9995EB7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE0EC26C-53DE-445F-9944-1E2E9995EB7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE0EC26C-53DE-445F-9944-1E2E9995EB7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE0EC26C-53DE-445F-9944-1E2E9995EB7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEEA3220-177C-46DC-9378-3AF8ACB25511}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEEA3220-177C-46DC-9378-3AF8ACB25511}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEEA3220-177C-46DC-9378-3AF8ACB25511}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEEA3220-177C-46DC-9378-3AF8ACB25511}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
