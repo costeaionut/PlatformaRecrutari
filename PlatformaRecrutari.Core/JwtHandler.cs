@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using PlatformaRecrutari.Core.Abstractions;
 using PlatformaRecrutari.Core.BusinessObjects;
 using System;
 using System.Collections.Generic;
@@ -13,11 +15,13 @@ namespace DAW.Core
     {
         private readonly IConfiguration _configuration;
         private readonly IConfigurationSection _jwtSettings;
+        private readonly IRoleManager _roleManager;
 
-        public JwtHandler(IConfiguration configuration)
+        public JwtHandler(IConfiguration configuration, IRoleManager roleManager)
         {
             _configuration = configuration;
             _jwtSettings = _configuration.GetSection("JwtSettings");
+            _roleManager = roleManager;
         }
 
         public SigningCredentials GetSigningCredentials()
@@ -29,9 +33,12 @@ namespace DAW.Core
 
         public List<Claim> GetClaims(User user)
         {
+            var role = _roleManager.GetRoleType(user.RoleId);
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, role)
             };
 
             return claims;

@@ -23,5 +23,8 @@ namespace PlatformaRecrutari.Dto.User
         
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Required(ErrorMessage = "Must select a role for the user.")]
+        public int RoleId { get; set; }
     }
 }
