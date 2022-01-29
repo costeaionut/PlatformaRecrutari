@@ -29,7 +29,7 @@ namespace PlatformaRecrutari.Web.Controllers
             _jwtHandler = jwtHandler;
         }
 
-        [HttpPost("Registration")]
+        [HttpPost("Register")]
         public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistration)
         {
             if (userForRegistration == null || !ModelState.IsValid)
