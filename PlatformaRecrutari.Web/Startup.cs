@@ -30,6 +30,16 @@ namespace PlatformaRecrutari.Web
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<JwtHandler>();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("EnableCORS", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
+                });
+            });
+
             var jwtSettings = Configuration.GetSection("JwtSettings");
             services.AddAuthentication(opt =>
             {
@@ -79,6 +89,7 @@ namespace PlatformaRecrutari.Web
             }
 
             app.UseRouting();
+            app.UseCors("EnableCORS");
 
             app.UseAuthentication();
             app.UseAuthorization();

@@ -68,8 +68,19 @@ export class RegisterUserComponent implements OnInit {
         })
       },
         error => {
-          this.showError = true
-          this.errorMessage = error.error.errors
+          if (error.error.errors) {
+            this.showError = true
+            this.errorMessage = error.error.errors
+          }
+          else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something went wrong!',
+              footer: 'Please try again later!'
+            })
+          }
+          
         }
       )
   }

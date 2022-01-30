@@ -10,8 +10,8 @@ export class AuthenticationService {
 
   baseUrl: string;
 
-  constructor(private _http: HttpClient, @Inject('BASE_URL') _baseUrl: string) {
-    this.baseUrl = _baseUrl;
+  constructor(private _http: HttpClient) {
+    this.baseUrl = ApiCallPaths.apiUrl;
   }
 
   public registerUser(body: UserForRegistrationDto) {
