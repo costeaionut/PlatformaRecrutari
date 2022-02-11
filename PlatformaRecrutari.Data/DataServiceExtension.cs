@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PlatformaRecrutari.Core.Abstractions;
+using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Data.Managers;
 using System;
 using System.Collections.Generic;
