@@ -40,6 +40,11 @@ namespace PlatformaRecrutari.Web
                 });
             });
 
+            services.AddIdentity<User, IdentityRole>(opt => {
+                opt.User.RequireUniqueEmail = true;
+            })
+                .AddEntityFrameworkStores<RepositoryContext>();
+
             var jwtSettings = Configuration.GetSection("JwtSettings");
             services.AddAuthentication(opt =>
             {
@@ -59,8 +64,10 @@ namespace PlatformaRecrutari.Web
                 };
             });
 
-            services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<RepositoryContext>();
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/login-user");
+            });
 
             services.AddControllersWithViews();
             services.AddSpaStaticFiles(configuration =>

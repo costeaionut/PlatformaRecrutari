@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace PlatformaRecrutari.Web.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AdminController : ControllerBase
@@ -21,7 +22,6 @@ namespace PlatformaRecrutari.Web.Controllers
             _userManager = userManager;
         }
 
-        [Authorize /*(Roles = RoleType.Admin)*/]
         [HttpGet("ListUsers")]
         public ActionResult<List<User>> GetUserList()
             => _userManager.Users.ToList();

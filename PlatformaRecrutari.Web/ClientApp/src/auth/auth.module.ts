@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RegisterUserComponent } from './register-user/register-user.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { LoginUserComponent } from './login-user/login-user.component';
 
 
 
 @NgModule({
-  declarations: [RegisterUserComponent],
+  declarations: [RegisterUserComponent, LoginUserComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

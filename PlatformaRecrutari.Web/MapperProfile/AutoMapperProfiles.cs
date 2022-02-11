@@ -13,7 +13,7 @@ namespace DAW.Web.MapperProfiles
         public AutoMapperProfiles()
         {
             CreateMap<UserForRegistrationDto, User>()
-                .ForMember(u => u.UserName, opt => opt.MapFrom(f => f.LastName + f.FirstName))
+                .ForMember(u => u.UserName, opt => opt.MapFrom(f => f.Email))
                 .ReverseMap();
         }
     }

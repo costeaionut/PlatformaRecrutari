@@ -1,11 +1,19 @@
 <div class="container">
-  <div class="row">
+  <div *ngIf="!isUserAuthenticated" class="row">
     <div class="col text-center">
-      <button [routerLink]="['/']" class="btn btn-primary">Login</button>
+      <button [routerLink]="['/login-user']" class="btn btn-primary">Login</button>
+      <button [routerLink]="['/register-user']" class="btn btn-primary">Register</button>
+      <button [routerLink]="['/api/Admin/ListUsers']" class="btn btn-primary">Click</button>
+    </div>
+  </div>
+
+  <div *ngIf="isUserAuthenticated" class="row">
+    <div class="col text-center">
       <button [swal]="['Oops!', 'This is not implemented yet :/', 'warning']">
         Do it!
       </button>
-      <button [routerLink]="['/register-user']" class="btn btn-primary">Register</button>
+      <button (click)="functionButton()" class="btn btn-primary">Click</button>
     </div>
   </div>
+
 </div>
