@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
 
 namespace PlatformaRecrutari.Data
 {
@@ -18,6 +19,7 @@ namespace PlatformaRecrutari.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<RecruitmentSession> RecruitmentSessions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,6 +29,15 @@ namespace PlatformaRecrutari.Data
                 .HasOne<Role>()
                 .WithMany()
                 .HasForeignKey(u => u.RoleId);
+
+            modelBuilder.Entity<RecruitmentSession>()
+                .Property(s => s.Form).IsRequired(false);
+
+            modelBuilder.Entity<RecruitmentSession>()
+                .Property(s => s.Workshop).IsRequired(false);
+
+            modelBuilder.Entity<RecruitmentSession>()
+                .Property(s => s.Interview).IsRequired(false);
         }
     }
 }

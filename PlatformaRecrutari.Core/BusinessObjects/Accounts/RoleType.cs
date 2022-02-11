@@ -10,6 +10,7 @@ namespace PlatformaRecrutari.Core.BusinessObjects
     {
         public const string Admin = "Admin";
         public const string Volunteer = "Volunteer";
+        public const string ProjectManager = "ProjectManager";
         public const string User = "User";
     }
 }
