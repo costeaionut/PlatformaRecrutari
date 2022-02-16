@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using PlatformaRecrutari.Core.BusinessObjects;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
+using PlatformaRecrutari.Dto.Sessions;
 using PlatformaRecrutari.Dto.User;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,9 @@ namespace DAW.Web.MapperProfiles
         {
             CreateMap<UserForRegistrationDto, User>()
                 .ForMember(u => u.UserName, opt => opt.MapFrom(f => f.Email))
+                .ReverseMap();
+
+            CreateMap<RecruitmentSessionDto, RecruitmentSession>()
                 .ReverseMap();
         }
     }

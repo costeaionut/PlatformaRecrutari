@@ -10,7 +10,7 @@ namespace PlatformaRecrutari.Core.Abstractions
     public interface ISessionManager
     {
         Task<RecruitmentSession> CreateSession(RecruitmentSession newSession);
-        Task<RecruitmentSession> ChangeSessionStatus(RecruitmentSession session, bool newStatus);
+        Task<RecruitmentSession> ChangeSessionStatus(RecruitmentSession session);
         Task<RecruitmentSession> UpdateSessionInfo(RecruitmentSession newSessionData);
     }
 }

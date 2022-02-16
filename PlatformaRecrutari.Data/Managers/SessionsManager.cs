@@ -25,16 +25,13 @@ namespace PlatformaRecrutari.Data.Managers
             return res.Entity;
         } 
 
-        public async Task<RecruitmentSession> ChangeSessionStatus(RecruitmentSession session, bool newStatus)
+        public async Task<RecruitmentSession> ChangeSessionStatus(RecruitmentSession session)
         {
             var res = _context.RecruitmentSessions.FirstOrDefault(s => s.Id == session.Id);
             if (res == null)
                 return null;
 
-            if (session.IsOpen == newStatus)
-                return session;
-            
-            res.IsOpen = newStatus;
+            res.IsOpen = !res.IsOpen;
             await _context.SaveChangesAsync();
 
             return res;
@@ -45,10 +42,22 @@ namespace PlatformaRecrutari.Data.Managers
             var res = _context.RecruitmentSessions.FirstOrDefault(s => s.Id == newSessionData.Id);
             if (res == null) return null;
 
-            res = newSessionData;
+            setSessionInfo(ref res, newSessionData);
             await _context.SaveChangesAsync();
 
             return res;
+        }
+
+        private void setSessionInfo(ref RecruitmentSession originalData, RecruitmentSession newData)
+        {
+            originalData.Id = newData.Id;
+            originalData.Title = newData.Title;
+            originalData.StartDate = newData.StartDate;
+            originalData.EndDate = newData.EndDate;
+            originalData.IsOpen = newData.IsOpen;
+            originalData.Form = newData.Form;
+            originalData.Workshop = newData.Workshop;
+            originalData.Interview = newData.Interview;
         }
 
     }
