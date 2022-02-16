@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PlatformaRecrutari.Core.Abstractions;
+using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
 using PlatformaRecrutari.Dto.Sessions;
 using System.Threading.Tasks;
@@ -8,6 +10,7 @@ using System.Threading.Tasks;
 namespace PlatformaRecrutari.Web.Controllers
 {
     [ApiController]
+    [Authorize(Roles = RoleType.ProjectManager)]
     [Route("api/[controller]")]
     public class SessionController : ControllerBase
     {
