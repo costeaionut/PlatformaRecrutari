@@ -26,6 +26,10 @@ export class AuthenticationService {
     return this._http.post<LoginResponseDto>(this.baseUrl + ApiCallPaths.loginPath, body);
   }
 
+  public getCurrentUser() {
+    return this._http.get<any>(this.baseUrl + "api/Auth/GetCurrentUser");
+  }
+
   public isUserAuthenticated = (): boolean => {
     const token = localStorage.getItem("token");
 

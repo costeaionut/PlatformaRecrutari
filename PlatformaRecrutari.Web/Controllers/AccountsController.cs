@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using DAW.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PlatformaRecrutari.Core.Abstractions;
 using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Dto.Responses;
 using PlatformaRecrutari.Dto.User;
@@ -10,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace PlatformaRecrutari.Web.Controllers
@@ -21,12 +24,15 @@ namespace PlatformaRecrutari.Web.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly JwtHandler _jwtHandler;
+        private readonly IRoleManager _roleManager;
 
-        public AccountsController(UserManager<User> userManager, IMapper mapper, JwtHandler jwtHandler)
+        public AccountsController(UserManager<User> userManager, IMapper mapper, 
+                                  JwtHandler jwtHandler, IRoleManager roleManager)
         {
             _userManager = userManager;
             _mapper = mapper;
             _jwtHandler = jwtHandler;
+            _roleManager = roleManager;
         }
 
         [HttpPost("Register")]
@@ -61,6 +67,29 @@ namespace PlatformaRecrutari.Web.Controllers
             var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
             
             return Ok(new LoginResponseDto { IsAuthSuccessful = true, Token = token });
+        }
+
+        [HttpGet("GetCurrentUser"), Authorize]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+
+            var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            if (email == null)
+                return BadRequest("There is no user logged in");
+
+            User user = await _userManager.FindByEmailAsync(email);
+
+            return Ok(new
+            {
+                id = user.Id,
+                firstName = user.FirstName,
+                lastName = user.LastName,
+                email = user.Email,
+                role = _roleManager.GetRoleType(user.RoleId)
+            });
         }
     }
 }
