@@ -31,6 +31,11 @@ namespace PlatformaRecrutari.Data
                 .HasForeignKey(u => u.RoleId);
 
             modelBuilder.Entity<RecruitmentSession>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(u => u.CreatorId);
+
+            modelBuilder.Entity<RecruitmentSession>()
                 .Property(s => s.Form).IsRequired(false);
 
             modelBuilder.Entity<RecruitmentSession>()

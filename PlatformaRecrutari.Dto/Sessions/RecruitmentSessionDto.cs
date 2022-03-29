@@ -9,8 +9,10 @@ namespace PlatformaRecrutari.Dto.Sessions
 {
     public class RecruitmentSessionDto
     {
-        [Required(ErrorMessage = "ID must have a value. If creating a new sesison id should be set to 0.")]
+        [Required(ErrorMessage = "ID must have a value. If creating a new sesison id shouldn't be added.")]
         public int Id { get; set; }
+        [Required(ErrorMessage = "Creator ID is required")]
+        public int CreatorId { get; set; }
         [Required(ErrorMessage = "Session's title is required.")]
         public string Title { get; set; }
         [Required(ErrorMessage = "Session's start date is required.")]
