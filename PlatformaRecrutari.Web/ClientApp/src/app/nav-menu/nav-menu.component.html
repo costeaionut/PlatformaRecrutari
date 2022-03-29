@@ -28,15 +28,19 @@
             <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/counter']"
+            <a class="nav-link text-dark" (click)="functionButton()"
               >Counter</a
             >
           </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/fetch-data']"
-              >Fetch data</a
-            >
+
+          <li *ngIf="isUserPM()" class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link text-dark" [routerLink]="['/fetch-data']">Create Session</a>
           </li>
+
+          <li *ngIf="this.isUserAuthenticated == true" class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link text-dark" [routerLink]="['']" (click)="logout()">Logout</a>
+          </li>
+
         </ul>
       </div>
     </div>

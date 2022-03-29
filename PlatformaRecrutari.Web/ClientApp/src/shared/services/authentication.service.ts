@@ -7,33 +7,54 @@ import { Inject, Injectable } from '@angular/core';
 import { UserForLoginDto } from '../interfaces/user/userForLoginDto';
 import { Subject } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { UserInfo } from '../interfaces/user/userInfo';
+import { NotificationService } from './notification.service';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
 
-  baseUrl: string;
+  _baseUrl: string;
 
-  constructor(private _http: HttpClient, private _jwtHelper: JwtHelperService) {
-    this.baseUrl = ApiCallPaths.apiUrl;
+  public _navBarNotification: NotificationService
+  public _homeNotification: NotificationService
+
+  constructor(private http: HttpClient, private navBarNotification: NotificationService,
+              private homeNotification: NotificationService, private jwtHelper: JwtHelperService) {
+    this._baseUrl = ApiCallPaths.apiUrl;
+    this._navBarNotification = navBarNotification;
+    this._homeNotification = homeNotification;
   }
 
   public registerUser(body: UserForRegistrationDto) {
-    return this._http.post<RegistrationResponseDto>(this.baseUrl + ApiCallPaths.registerPath, body);
+    return this.http.post<RegistrationResponseDto>(this._baseUrl + ApiCallPaths.registerPath, body);
   }
 
   public loginUser(body: UserForLoginDto) {
-    return this._http.post<LoginResponseDto>(this.baseUrl + ApiCallPaths.loginPath, body);
+    return this.http.post<LoginResponseDto>(this._baseUrl + ApiCallPaths.loginPath, body);
+  }
+
+  public logoutUser() {
+    localStorage.removeItem('token')
+    this.sendLoginNotificationToListeners(false);
   }
 
   public getCurrentUser() {
-    return this._http.get<any>(this.baseUrl + "api/Auth/GetCurrentUser");
+    return this.http.get<UserInfo>(this._baseUrl + ApiCallPaths.getCurrentUserPath);
   }
 
   public isUserAuthenticated = (): boolean => {
     const token = localStorage.getItem("token");
 
-    return token && !this._jwtHelper.isTokenExpired(token);
+    if (token.length == 0 || this.jwtHelper.isTokenExpired(token))
+      return false
+
+    return true
+  }
+
+  public sendLoginNotificationToListeners(isAuthenticated) {
+    this.homeNotification.sendLoginStateNotification(isAuthenticated);
+    this.navBarNotification.sendLoginStateNotification(isAuthenticated);
   }
 
 }

@@ -13,6 +13,10 @@ import { RegisterUserComponent } from '../auth/register-user/register-user.compo
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { LoginUserComponent } from '../auth/login-user/login-user.component';
 import { JwtModule } from '@auth0/angular-jwt';
+import { SessionModule } from '../session/session.module';
+import { DisplaySessionComponent } from '../session/display-session/display-session.component';
+import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
+import { PmRoleGuard } from '../shared/guards/pm-role.guard';
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -31,6 +35,7 @@ export function tokenGetter() {
     HttpClientModule,
     FormsModule,
     AuthModule,
+    SessionModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
@@ -44,7 +49,8 @@ export function tokenGetter() {
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'register-user', component: RegisterUserComponent },
-      { path: 'login-user', component: LoginUserComponent }
+      { path: 'login-user', component: LoginUserComponent },
+      { path: 'display-session/:id', component: DisplaySessionComponent, canActivate: [PmRoleGuard] }
     ])
   ],
   providers: [],

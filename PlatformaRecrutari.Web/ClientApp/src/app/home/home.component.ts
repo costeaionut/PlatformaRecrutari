@@ -10,15 +10,20 @@ export class HomeComponent implements OnInit{
 
   public isUserAuthenticated: boolean;
 
-  constructor(private _authService: AuthenticationService, private http: HttpClient) { }
+  constructor(private _authService: AuthenticationService, private http: HttpClient) {
+  }
 
   ngOnInit(): void {
-    this.isUserAuthenticated = this._authService.isUserAuthenticated();
+    this._authService.homeNotification.authChanged
+      .subscribe(res => {
+        this.isUserAuthenticated = res;
+      })
+
+    this._authService.homeNotification.sendLoginStateNotification(this._authService.isUserAuthenticated())
+
   }
 
   functionButton() {
-    this.http.get("https://localhost:44301/api/Admin/ListUsers").subscribe(res => {
-      console.log(res)
-    }, err => console.error(err))
+    console.log(this.isUserAuthenticated)
   }
 }

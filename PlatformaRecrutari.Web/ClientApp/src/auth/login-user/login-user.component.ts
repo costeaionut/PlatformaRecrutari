@@ -48,6 +48,8 @@ export class LoginUserComponent implements OnInit {
     this._authService.loginUser(userForAuth)
       .subscribe(res => {
         localStorage.setItem("token", res.token);
+        this._authService.sendLoginNotificationToListeners(res.isAuthSuccessful)
+
         this._router.navigate([this._returnUrl]);
         this.submittingForm = false;
       },
