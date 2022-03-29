@@ -17,6 +17,7 @@ import { SessionModule } from '../session/session.module';
 import { DisplaySessionComponent } from '../session/display-session/display-session.component';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { PmRoleGuard } from '../shared/guards/pm-role.guard';
+import { CreateSessionComponent } from '../session/create-session/create-session.component';
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -50,7 +51,8 @@ export function tokenGetter() {
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'register-user', component: RegisterUserComponent },
       { path: 'login-user', component: LoginUserComponent },
-      { path: 'display-session/:id', component: DisplaySessionComponent, canActivate: [PmRoleGuard] }
+      { path: 'display-session/:id', component: DisplaySessionComponent, canActivate: [PmRoleGuard] },
+      { path: 'create-session', component: CreateSessionComponent, canActivate: [PmRoleGuard] }
     ])
   ],
   providers: [],

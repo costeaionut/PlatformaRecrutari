@@ -18,21 +18,24 @@ export class NavMenuComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this._authService.navBarNotification.authChanged
+    await this._authService._navBarNotification.authChanged
       .subscribe(res => {
         this.isUserAuthenticated = res;
       })
 
-    this._authService.navBarNotification.sendLoginStateNotification(this._authService.isUserAuthenticated())
+    await this._authService._navBarNotification.sendLoginStateNotification(this._authService.isUserAuthenticated())
 
-    await this._authService.getCurrentUser().subscribe(user => {
-      this.user = user
-    }, err => console.error(err))
+    if (this.isUserAuthenticated) {
+      await this._authService.getCurrentUser().subscribe(user => {
+        this.user = user
+      }, err => console.error(err))
+    }
   }
 
   isUserPM() {
-    if (this.isUserAuthenticated && this.user.role == 'ProjectManager')
-      return true
+    if (this.isUserAuthenticated) 
+      if (this.user.role == 'ProjectManager')
+        return true
     return false
   }
 

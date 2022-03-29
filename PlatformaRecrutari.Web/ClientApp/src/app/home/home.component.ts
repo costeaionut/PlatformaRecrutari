@@ -14,12 +14,12 @@ export class HomeComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this._authService.homeNotification.authChanged
+    this._authService._homeNotification.authChanged
       .subscribe(res => {
         this.isUserAuthenticated = res;
       })
 
-    this._authService.homeNotification.sendLoginStateNotification(this._authService.isUserAuthenticated())
+    this._authService._homeNotification.sendLoginStateNotification(this._authService.isUserAuthenticated())
 
   }
 
