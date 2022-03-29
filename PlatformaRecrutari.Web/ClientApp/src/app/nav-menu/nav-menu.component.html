@@ -1,4 +1,4 @@
-<header>
+<header *ngIf="!this.isUserAuthenticated || this.user">
   <nav
     class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"
   >
@@ -32,7 +32,7 @@
             <a class="nav-link text-dark" [routerLink]="['/create-session']">Create Session</a>
           </li>
 
-          <li *ngIf="this.isUserAuthenticated == true" class="nav-item" [routerLinkActive]="['link-active']">
+          <li *ngIf="this.isUserAuthenticated" class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['']" (click)="logout()">Logout</a>
           </li>
 
