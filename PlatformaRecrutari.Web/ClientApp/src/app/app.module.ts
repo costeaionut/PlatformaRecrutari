@@ -1,23 +1,25 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
-import { AppComponent } from './app.component';
-import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
-import { AuthModule } from '../auth/auth.module';
-import { RegisterUserComponent } from '../auth/register-user/register-user.component';
-import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
-import { LoginUserComponent } from '../auth/login-user/login-user.component';
-import { JwtModule } from '@auth0/angular-jwt';
-import { SessionModule } from '../session/session.module';
-import { DisplaySessionComponent } from '../session/display-session/display-session.component';
-import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
-import { PmRoleGuard } from '../shared/guards/pm-role.guard';
-import { CreateSessionComponent } from '../session/create-session/create-session.component';
+import { BrowserModule } from "@angular/platform-browser";
+import { NgModule } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
+import { RouterModule } from "@angular/router";
+import { AppComponent } from "./app.component";
+import { NavMenuComponent } from "./nav-menu/nav-menu.component";
+import { HomeComponent } from "./home/home.component";
+import { CounterComponent } from "./counter/counter.component";
+import { FetchDataComponent } from "./fetch-data/fetch-data.component";
+import { AuthModule } from "../auth/auth.module";
+import { RegisterUserComponent } from "../auth/register-user/register-user.component";
+import { SweetAlert2Module } from "@sweetalert2/ngx-sweetalert2";
+import { LoginUserComponent } from "../auth/login-user/login-user.component";
+import { JwtModule } from "@auth0/angular-jwt";
+import { SessionModule } from "../session/session.module";
+import { DisplaySessionComponent } from "../session/display-session/display-session.component";
+import { AuthenticatedGuard } from "../shared/guards/authenticated.guard";
+import { PmRoleGuard } from "../shared/guards/pm-role.guard";
+import { CreateSessionComponent } from "../session/create-session/create-session.component";
+import { SessionManagerComponent } from "../session/session-manager/session-manager.component";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -29,10 +31,10 @@ export function tokenGetter() {
     NavMenuComponent,
     HomeComponent,
     CounterComponent,
-    FetchDataComponent
+    FetchDataComponent,
   ],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    BrowserModule.withServerTransition({ appId: "ng-cli-universal" }),
     HttpClientModule,
     FormsModule,
     AuthModule,
@@ -41,21 +43,30 @@ export function tokenGetter() {
       config: {
         tokenGetter: tokenGetter,
         whitelistedDomains: ["localhost:44301"],
-        blacklistedRoutes: []
-      }
+        blacklistedRoutes: [],
+      },
     }),
     SweetAlert2Module.forRoot(),
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
-      { path: 'register-user', component: RegisterUserComponent },
-      { path: 'login-user', component: LoginUserComponent },
-      { path: 'display-session/:id', component: DisplaySessionComponent, canActivate: [PmRoleGuard] },
-      { path: 'create-session', component: CreateSessionComponent, canActivate: [PmRoleGuard] }
-    ])
+      { path: "", component: HomeComponent, pathMatch: "full" },
+      { path: "counter", component: CounterComponent },
+      { path: "fetch-data", component: FetchDataComponent },
+      { path: "register-user", component: RegisterUserComponent },
+      { path: "login-user", component: LoginUserComponent },
+      {
+        path: "display-session/:id",
+        component: DisplaySessionComponent,
+        canActivate: [PmRoleGuard],
+      },
+      {
+        path: "create-session",
+        component: SessionManagerComponent,
+        canActivate: [PmRoleGuard],
+      },
+    ]),
+    BrowserAnimationsModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

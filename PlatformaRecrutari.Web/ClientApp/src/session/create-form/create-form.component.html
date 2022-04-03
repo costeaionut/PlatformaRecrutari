@@ -1,0 +1,21 @@
+<div *ngFor="let question of this.questions">
+  <span>{{ question.question }}</span>
+
+  <app-question-separator
+    [position]="question.position"
+    (newQuestion)="addQuestion($event)"
+  ></app-question-separator>
+</div>
+
+<app-question-separator
+  *ngIf="this.questions.length == 0"
+  [position]="0"
+  (newQuestion)="addQuestion($event)"
+></app-question-separator>
+
+<br />
+
+<button class="btn btn-primary" (click)="changePage(-1)">Previous step</button>
+<button class="btn btn-primary float-right" (click)="changePage(1)">
+  Next step
+</button>

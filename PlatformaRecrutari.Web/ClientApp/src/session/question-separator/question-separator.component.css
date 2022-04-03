@@ -1,0 +1,8 @@
+.add-question{
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.add-question:hover{
+    opacity: 1;
+}

@@ -1,1 +1,94 @@
-<p>create-session works!</p>
+<div class="card">
+  <div class="card-body">
+    <h1 class="card-title">Create Session</h1>
+
+    <div *ngIf="showError" class="alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="sessionForm" autocomplete="off" novalidate>
+      <div class="form-group row">
+        <label for="title" class="col-form-label col-sm-2">Title:</label>
+        <div class="col-md-5">
+          <input
+            type="text"
+            id="title"
+            formControlName="title"
+            class="form-control"
+          />
+        </div>
+        <div class="col-md-5">
+          <em *ngIf="validateControl('title') && hasError('title', 'required')"
+            >Title is required</em
+          >
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="Start date" class="col-form-label col-sm-2"
+          >Start Date:</label
+        >
+        <div class="col-md-5">
+          <input
+            class="form-control"
+            style="width: 90%; display: inline"
+            matInput
+            [matDatepicker]="startPicker"
+            formControlName="startDate"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="startPicker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </div>
+        <div class="col-md-5">
+          <em
+            *ngIf="
+              validateControl('startDate') && hasError('startDate', 'required')
+            "
+            >Start date is required</em
+          >
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="End date" class="col-form-label col-sm-2">End Date:</label>
+        <div class="col-md-5">
+          <input
+            class="form-control"
+            style="width: 90%; display: inline"
+            matInput
+            [matDatepicker]="endPicker"
+            formControlName="endDate"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="endPicker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+        </div>
+        <div class="col-md-5">
+          <em
+            *ngIf="
+              validateControl('endDate') && hasError('endDate', 'required')
+            "
+            >Start date is required</em
+          >
+        </div>
+      </div>
+
+      <div *ngIf="!this.validDates" class="alert alert-danger" role="alert">
+        This is a danger alert—check it out!
+      </div>
+
+      <button
+        class="btn btn-primary float-right"
+        [disabled]="!sessionForm.valid || submittingForm"
+        (click)="changePage(sessionForm.value)"
+      >
+        Next Step
+      </button>
+    </form>
+  </div>
+</div>
