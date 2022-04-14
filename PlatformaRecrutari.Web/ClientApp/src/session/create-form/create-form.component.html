@@ -1,8 +1,21 @@
-<div *ngFor="let question of this.questions">
-  <span>{{ question.question }}</span>
+<h2 class="mb-3">Recruitment form:</h2>
+<div *ngFor="let entry of this.questions">
+  <app-short-question
+    *ngIf="entry.question.getType() == 'ShortQuestion'"
+    [questionDetails]="entry.question"
+    [position]="entry.position"
+    (deleteQuestion)="this.deleteQuestion($event)"
+  ></app-short-question>
+
+  <app-long-question
+    *ngIf="entry.question.getType() == 'LongQuestion'"
+    [questionDetails]="entry.question"
+    [position]="entry.position"
+    (deleteQuestion)="this.deleteQuestion($event)"
+  ></app-long-question>
 
   <app-question-separator
-    [position]="question.position"
+    [position]="entry.position"
     (newQuestion)="addQuestion($event)"
   ></app-question-separator>
 </div>

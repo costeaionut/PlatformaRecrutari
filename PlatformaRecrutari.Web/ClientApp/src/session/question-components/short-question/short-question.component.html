@@ -1,0 +1,24 @@
+<h4>
+  {{ questionDetails.getQuestion() }}
+  <span *ngIf="questionDetails.getRequired()" style="color: red">*</span>
+</h4>
+
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="basic-addon1">Answer:</span>
+  </div>
+  <input
+    type="text"
+    class="form-control"
+    placeholder="Type your answer here."
+    aria-describedby="basic-addon1"
+    disabled
+  />
+  <button
+    type="button"
+    (click)="deleteThis()"
+    class="btn btn-outline-danger float-right ml-2"
+  >
+    Delete
+  </button>
+</div>

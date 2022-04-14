@@ -14,7 +14,9 @@ import {
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { CreateFormComponent } from "./create-form/create-form.component";
 import { SweetAlert2Module } from "@sweetalert2/ngx-sweetalert2";
-import { QuestionSeparatorComponent } from './question-separator/question-separator.component';
+import { QuestionSeparatorComponent } from "./question-separator/question-separator.component";
+import { ShortQuestionComponent } from "./question-components/short-question/short-question.component";
+import { LongQuestionComponent } from './question-components/long-question/long-question.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +25,8 @@ import { QuestionSeparatorComponent } from './question-separator/question-separa
     SessionManagerComponent,
     CreateFormComponent,
     QuestionSeparatorComponent,
+    ShortQuestionComponent,
+    LongQuestionComponent,
   ],
   imports: [
     CommonModule,
