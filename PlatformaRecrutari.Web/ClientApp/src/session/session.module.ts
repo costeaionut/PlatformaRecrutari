@@ -16,7 +16,9 @@ import { CreateFormComponent } from "./create-form/create-form.component";
 import { SweetAlert2Module } from "@sweetalert2/ngx-sweetalert2";
 import { QuestionSeparatorComponent } from "./question-separator/question-separator.component";
 import { ShortQuestionComponent } from "./question-components/short-question/short-question.component";
-import { LongQuestionComponent } from './question-components/long-question/long-question.component';
+import { LongQuestionComponent } from "./question-components/long-question/long-question.component";
+
+import { TextareaAutoresizeDirective } from "../shared/directives/textarea-autoresize.directive";
 
 @NgModule({
   declarations: [
@@ -27,6 +29,7 @@ import { LongQuestionComponent } from './question-components/long-question/long-
     QuestionSeparatorComponent,
     ShortQuestionComponent,
     LongQuestionComponent,
+    TextareaAutoresizeDirective,
   ],
   imports: [
     CommonModule,

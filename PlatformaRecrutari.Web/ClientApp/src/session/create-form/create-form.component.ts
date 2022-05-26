@@ -26,6 +26,11 @@ export class CreateFormComponent implements OnInit {
     }
   }
 
+  auto_height(elem) {
+    elem.style.height = "1px";
+    elem.style.height = elem.scrollHeight + "px";
+  }
+
   deleteQuestion(value: number) {
     this.questions.splice(value, 1);
     for (let index = 0; index < this.questions.length; index++) {

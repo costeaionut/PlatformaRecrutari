@@ -19,47 +19,7 @@ export class QuestionSeparatorComponent implements OnInit {
   ngOnInit() {}
 
   generateQuestion = async (questionType: String): Promise<Question> => {
-    switch (questionType) {
-      case QuestionTypes.Short:
-      case QuestionTypes.Long:
-        const { value: questionValues } = await Swal.fire({
-          icon: "info",
-          title: "What is the question?",
-          input: "text",
-          inputPlaceholder: "Question",
-        });
-
-        if (!questionValues) return;
-
-        const { value: required } = await Swal.fire({
-          title: "Is the question required?",
-          input: "radio",
-          inputOptions: {
-            YES: "Yes",
-            NO: "No",
-          },
-          showCancelButton: true,
-        });
-
-        if (!required) return;
-
-        if (questionType === QuestionTypes.Short)
-          return new ShortQuestion(
-            questionValues,
-            required == "YES" ? true : false
-          );
-        else
-          return new LongQuestion(
-            questionValues,
-            required == "YES" ? true : false
-          );
-
-      default:
-        break;
-    }
-    if (questionType == QuestionTypes.Short) {
-    }
-    return new ShortQuestion("Nu am reusit sa selectam");
+    return new ShortQuestion("Intrebarea ta? :)");
   };
 
   addQuestion = async () => {

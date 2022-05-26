@@ -1,0 +1,26 @@
+.formTitleInput {
+    width: 100%;
+    resize: none;
+    font-size:35px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border-top-style: hidden;
+    border-left-style: hidden;
+    border-bottom: 1px grey;
+    border-right-style: hidden;
+    border-bottom-style: inset;
+}
+
+.descriptionInput{
+    width: 100%;
+    resize: none;    
+    overflow: hidden;
+    border-top-style: hidden;
+    border-left-style: hidden;
+    border-right-style: hidden;
+    border-bottom-style: groove;
+}
+
+textarea:focus{
+    outline: none;
+}
