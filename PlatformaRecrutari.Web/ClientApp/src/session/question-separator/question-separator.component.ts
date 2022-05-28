@@ -19,7 +19,13 @@ export class QuestionSeparatorComponent implements OnInit {
   ngOnInit() {}
 
   generateQuestion = async (questionType: String): Promise<Question> => {
-    return new ShortQuestion("Intrebarea ta? :)");
+    console.log(questionType);
+    switch (questionType) {
+      case "SHORT":
+        return new ShortQuestion("Please insert your question", false);
+      default:
+        return null;
+    }
   };
 
   addQuestion = async () => {
@@ -44,7 +50,15 @@ export class QuestionSeparatorComponent implements OnInit {
     const newQuestion: Question = await this.generateQuestion(questionType);
 
     console.log(newQuestion);
-    if (!newQuestion) return;
+    if (!newQuestion) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "There was an error creating your question! Please try again later :)",
+        footer: '<a href="">Why do I have this issue?</a>',
+      });
+      return;
+    }
 
     let question: QuestionPosition = {
       position: this.position + 1,

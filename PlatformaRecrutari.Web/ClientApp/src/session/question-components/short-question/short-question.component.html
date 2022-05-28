@@ -1,9 +1,23 @@
-<h4>
-  {{ questionDetails.getQuestion() }}
-  <span *ngIf="questionDetails.getRequired()" style="color: red">*</span>
-</h4>
+<div class="container">
+  <div class="row">
+    <div class="col questionInputWrapper">
+      <textarea
+        class="questionInput"
+        cols="30"
+        rows="1"
+        appTextareaAutoresize
+        [(ngModel)]="this.question"
+        (focusout)="updateQuestionText()"
+        >{{ questionDetails.getQuestion() }}</textarea
+      >
+    </div>
+    <div class="col"></div>
+  </div>
+</div>
 
-<div class="input-group mb-3">
+<br />
+
+<div class="input-group">
   <div class="input-group-prepend">
     <span class="input-group-text" id="basic-addon1">Answer:</span>
   </div>
@@ -14,11 +28,29 @@
     aria-describedby="basic-addon1"
     disabled
   />
-  <button
-    type="button"
-    (click)="deleteThis()"
-    class="btn btn-outline-danger float-right ml-2"
-  >
-    Delete
-  </button>
+</div>
+
+<div class="container" style="width: 100%">
+  <div class="row">
+    <div class="col-7"></div>
+    <div class="col-2">
+      <button
+        style="padding-top: 0; padding-bottom: 0"
+        type="button"
+        (click)="deleteThis()"
+        class="btn btn-outline-danger float-right"
+      >
+        Delete
+      </button>
+    </div>
+    <div class="col-2" style="padding-right: 0; padding-left: 0">
+      <span class="float-right" style="margin-right: 10px">Required</span>
+    </div>
+    <div class="col-1" style="padding-left: 5px">
+      <mat-slide-toggle
+        (click)="updateQuestionRequired()"
+        [(ngModel)]="this.required"
+      ></mat-slide-toggle>
+    </div>
+  </div>
 </div>

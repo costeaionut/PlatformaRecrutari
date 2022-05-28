@@ -3,7 +3,7 @@ import { Question } from "./question";
 export class ShortQuestion extends Question {
   private question: String;
 
-  constructor(_question: String, _required: Boolean = false) {
+  constructor(_question: String, _required: boolean = false) {
     super("ShortQuestion", _required);
     this.question = _question;
   }

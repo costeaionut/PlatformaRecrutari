@@ -18,14 +18,15 @@
     <div class="col"></div>
   </div>
 
-  <div class="row" *ngFor="let entry of this.questions">
+  <div class="row questionRows" *ngFor="let entry of this.questions">
     <div class="col"></div>
-    <div class="col-10">
+    <div class="col-8">
       <app-short-question
         *ngIf="entry.question.getType() == 'ShortQuestion'"
         [questionDetails]="entry.question"
         [position]="entry.position"
         (deleteQuestion)="this.deleteQuestion($event)"
+        (updateQuestion)="updateQuestion($event)"
       ></app-short-question>
 
       <app-long-question
@@ -43,11 +44,16 @@
     <div class="col"></div>
   </div>
 
-  <app-question-separator
-    *ngIf="this.questions.length == 0"
-    [position]="0"
-    (newQuestion)="addQuestion($event)"
-  ></app-question-separator>
+  <div class="row" *ngIf="this.questions.length == 0">
+    <div class="col"></div>
+    <div class="col-8">
+      <app-question-separator
+        [position]="0"
+        (newQuestion)="addQuestion($event)"
+      ></app-question-separator>
+    </div>
+    <div class="col"></div>
+  </div>
 </div>
 
 <br />

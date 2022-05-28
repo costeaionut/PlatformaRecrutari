@@ -11,6 +11,11 @@
     border-bottom-style: inset;
 }
 
+.questionRows {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
 .descriptionInput{
     width: 100%;
     resize: none;    

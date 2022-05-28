@@ -2,14 +2,14 @@ import { QuestionTypes } from "../../enums/question-types";
 
 export class Question {
   private type: String;
-  private required: Boolean;
+  private required: boolean;
 
-  public constructor(_type: String, _required: Boolean = false) {
+  public constructor(_type: String, _required: boolean = false) {
     this.type = _type;
     this.required = _required;
   }
 
-  public setRequired = (_required: Boolean) => (this.required = _required);
+  public setRequired = (_required: boolean) => (this.required = _required);
   public setType = (_type: String) => {
     if ((<any>Object).values(QuestionTypes).includes(_type)) {
       this.type = _type;

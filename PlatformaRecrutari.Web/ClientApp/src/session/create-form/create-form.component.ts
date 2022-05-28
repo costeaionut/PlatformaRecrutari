@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { ShortQuestion } from "src/shared/classes/questions/short-question";
+import { UpdateQuestion } from "src/shared/classes/questions/update-question";
 import { QuestionPosition } from "src/shared/interfaces/session/question-position";
 
 @Component({
@@ -19,22 +19,22 @@ export class CreateFormComponent implements OnInit {
 
   changePage = (direction: number): void => this.parentChangePage(direction);
 
-  addQuestion(value: QuestionPosition) {
+  addQuestion = (value: QuestionPosition): void => {
     this.questions.splice(value.position, 0, value);
     for (let index = 0; index < this.questions.length; index++) {
       this.questions[index].position = index;
     }
-  }
+  };
 
-  auto_height(elem) {
-    elem.style.height = "1px";
-    elem.style.height = elem.scrollHeight + "px";
-  }
+  updateQuestion = (updatedQuestion: UpdateQuestion): void => {
+    this.questions[updatedQuestion.position].question =
+      updatedQuestion.questionDetails;
+  };
 
-  deleteQuestion(value: number) {
+  deleteQuestion = (value: number): void => {
     this.questions.splice(value, 1);
     for (let index = 0; index < this.questions.length; index++) {
       this.questions[index].position = index;
     }
-  }
+  };
 }
