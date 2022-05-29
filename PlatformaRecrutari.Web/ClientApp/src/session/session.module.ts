@@ -22,6 +22,7 @@ import { LongQuestionComponent } from "./question-components/long-question/long-
 import { TextareaAutoresizeDirective } from "../shared/directives/textarea-autoresize.directive";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { QuestionTypeSelectorComponent } from './question-type-selector/question-type-selector/question-type-selector.component';
+import { MultipleOptionsQuestionComponent } from './question-components/multiple-options-question/multiple-options-question/multiple-options-question.component';
 @NgModule({
   declarations: [
     CreateSessionComponent,
@@ -33,6 +34,7 @@ import { QuestionTypeSelectorComponent } from './question-type-selector/question
     LongQuestionComponent,
     TextareaAutoresizeDirective,
     QuestionTypeSelectorComponent,
+    MultipleOptionsQuestionComponent,
   ],
   imports: [
     FormsModule,
