@@ -12,12 +12,6 @@
     border-top-right-radius: 5px;
     background-color: rgb(237, 237, 237);
 
-    transition-duration: 10s;
-    transition-property: border;
-    transition-timing-function: ease-in-out;
-
-    transition: border 2s ease-in-out;
-
     outline: none;
 }
 
@@ -28,6 +22,13 @@
 
 .questionInputWrapper{
     padding: 0;
+}
+
+.componentWrapper {
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid rgb(174, 174, 174);
+    border-left: 5px solid royalblue;
 }
 
 /deep/ .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
