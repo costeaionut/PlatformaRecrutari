@@ -1,0 +1,9 @@
+<select
+  [(ngModel)]="this.questionType"
+  (change)="updateQuestionType()"
+  class="form-control"
+>
+  <option default value="ShortQuestion">Short Answear</option>
+  <option value="LongQuestion">Long Answear</option>
+  <option value="MultipleQuestion">Multiple Answers</option>
+</select>
