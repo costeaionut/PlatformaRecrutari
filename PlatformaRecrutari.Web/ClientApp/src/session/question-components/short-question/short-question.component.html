@@ -9,8 +9,8 @@
           appTextareaAutoresize
           [(ngModel)]="this.question"
           (focusout)="updateQuestionText()"
-          >{{ questionDetails.getQuestion() }}</textarea
-        >
+          placeholder="Type your question here!"
+        ></textarea>
       </div>
       <div class="col">
         <app-question-type-selector

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { LongQuestion } from "src/shared/classes/questions/long-question";
+import { MultipleQuestion } from "src/shared/classes/questions/multiple-question";
 import { Question } from "src/shared/classes/questions/question";
 import { ShortQuestion } from "src/shared/classes/questions/short-question";
 import { QuestionTypes } from "src/shared/enums/question-types";
@@ -19,10 +20,11 @@ export class QuestionSeparatorComponent implements OnInit {
   ngOnInit() {}
 
   generateQuestion = async (questionType: String): Promise<Question> => {
-    console.log(questionType);
     switch (questionType) {
-      case "SHORT":
-        return new ShortQuestion("Please insert your question", false);
+      case QuestionTypes.Short:
+        return new ShortQuestion("", false);
+      case QuestionTypes.Multiple:
+        return new MultipleQuestion("", ["Option 1"], false);
       default:
         return null;
     }
@@ -49,7 +51,6 @@ export class QuestionSeparatorComponent implements OnInit {
 
     const newQuestion: Question = await this.generateQuestion(questionType);
 
-    console.log(newQuestion);
     if (!newQuestion) {
       Swal.fire({
         icon: "error",

@@ -1,0 +1,62 @@
+
+.optionBubble{
+    width: 15px;
+    height: 15px;
+    margin-top: 8px;
+    border: 1px solid grey;
+    border-radius: 50%;
+}
+
+.optionInput{
+
+    margin-top: 2px;
+    margin-left: 10px;
+
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid grey;
+
+    outline: none;
+}
+
+.questionInput{
+    resize: none;
+    padding: 10px;
+    overflow: hidden;
+
+    border-top-style: hidden;
+    border-left-style: hidden;
+    border-bottom: 1px grey;
+    border-right-style: hidden;
+    border-bottom-style: inset;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: rgb(237, 237, 237);
+
+    outline: none;
+}
+
+.questionInput:focus{
+    border-style: solid;
+    border-color: royalblue;
+}
+
+.componentWrapper {
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid rgb(174, 174, 174);
+    border-left: 5px solid royalblue;
+}
+
+.questionInputWrapper{
+    padding: 0;
+}
+
+/deep/ .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
+    background-color: royalblue;
+}
+
+/deep/ .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
+    background-color: #e2daff;
+}

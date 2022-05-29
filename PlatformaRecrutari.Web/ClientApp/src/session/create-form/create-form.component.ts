@@ -17,6 +17,10 @@ export class CreateFormComponent implements OnInit {
     this.questions = new Array<QuestionPosition>();
   }
 
+  checkQuestions() {
+    console.log(this.questions);
+  }
+
   changePage = (direction: number): void => this.parentChangePage(direction);
 
   addQuestion = (value: QuestionPosition): void => {

@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { Console } from "console";
+import { MultipleQuestion } from "src/shared/classes/questions/multiple-question";
 import { ShortQuestion } from "src/shared/classes/questions/short-question";
 import { UpdateQuestion } from "src/shared/classes/questions/update-question";
-import { QuestionTypes } from "src/shared/enums/question-types";
 
 @Component({
   selector: "app-short-question",
@@ -35,7 +34,23 @@ export class ShortQuestionComponent implements OnInit {
   }
 
   updateQuestionType(newType: String) {
-    this.questionType = newType;
+    switch (newType) {
+      case "MultipleQuestion":
+        var newMultipleQuestion = new MultipleQuestion(
+          this.questionDetails.getQuestion(),
+          ["Option 1"],
+          this.questionDetails.getRequired()
+        );
+
+        var updatedQuestionWithNewType = new UpdateQuestion(
+          newMultipleQuestion,
+          this.position
+        );
+
+        this.updateQuestion.emit(updatedQuestionWithNewType);
+
+        break;
+    }
   }
 
   updateQuestionRequired() {

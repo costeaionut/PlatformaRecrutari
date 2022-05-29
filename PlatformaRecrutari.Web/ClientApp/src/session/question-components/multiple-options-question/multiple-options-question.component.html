@@ -1,1 +1,89 @@
-<p>multiple-options-question works!</p>
+<div class="componentWrapper">
+  <div class="container">
+    <div class="row">
+      <div class="col questionInputWrapper">
+        <textarea
+          class="questionInput"
+          cols="30"
+          rows="1"
+          appTextareaAutoresize
+          [(ngModel)]="this.question"
+          (focusout)="updateQuestionText()"
+          placeholder="Type your question here!"
+        ></textarea>
+      </div>
+      <div class="col">
+        <app-question-type-selector
+          [questionType]="this.questionType"
+          (updateType)="this.updateQuestionType($event)"
+        ></app-question-type-selector>
+      </div>
+    </div>
+    <div
+      class="row"
+      style="margin-bottom: 10px; margin-top: 10px"
+      *ngFor="let option of this.options; let i = index; trackBy: trackByIdx"
+    >
+      <div class="optionBubble"></div>
+      <div>
+        <input
+          type="text"
+          class="optionInput"
+          [(ngModel)]="this.options[i]"
+          (change)="updateQuestionOptions()"
+        />
+      </div>
+      <div style="margin-left: 10px; margin-top: 5px">
+        <button
+          style="
+            width: 20px;
+            border: none;
+            padding: 0;
+            border-radius: 50%;
+            color: red;
+            background-color: white;
+          "
+          type="button"
+          (click)="removeOption(i)"
+          class="btn btn-danger"
+        >
+          X
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <button
+          class="btn btn-outline-primary"
+          style="padding-top: 0; padding-bottom: 0"
+          type="button"
+          (click)="addOption()"
+        >
+          New Option
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-7"></div>
+      <div class="col-2">
+        <button
+          style="padding-top: 0; padding-bottom: 0"
+          type="button"
+          (click)="deleteThis()"
+          class="btn btn-outline-danger float-right"
+        >
+          Delete
+        </button>
+      </div>
+      <div class="col-2" style="padding-right: 0; padding-left: 0">
+        <span class="float-right" style="margin-right: 10px">Required</span>
+      </div>
+      <div class="col-1" style="padding-left: 5px">
+        <mat-slide-toggle
+          (click)="updateQuestionRequired()"
+          [(ngModel)]="this.required"
+        ></mat-slide-toggle>
+      </div>
+    </div>
+  </div>
+</div>
