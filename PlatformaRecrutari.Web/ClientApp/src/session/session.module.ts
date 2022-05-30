@@ -22,6 +22,8 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { QuestionTypeSelectorComponent } from "./question-type-selector/question-type-selector.component";
 import { MultipleOptionsQuestionComponent } from "./question-components/multiple-options-question/multiple-options-question.component";
 import { SelectBoxesQuestionComponent } from "./question-components/select-boxes-question/select-boxes-question.component";
+import { GridMultipleOptionsQuestionComponent } from './question-components/grid-multiple-options-question/grid-multiple-options-question.component';
+import { GrudSelectBoxesQuestionComponent } from './question-components/grud-select-boxes-question/grud-select-boxes-question.component';
 @NgModule({
   declarations: [
     CreateSessionComponent,
@@ -34,6 +36,8 @@ import { SelectBoxesQuestionComponent } from "./question-components/select-boxes
     QuestionTypeSelectorComponent,
     MultipleOptionsQuestionComponent,
     SelectBoxesQuestionComponent,
+    GridMultipleOptionsQuestionComponent,
+    GrudSelectBoxesQuestionComponent,
   ],
   imports: [
     FormsModule,
