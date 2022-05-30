@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { LongQuestion } from "src/shared/classes/questions/long-question";
 import { MultipleQuestion } from "src/shared/classes/questions/multiple-question";
 import { Question } from "src/shared/classes/questions/question";
+import { SelectBoxesQuestion } from "src/shared/classes/questions/select-boxes-question";
 import { ShortQuestion } from "src/shared/classes/questions/short-question";
-import { QuestionTypes } from "src/shared/enums/question-types";
+import { QuestionTypes } from "src/shared/enums/question-types-separator";
 import { QuestionPosition } from "src/shared/interfaces/session/question-position";
 import Swal from "sweetalert2";
 
@@ -25,6 +25,8 @@ export class QuestionSeparatorComponent implements OnInit {
         return new ShortQuestion("", false);
       case QuestionTypes.Multiple:
         return new MultipleQuestion("", ["Option 1"], false);
+      case QuestionTypes.SelectBoxes:
+        return new SelectBoxesQuestion("", ["Option 1"], false);
       default:
         return null;
     }
@@ -36,9 +38,9 @@ export class QuestionSeparatorComponent implements OnInit {
       title: "Which type of question do you want to add?",
       input: "select",
       inputOptions: {
-        SHORT: "Short Answer",
-        LONG: "Long Answer",
-        MULTIPLE: "Multiple Options",
+        SHORT: "Short Answear",
+        MULTIPLE: "Multiple Answears",
+        SELECT: "Select Boxes",
       },
       inputPlaceholder: "Question Type",
       showCancelButton: true,

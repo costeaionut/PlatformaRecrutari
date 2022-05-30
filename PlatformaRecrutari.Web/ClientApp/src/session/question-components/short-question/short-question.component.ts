@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { MultipleQuestion } from "src/shared/classes/questions/multiple-question";
+import { SelectBoxesQuestion } from "src/shared/classes/questions/select-boxes-question";
 import { ShortQuestion } from "src/shared/classes/questions/short-question";
 import { UpdateQuestion } from "src/shared/classes/questions/update-question";
 
@@ -50,6 +51,19 @@ export class ShortQuestionComponent implements OnInit {
         this.updateQuestion.emit(updatedQuestionWithNewType);
 
         break;
+      case "SelectBoxesQuestion":
+        var newSelectBoxesQuestion = new SelectBoxesQuestion(
+          this.questionDetails.getQuestion(),
+          ["Option 1"],
+          this.questionDetails.getRequired()
+        );
+
+        var updatedQuestionWithNewType = new UpdateQuestion(
+          newSelectBoxesQuestion,
+          this.position
+        );
+
+        this.updateQuestion.emit(updatedQuestionWithNewType);
     }
   }
 

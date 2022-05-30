@@ -1,4 +1,4 @@
-import { QuestionTypes } from "../../enums/question-types";
+import { QuestionTypes } from "../../enums/question-types-separator";
 
 export class Question {
   private type: String;

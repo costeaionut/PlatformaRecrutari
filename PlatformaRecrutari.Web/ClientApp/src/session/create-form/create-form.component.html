@@ -29,13 +29,6 @@
         (updateQuestion)="updateQuestion($event)"
       ></app-short-question>
 
-      <app-long-question
-        *ngIf="entry.question.getType() == 'LongQuestion'"
-        [questionDetails]="entry.question"
-        [position]="entry.position"
-        (deleteQuestion)="this.deleteQuestion($event)"
-      ></app-long-question>
-
       <app-multiple-options-question
         *ngIf="entry.question.getType() == 'MultipleQuestion'"
         [questionDetails]="entry.question"
@@ -43,6 +36,14 @@
         (deleteQuestion)="this.deleteQuestion($event)"
         (updateQuestion)="updateQuestion($event)"
       ></app-multiple-options-question>
+
+      <app-select-boxes-question
+        *ngIf="entry.question.getType() == 'SelectBoxesQuestion'"
+        [questionDetails]="entry.question"
+        [position]="entry.position"
+        (deleteQuestion)="this.deleteQuestion($event)"
+        (updateQuestion)="updateQuestion($event)"
+      ></app-select-boxes-question>
 
       <app-question-separator
         [position]="entry.position"

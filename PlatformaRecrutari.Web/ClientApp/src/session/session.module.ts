@@ -9,7 +9,6 @@ import {
   MatFormFieldModule,
   MatNativeDateModule,
   MatInputModule,
-  MatIconModule,
 } from "@angular/material";
 
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -17,12 +16,12 @@ import { CreateFormComponent } from "./create-form/create-form.component";
 import { SweetAlert2Module } from "@sweetalert2/ngx-sweetalert2";
 import { QuestionSeparatorComponent } from "./question-separator/question-separator.component";
 import { ShortQuestionComponent } from "./question-components/short-question/short-question.component";
-import { LongQuestionComponent } from "./question-components/long-question/long-question.component";
 
 import { TextareaAutoresizeDirective } from "../shared/directives/textarea-autoresize.directive";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { QuestionTypeSelectorComponent } from "./question-type-selector/question-type-selector.component";
 import { MultipleOptionsQuestionComponent } from "./question-components/multiple-options-question/multiple-options-question.component";
+import { SelectBoxesQuestionComponent } from "./question-components/select-boxes-question/select-boxes-question.component";
 @NgModule({
   declarations: [
     CreateSessionComponent,
@@ -31,10 +30,10 @@ import { MultipleOptionsQuestionComponent } from "./question-components/multiple
     CreateFormComponent,
     QuestionSeparatorComponent,
     ShortQuestionComponent,
-    LongQuestionComponent,
     TextareaAutoresizeDirective,
     QuestionTypeSelectorComponent,
     MultipleOptionsQuestionComponent,
+    SelectBoxesQuestionComponent,
   ],
   imports: [
     FormsModule,

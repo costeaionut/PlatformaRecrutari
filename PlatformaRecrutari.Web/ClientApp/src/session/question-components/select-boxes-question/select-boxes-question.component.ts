@@ -5,13 +5,13 @@ import { ShortQuestion } from "src/shared/classes/questions/short-question";
 import { UpdateQuestion } from "src/shared/classes/questions/update-question";
 
 @Component({
-  selector: "app-multiple-options-question",
-  templateUrl: "./multiple-options-question.component.html",
-  styleUrls: ["./multiple-options-question.component.css"],
+  selector: "app-select-boxes-question",
+  templateUrl: "./select-boxes-question.component.html",
+  styleUrls: ["./select-boxes-question.component.css"],
 })
-export class MultipleOptionsQuestionComponent implements OnInit {
+export class SelectBoxesQuestionComponent implements OnInit {
   @Input() position: number;
-  @Input() questionDetails: MultipleQuestion;
+  @Input() questionDetails: SelectBoxesQuestion;
 
   @Output() deleteQuestion = new EventEmitter<number>();
   @Output() updateQuestion = new EventEmitter<UpdateQuestion>();
@@ -92,14 +92,14 @@ export class MultipleOptionsQuestionComponent implements OnInit {
         this.updateQuestion.emit(updatedQuestionWithNewType);
 
         break;
-      case "SelectBoxesQuestion":
-        var newSelectBoxesQuestion = new SelectBoxesQuestion(
+      case "MultipleQuestion":
+        var newMultipleQuestion = new MultipleQuestion(
           this.questionDetails.getQuestion(),
           this.questionDetails.getOptions(),
           this.questionDetails.getRequired()
         );
         var updatedQuestionWithNewType = new UpdateQuestion(
-          newSelectBoxesQuestion,
+          newMultipleQuestion,
           this.position
         );
         this.updateQuestion.emit(updatedQuestionWithNewType);
