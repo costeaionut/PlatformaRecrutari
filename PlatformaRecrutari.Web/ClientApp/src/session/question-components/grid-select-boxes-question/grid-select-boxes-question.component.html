@@ -1,1 +1,23 @@
-<p>grid-select-boxes-question works!</p>
+<div class="componentWrapper">
+  <div class="container">
+    <div class="row">
+      <div class="col questionInputWrapper">
+        <textarea
+          class="questionInput"
+          cols="30"
+          rows="1"
+          appTextareaAutoresize
+          [(ngModel)]="this.question"
+          (focusout)="updateQuestionText()"
+          placeholder="Type your question here!"
+        ></textarea>
+      </div>
+      <div class="col">
+        <app-question-type-selector
+          [questionType]="this.questionType"
+          (updateType)="this.updateQuestionType($event)"
+        ></app-question-type-selector>
+      </div>
+    </div>
+  </div>
+</div>
