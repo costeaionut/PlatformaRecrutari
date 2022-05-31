@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { UpdateQuestion } from "src/shared/classes/questions/update-question";
+import { FormInfo } from "src/shared/interfaces/form/formInfo";
 import { QuestionPosition } from "src/shared/interfaces/session/question-position";
 
 @Component({
@@ -9,19 +10,36 @@ import { QuestionPosition } from "src/shared/interfaces/session/question-positio
 })
 export class CreateFormComponent implements OnInit {
   @Input() parentChangePage;
+  @Input() formInfo: FormInfo;
+  @Output() updateFormInfo = new EventEmitter<FormInfo>();
+
+  public title: String;
+  public description: String;
   public questions: Array<QuestionPosition>;
 
   constructor() {}
 
   ngOnInit() {
-    this.questions = new Array<QuestionPosition>();
+    this.title = this.formInfo.title;
+    this.questions = this.formInfo.questions;
+    this.description = this.formInfo.description;
   }
 
   checkQuestions() {
     console.log(this.questions);
   }
 
-  changePage = (direction: number): void => this.parentChangePage(direction);
+  changePage = (direction: number): void => {
+    this.formInfo = {
+      title: this.title,
+      description: this.description,
+      questions: this.questions,
+    };
+
+    this.updateFormInfo.emit(this.formInfo);
+
+    this.parentChangePage(direction);
+  };
 
   addQuestion = (value: QuestionPosition): void => {
     this.questions.splice(value.position, 0, value);

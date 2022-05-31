@@ -30,16 +30,7 @@
     >
       <br />
     </div>
-    <div
-      [ngClass]="{
-        activePage: this.currentStep === 4,
-        inactivePage: this.currentStep !== 4
-      }"
-      class="col border rounded"
-      style="height: 7px"
-    >
-      <br />
-    </div>
+    <br />
   </div>
 </div>
 <br />
@@ -52,7 +43,14 @@
 
 <app-create-form
   *ngIf="this.currentStep == 2"
+  [formInfo]="this.formInfo"
   [parentChangePage]="changePage"
+  (updateFormInfo)="updateFormInfo($event)"
 ></app-create-form>
 
-<br />
+<app-display-form
+  *ngIf="this.currentStep == 3"
+  [formInfo]="this.formInfo"
+  [parentChangePage]="changePage"
+  [parentCreateSession]="createSession"
+></app-display-form>
