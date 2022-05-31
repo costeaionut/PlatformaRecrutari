@@ -24,6 +24,7 @@ import { MultipleOptionsQuestionComponent } from "./question-components/multiple
 import { SelectBoxesQuestionComponent } from "./question-components/select-boxes-question/select-boxes-question.component";
 import { GridMultipleOptionsQuestionComponent } from "./question-components/grid-multiple-options-question/grid-multiple-options-question.component";
 import { GridSelectBoxesQuestionComponent } from './question-components/grid-select-boxes-question/grid-select-boxes-question.component';
+import { DisplayFormComponent } from './display-form/display-form.component';
 @NgModule({
   declarations: [
     CreateSessionComponent,
@@ -38,6 +39,7 @@ import { GridSelectBoxesQuestionComponent } from './question-components/grid-sel
     SelectBoxesQuestionComponent,
     GridMultipleOptionsQuestionComponent,
     GridSelectBoxesQuestionComponent,
+    DisplayFormComponent,
   ],
   imports: [
     FormsModule,

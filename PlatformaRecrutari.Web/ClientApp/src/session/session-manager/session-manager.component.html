@@ -44,14 +44,14 @@
 </div>
 <br />
 <app-create-session
-  *ngIf="this.currentStep == 0"
+  *ngIf="this.currentStep == 1"
   [sessionInfo]="this.sessionInfo"
   [parentChangePage]="changePage"
   (sessionInfoEmitter)="updateSession($event)"
 ></app-create-session>
 
 <app-create-form
-  *ngIf="this.currentStep == 1"
+  *ngIf="this.currentStep == 2"
   [parentChangePage]="changePage"
 ></app-create-form>
 
