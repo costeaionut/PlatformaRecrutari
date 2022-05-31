@@ -3,4 +3,6 @@ export enum QuestionTypes {
   Long = "LONG",
   Multiple = "MULTIPLE",
   SelectBoxes = "SELECT",
+  GridMultiple = "GRIDMULTIPLE",
+  GridSelect = "GRIDSELECT",
 }

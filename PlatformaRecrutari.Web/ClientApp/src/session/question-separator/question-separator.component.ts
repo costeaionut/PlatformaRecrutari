@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { GridMultipleOptions } from "src/shared/classes/questions/grid-multiple-options-question";
+import { GridSelectBoxes } from "src/shared/classes/questions/grid-select-boxes-question";
 import { MultipleQuestion } from "src/shared/classes/questions/multiple-question";
 import { Question } from "src/shared/classes/questions/question";
 import { SelectBoxesQuestion } from "src/shared/classes/questions/select-boxes-question";
@@ -27,6 +29,16 @@ export class QuestionSeparatorComponent implements OnInit {
         return new MultipleQuestion("", ["Option 1"], false);
       case QuestionTypes.SelectBoxes:
         return new SelectBoxesQuestion("", ["Option 1"], false);
+      case QuestionTypes.GridMultiple:
+        return new GridMultipleOptions(
+          "",
+          ["Row 1"],
+          ["Column 1"],
+          false,
+          false
+        );
+      case QuestionTypes.GridSelect:
+        return new GridSelectBoxes("", ["Row 1"], ["Column 1"], false, false);
       default:
         return null;
     }
@@ -41,6 +53,8 @@ export class QuestionSeparatorComponent implements OnInit {
         SHORT: "Short Answear",
         MULTIPLE: "Multiple Answears",
         SELECT: "Select Boxes",
+        GRIDMULTIPLE: "Multiple Answears Grid",
+        GRIDSELECT: "Select Boxes Grid",
       },
       inputPlaceholder: "Question Type",
       showCancelButton: true,
