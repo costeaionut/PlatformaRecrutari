@@ -19,31 +19,83 @@
         ></app-question-type-selector>
       </div>
     </div>
-    <div class="row">
-      <div class="col">Rows</div>
-      <div class="col">Columns</div>
+    <div class="row" style="margin-top: 5px; margin-bottom: 5px">
+      <div class="col" style="padding-left: 2px; padding-bottom: 5px">
+        <h6>Rows</h6>
+      </div>
+      <div class="col" style="padding-left: 2px; padding-bottom: 5px">
+        <h6>Columns</h6>
+      </div>
     </div>
     <div class="row" *ngFor="let index of this.getNumberOfRows()">
-      <div class="col" *ngIf="!this.rows[index]"></div>
-      <div class="col" *ngIf="this.rows[index]">
+      <div
+        class="col"
+        style="padding-left: 2px; padding-bottom: 10px"
+        *ngIf="!this.rows[index]"
+      ></div>
+      <div
+        class="col"
+        style="padding-left: 2px; padding-bottom: 10px"
+        *ngIf="this.rows[index]"
+      >
         <input
+          class="rowOrColumnInput"
           (change)="updateQuestionRows()"
           [(ngModel)]="this.rows[index]"
           type="text"
         />
+        <button
+          style="
+            width: 20px;
+            border: none;
+            padding: 0;
+            border-radius: 50%;
+            color: red;
+            background-color: white;
+          "
+          type="button"
+          (click)="removeRow(index)"
+          class="btn btn-danger"
+        >
+          X
+        </button>
       </div>
 
-      <div class="col" *ngIf="!this.columns[index]"></div>
-      <div class="col" *ngIf="this.columns[index]">
+      <div
+        class="col"
+        style="padding-left: 2px; padding-bottom: 10px"
+        *ngIf="!this.columns[index]"
+      ></div>
+      <div
+        class="col"
+        style="padding-left: 2px; padding-bottom: 10px"
+        *ngIf="this.columns[index]"
+      >
         <input
+          class="rowOrColumnInput"
           (change)="updateQuestionColumns()"
           [(ngModel)]="this.columns[index]"
           type="text"
         />
+        <button
+          style="
+            width: 20px;
+            border: none;
+            padding: 0;
+            border-radius: 50%;
+            color: red;
+            background-color: white;
+          "
+          type="button"
+          (click)="removeColumn(index)"
+          class="btn btn-danger"
+        >
+          X
+        </button>
       </div>
     </div>
     <div class="row">
-      <div class="col">
+      <div class="col" style="padding-left: 0px">
         <button
           class="btn btn-outline-primary"
           style="padding-top: 0; padding-bottom: 0"
@@ -52,13 +104,48 @@
           Add row
         </button>
       </div>
-      <div class="col">
+      <div class="col" style="padding-left: 0px">
         <button
           class="btn btn-outline-primary"
           style="padding-top: 0; padding-bottom: 0"
           (click)="addColumn()"
         >
           Add column
+        </button>
+      </div>
+    </div>
+    <div
+      class="row"
+      style="
+        margin-top: 30px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(191, 190, 190, 0.25);
+      "
+    >
+      <div class="col-3" style="padding-left: 0px">
+        <span>Required:</span>
+        <mat-slide-toggle
+          style="padding-left: 5px"
+          (click)="updateQuestionRequired()"
+          [(ngModel)]="this.required"
+        ></mat-slide-toggle>
+      </div>
+      <div class="col-6">
+        <span>Maximum 1 answer per column:</span>
+        <mat-slide-toggle
+          style="padding-left: 5px"
+          (click)="updateQuestionMaximumOneAnswerPerColumn()"
+          [(ngModel)]="this.requiredOneAnswerPerColumn"
+        ></mat-slide-toggle>
+      </div>
+      <div class="col-3">
+        <button
+          style="padding-top: 0; padding-bottom: 0"
+          type="button"
+          (click)="deleteThis()"
+          class="btn btn-outline-danger float-right"
+        >
+          Delete
         </button>
       </div>
     </div>
