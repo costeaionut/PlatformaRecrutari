@@ -111,6 +111,7 @@ export class DtoMapperService {
     }
 
     let formDto: FormDto = {
+      id: 0,
       title: formInfo.title,
       description: formInfo.description,
       shortQuestions: shortQuestionArray,
@@ -121,6 +122,7 @@ export class DtoMapperService {
     };
 
     let sessionDto: CreateSessionDto = {
+      id: 0,
       creatorId: sessionInfo.creatorId,
       title: sessionInfo.title,
       startDate: sessionInfo.startDate,

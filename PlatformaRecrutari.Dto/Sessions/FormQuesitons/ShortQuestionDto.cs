@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PlatformaRecrutari.Dto.Sessions.FormQuesitons
 {
-    public class ShortQuestionDto : BaseQuestion
+    public class ShortQuestionDto : BaseQuestionDto
     {
     }
 }

@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FormQuestions;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Inputed_Options;
 
 namespace PlatformaRecrutari.Data
 {
@@ -19,8 +21,13 @@ namespace PlatformaRecrutari.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
-        public DbSet<RecruitmentSession> RecruitmentSessions { get; set; }
+        
         public DbSet<Form> Forms { get; set; }
+        public DbSet<InputsOption> InputsOptions { get; set; }
+        public DbSet<GridQuestion> GridQuestions { get; set; }
+        public DbSet<BaseQuestion> SimpleQuestions { get; set; }
+        public DbSet<RecruitmentSession> RecruitmentSessions { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,14 +43,20 @@ namespace PlatformaRecrutari.Data
                 .WithMany()
                 .HasForeignKey(u => u.CreatorId);
 
-            modelBuilder.Entity<RecruitmentSession>()
-                .Property(s => s.FormId).IsRequired(true);
+            modelBuilder.Entity<Form>()
+                .HasOne<RecruitmentSession>()
+                .WithMany()
+                .HasForeignKey(f => f.SessionId);
 
-            modelBuilder.Entity<RecruitmentSession>()
-                .Property(s => s.Workshop).IsRequired(false);
+            modelBuilder.Entity<BaseQuestion>()
+                .HasOne<Form>()
+                .WithMany()
+                .HasForeignKey(bq => bq.FormId);
 
-            modelBuilder.Entity<RecruitmentSession>()
-                .Property(s => s.Interview).IsRequired(false);
+            modelBuilder.Entity<GridQuestion>()
+                .HasOne<Form>()
+                .WithMany()
+                .HasForeignKey(gq => gq.FormId);
         }
     }
 }

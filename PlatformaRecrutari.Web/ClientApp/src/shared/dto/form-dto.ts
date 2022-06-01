@@ -5,6 +5,7 @@ import { SelectBoxesQuestionDto } from "./questions/select-boxes-question-dto";
 import { ShortQuestionDto } from "./questions/short-question-dto";
 
 export interface FormDto {
+  id: number;
   title: string;
   description: string;
   shortQuestions: ShortQuestionDto[];

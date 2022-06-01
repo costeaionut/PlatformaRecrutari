@@ -55,9 +55,6 @@ namespace PlatformaRecrutari.Data.Managers
             originalData.StartDate = newData.StartDate;
             originalData.EndDate = newData.EndDate;
             originalData.IsOpen = newData.IsOpen;
-            originalData.FormId = newData.FormId;
-            originalData.Workshop = newData.Workshop;
-            originalData.Interview = newData.Interview;
         }
 
     }

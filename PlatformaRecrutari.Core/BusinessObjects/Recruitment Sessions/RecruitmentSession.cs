@@ -14,8 +14,5 @@ namespace PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool IsOpen { get; set; }
-        public int FormId { get; set; }
-        public string Workshop { get; set; }
-        public string Interview { get; set; }
     }
 }

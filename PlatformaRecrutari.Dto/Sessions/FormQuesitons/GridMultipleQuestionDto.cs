@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PlatformaRecrutari.Dto.Sessions.FormQuesitons
 {
-    public class GridMultipleQuestionDto : BaseQuestion
+    public class GridMultipleQuestionDto : BaseQuestionDto
     {
         public List<String> Rows { get; set; }
         public List<String> Columns { get; set; }

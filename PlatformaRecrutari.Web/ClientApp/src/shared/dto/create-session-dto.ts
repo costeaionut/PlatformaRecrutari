@@ -1,6 +1,7 @@
 import { FormDto } from "./form-dto";
 
 export interface CreateSessionDto {
+  id: number;
   creatorId: string;
   title: string;
   startDate: Date;
