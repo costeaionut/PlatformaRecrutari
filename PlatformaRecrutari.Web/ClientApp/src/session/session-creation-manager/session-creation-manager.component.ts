@@ -36,6 +36,8 @@ export class SessionCreationManagerComponent implements OnInit {
       title: "",
       description: "",
       questions: [],
+      startDate: new Date(),
+      endDate: new Date(),
     };
   }
 

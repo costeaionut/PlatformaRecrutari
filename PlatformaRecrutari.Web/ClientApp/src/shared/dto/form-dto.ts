@@ -8,6 +8,8 @@ export interface FormDto {
   id: number;
   title: string;
   description: string;
+  startDate: Date;
+  endDate: Date;
   shortQuestions: ShortQuestionDto[];
   multipleQuestions: MultipleQuestionDto[];
   selectBoxesQuestions: SelectBoxesQuestionDto[];

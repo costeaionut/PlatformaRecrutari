@@ -5,4 +5,6 @@ export interface FormInfo {
   title: string;
   description: string;
   questions: Array<QuestionPosition>;
+  startDate: Date;
+  endDate: Date;
 }

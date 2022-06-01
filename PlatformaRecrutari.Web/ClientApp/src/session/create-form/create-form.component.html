@@ -20,6 +20,43 @@
     <div class="col"></div>
   </div>
 
+  <div class="row">
+    <div class="col"></div>
+    <div class="col-8 dateSelectorWrapper">
+      <div>
+        <label for="Start date" style="padding-right: 10px">
+          Form start date:</label
+        >
+        <input
+          style="width: 50%; display: inline"
+          matInput
+          [(ngModel)]="this.formStartDate"
+          [matDatepicker]="startPicker"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="startPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </div>
+      <div>
+        <label for="End date" style="padding-right: 17px">From end date:</label>
+        <input
+          style="width: 50%; display: inline"
+          matInput
+          [(ngModel)]="this.formEndDate"
+          [matDatepicker]="endPicker"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="endPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </div>
+    </div>
+    <div class="col"></div>
+  </div>
+
   <div class="row questionRows" *ngFor="let entry of this.questions">
     <div class="col"></div>
     <div class="col-8">

@@ -12,6 +12,8 @@ namespace PlatformaRecrutari.Dto.Sessions
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public List<ShortQuestionDto> ShortQuestions { get; set; }
         public List<MultipleQuestionDto> MultipleQuestions { get; set; }
         public List<SelectBoxesQuestionDto> SelectBoxesQuestions { get; set; }
