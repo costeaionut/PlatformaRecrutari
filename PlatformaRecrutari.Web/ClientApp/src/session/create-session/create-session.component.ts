@@ -14,7 +14,7 @@ export class CreateSessionComponent implements OnInit {
 
   public sessionForm: FormGroup;
   public showError: Boolean;
-  public errorMessage: String = "";
+  public errorMessage: string = "";
   public submittingForm: Boolean;
   public validDates: Boolean = true;
 

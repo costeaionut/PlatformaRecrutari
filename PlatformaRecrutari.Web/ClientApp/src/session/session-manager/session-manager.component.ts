@@ -1,5 +1,9 @@
 import { Component, OnInit } from "@angular/core";
+import { CreateSessionDto } from "src/shared/dto/create-session-dto";
+import { FormDto } from "src/shared/dto/form-dto";
 import { FormInfo } from "src/shared/interfaces/form/formInfo";
+import { DtoMapperService } from "src/shared/services/dto-mapper.service";
+import { SessionService } from "src/shared/services/session.service";
 
 @Component({
   selector: "app-session-manager",
@@ -11,7 +15,10 @@ export class SessionManagerComponent implements OnInit {
   sessionInfo: SessionInfo;
   formInfo: FormInfo;
 
-  constructor() {}
+  constructor(
+    private dtoMapper: DtoMapperService,
+    private sessionService: SessionService
+  ) {}
 
   ngOnInit() {
     this.currentStep = 1;
@@ -31,8 +38,15 @@ export class SessionManagerComponent implements OnInit {
   }
 
   createSession = (): void => {
-    console.log("Session info: " + this.sessionInfo);
-    console.log("Form info: " + this.formInfo);
+    let sessionInfoDto: CreateSessionDto = this.dtoMapper.mapSessionInfoToDto(
+      this.sessionInfo,
+      this.formInfo
+    );
+
+    this.sessionService.createSession(sessionInfoDto).subscribe(
+      (res) => {},
+      (error) => console.error(error)
+    );
   };
 
   changePage = (page: number): void => {

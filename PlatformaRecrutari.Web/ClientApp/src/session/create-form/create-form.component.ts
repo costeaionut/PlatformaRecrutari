@@ -13,8 +13,8 @@ export class CreateFormComponent implements OnInit {
   @Input() formInfo: FormInfo;
   @Output() updateFormInfo = new EventEmitter<FormInfo>();
 
-  public title: String;
-  public description: String;
+  public title: string;
+  public description: string;
   public questions: Array<QuestionPosition>;
 
   constructor() {}

@@ -18,10 +18,10 @@ export class MultipleOptionsQuestionComponent implements OnInit {
   @Output() deleteQuestion = new EventEmitter<number>();
   @Output() updateQuestion = new EventEmitter<UpdateQuestion>();
 
-  question: String;
-  options: String[];
+  question: string;
+  options: string[];
   required: boolean;
-  questionType: String;
+  questionType: string;
 
   constructor() {}
 
@@ -78,7 +78,7 @@ export class MultipleOptionsQuestionComponent implements OnInit {
     this.updateQuestion.emit(updatedQuestion);
   }
 
-  updateQuestionType(newType: String) {
+  updateQuestionType(newType: string) {
     switch (newType) {
       case "ShortQuestion":
         var newShortQuestion = new ShortQuestion(

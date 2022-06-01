@@ -18,10 +18,10 @@ export class GridSelectBoxesQuestionComponent implements OnInit {
   @Output() deleteQuestion = new EventEmitter<number>();
   @Output() updateQuestion = new EventEmitter<UpdateQuestion>();
 
-  question: String;
-  questionType: String;
-  rows: Array<String>;
-  columns: Array<String>;
+  question: string;
+  questionType: string;
+  rows: Array<string>;
+  columns: Array<string>;
   required: boolean;
   requiredOneAnswerPerColumn: boolean;
 
@@ -73,7 +73,7 @@ export class GridSelectBoxesQuestionComponent implements OnInit {
     return this.createIndexArray(this.columns.length);
   }
 
-  updateQuestionType(newType: String) {
+  updateQuestionType(newType: string) {
     switch (newType) {
       case "ShortQuestion":
         var newShortQuestion = new ShortQuestion(

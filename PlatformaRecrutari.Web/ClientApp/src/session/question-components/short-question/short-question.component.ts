@@ -17,9 +17,9 @@ export class ShortQuestionComponent implements OnInit {
   @Output() deleteQuestion = new EventEmitter<Number>();
   @Output() updateQuestion = new EventEmitter<UpdateQuestion>();
 
-  question: String;
+  question: string;
   required: boolean;
-  questionType: String;
+  questionType: string;
 
   constructor() {}
 
@@ -36,7 +36,7 @@ export class ShortQuestionComponent implements OnInit {
     this.updateQuestion.emit(newQuestion);
   }
 
-  updateQuestionType(newType: String) {
+  updateQuestionType(newType: string) {
     switch (newType) {
       case "MultipleQuestion":
         var newMultipleQuestion = new MultipleQuestion(

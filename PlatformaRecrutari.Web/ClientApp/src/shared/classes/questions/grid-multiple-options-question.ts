@@ -1,15 +1,15 @@
 import { Question } from "./question";
 
 export class GridMultipleOptions extends Question {
-  private question: String;
-  private rows: Array<String>;
-  private columns: Array<String>;
+  private question: string;
+  private rows: Array<string>;
+  private columns: Array<string>;
   private oneAnswearPerColumn: boolean;
 
   constructor(
-    _question: String,
-    _rows: Array<String>,
-    _columns: Array<String>,
+    _question: string,
+    _rows: Array<string>,
+    _columns: Array<string>,
     _oneAnswearPerColumn: boolean,
     _required?: boolean
   ) {
@@ -20,23 +20,23 @@ export class GridMultipleOptions extends Question {
     this.oneAnswearPerColumn = _oneAnswearPerColumn;
   }
 
-  public setQuestion = (_question: String): void => {
+  public setQuestion = (_question: string): void => {
     this.question = _question;
   };
-  public getQuestion = (): String => {
+  public getQuestion = (): string => {
     return this.question;
   };
 
-  public setRows = (_rows: Array<String>): void => {
+  public setRows = (_rows: Array<string>): void => {
     this.rows = _rows;
   };
-  public getRows = (): Array<String> => {
+  public getRows = (): Array<string> => {
     return this.rows;
   };
-  public setColumns = (_columns: Array<String>): void => {
+  public setColumns = (_columns: Array<string>): void => {
     this.columns = _columns;
   };
-  public getColumns = (): Array<String> => {
+  public getColumns = (): Array<string> => {
     return this.columns;
   };
 

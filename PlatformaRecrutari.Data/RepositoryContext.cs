@@ -20,6 +20,7 @@ namespace PlatformaRecrutari.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<RecruitmentSession> RecruitmentSessions { get; set; }
+        public DbSet<Form> Forms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,7 +37,7 @@ namespace PlatformaRecrutari.Data
                 .HasForeignKey(u => u.CreatorId);
 
             modelBuilder.Entity<RecruitmentSession>()
-                .Property(s => s.Form).IsRequired(false);
+                .Property(s => s.FormId).IsRequired(true);
 
             modelBuilder.Entity<RecruitmentSession>()
                 .Property(s => s.Workshop).IsRequired(false);
