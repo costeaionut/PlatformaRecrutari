@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { CreateSessionComponent } from "./create-session/create-session.component";
 import { DisplaySessionComponent } from "./display-session/display-session.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { SessionManagerComponent } from "./session-manager/session-manager.component";
+import { SessionCreationManagerComponent } from "./session-creation-manager/session-creation-manager.component";
 import {
   MatDatepickerModule,
   MatFormFieldModule,
@@ -23,13 +23,13 @@ import { QuestionTypeSelectorComponent } from "./question-type-selector/question
 import { MultipleOptionsQuestionComponent } from "./question-components/multiple-options-question/multiple-options-question.component";
 import { SelectBoxesQuestionComponent } from "./question-components/select-boxes-question/select-boxes-question.component";
 import { GridMultipleOptionsQuestionComponent } from "./question-components/grid-multiple-options-question/grid-multiple-options-question.component";
-import { GridSelectBoxesQuestionComponent } from './question-components/grid-select-boxes-question/grid-select-boxes-question.component';
-import { DisplayFormComponent } from './display-form/display-form.component';
+import { GridSelectBoxesQuestionComponent } from "./question-components/grid-select-boxes-question/grid-select-boxes-question.component";
+import { DisplayFormComponent } from "./display-form/display-form.component";
 @NgModule({
   declarations: [
     CreateSessionComponent,
     DisplaySessionComponent,
-    SessionManagerComponent,
+    SessionCreationManagerComponent,
     CreateFormComponent,
     QuestionSeparatorComponent,
     ShortQuestionComponent,
@@ -56,7 +56,7 @@ import { DisplayFormComponent } from './display-form/display-form.component';
   exports: [
     CreateSessionComponent,
     DisplaySessionComponent,
-    SessionManagerComponent,
+    SessionCreationManagerComponent,
   ],
 })
 export class SessionModule {}

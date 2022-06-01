@@ -6,11 +6,11 @@ import { DtoMapperService } from "src/shared/services/dto-mapper.service";
 import { SessionService } from "src/shared/services/session.service";
 
 @Component({
-  selector: "app-session-manager",
-  templateUrl: "./session-manager.component.html",
-  styleUrls: ["./session-manager.component.css"],
+  selector: "app-session-creation-manager",
+  templateUrl: "./session-creation-manager.component.html",
+  styleUrls: ["./session-creation-manager.component.css"],
 })
-export class SessionManagerComponent implements OnInit {
+export class SessionCreationManagerComponent implements OnInit {
   currentStep: number;
   sessionInfo: SessionInfo;
   formInfo: FormInfo;

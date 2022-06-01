@@ -15,10 +15,8 @@ import { LoginUserComponent } from "../auth/login-user/login-user.component";
 import { JwtModule } from "@auth0/angular-jwt";
 import { SessionModule } from "../session/session.module";
 import { DisplaySessionComponent } from "../session/display-session/display-session.component";
-import { AuthenticatedGuard } from "../shared/guards/authenticated.guard";
 import { PmRoleGuard } from "../shared/guards/pm-role.guard";
-import { CreateSessionComponent } from "../session/create-session/create-session.component";
-import { SessionManagerComponent } from "../session/session-manager/session-manager.component";
+import { SessionCreationManagerComponent } from "../session/session-creation-manager/session-creation-manager.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 export function tokenGetter() {
@@ -60,7 +58,7 @@ export function tokenGetter() {
       },
       {
         path: "create-session",
-        component: SessionManagerComponent,
+        component: SessionCreationManagerComponent,
         canActivate: [PmRoleGuard],
       },
     ]),
