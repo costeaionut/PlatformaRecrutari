@@ -28,14 +28,25 @@
             <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
           </li>
 
-          <li *ngIf="isUserPM()" class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/create-session']">Create Session</a>
+          <li
+            *ngIf="isUserPM()"
+            class="nav-item"
+            [routerLinkActive]="['link-active']"
+          >
+            <a class="nav-link text-dark" [routerLink]="['/sessions']"
+              >Session Manager</a
+            >
           </li>
 
-          <li *ngIf="this.isUserAuthenticated" class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['']" (click)="logout()">Logout</a>
+          <li
+            *ngIf="this.isUserAuthenticated"
+            class="nav-item"
+            [routerLinkActive]="['link-active']"
+          >
+            <a class="nav-link text-dark" [routerLink]="['']" (click)="logout()"
+              >Logout</a
+            >
           </li>
-
         </ul>
       </div>
     </div>

@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CreateSessionComponent } from "./create-session/create-session.component";
-import { DisplaySessionComponent } from "./display-session/display-session.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { SessionCreationManagerComponent } from "./session-creation-manager/session-creation-manager.component";
 import {
@@ -25,10 +24,11 @@ import { SelectBoxesQuestionComponent } from "./question-components/select-boxes
 import { GridMultipleOptionsQuestionComponent } from "./question-components/grid-multiple-options-question/grid-multiple-options-question.component";
 import { GridSelectBoxesQuestionComponent } from "./question-components/grid-select-boxes-question/grid-select-boxes-question.component";
 import { DisplayFormComponent } from "./display-form/display-form.component";
+import { SessionManagerComponent } from "./session-manager/session-manager.component";
+import { DisplaySessionsComponent } from './display-sessions/display-sessions.component';
 @NgModule({
   declarations: [
     CreateSessionComponent,
-    DisplaySessionComponent,
     SessionCreationManagerComponent,
     CreateFormComponent,
     QuestionSeparatorComponent,
@@ -40,6 +40,8 @@ import { DisplayFormComponent } from "./display-form/display-form.component";
     GridMultipleOptionsQuestionComponent,
     GridSelectBoxesQuestionComponent,
     DisplayFormComponent,
+    SessionManagerComponent,
+    DisplaySessionsComponent,
   ],
   imports: [
     FormsModule,
@@ -53,10 +55,6 @@ import { DisplayFormComponent } from "./display-form/display-form.component";
     BrowserAnimationsModule,
     SweetAlert2Module.forRoot(),
   ],
-  exports: [
-    CreateSessionComponent,
-    DisplaySessionComponent,
-    SessionCreationManagerComponent,
-  ],
+  exports: [SessionManagerComponent, SessionCreationManagerComponent],
 })
 export class SessionModule {}
