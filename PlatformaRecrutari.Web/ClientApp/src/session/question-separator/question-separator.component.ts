@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { LongQuestion } from "src/shared/classes/questions/long-question";
+import { GridMultipleOptions } from "src/shared/classes/questions/grid-multiple-options-question";
+import { GridSelectBoxes } from "src/shared/classes/questions/grid-select-boxes-question";
+import { MultipleQuestion } from "src/shared/classes/questions/multiple-question";
 import { Question } from "src/shared/classes/questions/question";
+import { SelectBoxesQuestion } from "src/shared/classes/questions/select-boxes-question";
 import { ShortQuestion } from "src/shared/classes/questions/short-question";
-import { QuestionTypes } from "src/shared/enums/question-types";
+import { QuestionTypes } from "src/shared/enums/question-types-separator";
 import { QuestionPosition } from "src/shared/interfaces/session/question-position";
 import Swal from "sweetalert2";
 
@@ -21,45 +24,24 @@ export class QuestionSeparatorComponent implements OnInit {
   generateQuestion = async (questionType: String): Promise<Question> => {
     switch (questionType) {
       case QuestionTypes.Short:
-      case QuestionTypes.Long:
-        const { value: questionValues } = await Swal.fire({
-          icon: "info",
-          title: "What is the question?",
-          input: "text",
-          inputPlaceholder: "Question",
-        });
-
-        if (!questionValues) return;
-
-        const { value: required } = await Swal.fire({
-          title: "Is the question required?",
-          input: "radio",
-          inputOptions: {
-            YES: "Yes",
-            NO: "No",
-          },
-          showCancelButton: true,
-        });
-
-        if (!required) return;
-
-        if (questionType === QuestionTypes.Short)
-          return new ShortQuestion(
-            questionValues,
-            required == "YES" ? true : false
-          );
-        else
-          return new LongQuestion(
-            questionValues,
-            required == "YES" ? true : false
-          );
-
+        return new ShortQuestion("", false);
+      case QuestionTypes.Multiple:
+        return new MultipleQuestion("", ["Option 1"], false);
+      case QuestionTypes.SelectBoxes:
+        return new SelectBoxesQuestion("", ["Option 1"], false);
+      case QuestionTypes.GridMultiple:
+        return new GridMultipleOptions(
+          "",
+          ["Row 1"],
+          ["Column 1"],
+          false,
+          false
+        );
+      case QuestionTypes.GridSelect:
+        return new GridSelectBoxes("", ["Row 1"], ["Column 1"], false, false);
       default:
-        break;
+        return null;
     }
-    if (questionType == QuestionTypes.Short) {
-    }
-    return new ShortQuestion("Nu am reusit sa selectam");
   };
 
   addQuestion = async () => {
@@ -68,9 +50,11 @@ export class QuestionSeparatorComponent implements OnInit {
       title: "Which type of question do you want to add?",
       input: "select",
       inputOptions: {
-        SHORT: "Short Answer",
-        LONG: "Long Answer",
-        MULTIPLE: "Multiple Options",
+        SHORT: "Short Answear",
+        MULTIPLE: "Multiple Answears",
+        SELECT: "Select Boxes",
+        GRIDMULTIPLE: "Grid Multiple Answears",
+        GRIDSELECT: "Grid Select Boxes",
       },
       inputPlaceholder: "Question Type",
       showCancelButton: true,
@@ -83,8 +67,15 @@ export class QuestionSeparatorComponent implements OnInit {
 
     const newQuestion: Question = await this.generateQuestion(questionType);
 
-    console.log(newQuestion);
-    if (!newQuestion) return;
+    if (!newQuestion) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "There was an error creating your question! Please try again later :)",
+        footer: '<a href="">Why do I have this issue?</a>',
+      });
+      return;
+    }
 
     let question: QuestionPosition = {
       position: this.position + 1,

@@ -1,0 +1,11 @@
+<select
+  [(ngModel)]="this.questionType"
+  (change)="updateQuestionType()"
+  class="form-control"
+>
+  <option default value="ShortQuestion">Short Answear</option>
+  <option value="MultipleQuestion">Multiple Options</option>
+  <option value="SelectBoxesQuestion">Select Boxes</option>
+  <option value="GridSelectQuestion">Grid Select Boxes</option>
+  <option value="GridMultipleQuestion">Grid Multiple Options</option>
+</select>

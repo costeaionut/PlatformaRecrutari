@@ -1,7 +1,7 @@
 interface SessionInfo {
-  creatorId: String;
-  title: String;
+  creatorId: string;
+  title: string;
   startDate: Date;
   endDate: Date;
-  isOpen: Boolean;
+  isOpen: boolean;
 }

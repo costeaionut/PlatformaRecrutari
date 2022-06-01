@@ -1,30 +1,87 @@
-<h2 class="mb-3">Recruitment form:</h2>
-<div *ngFor="let entry of this.questions">
-  <app-short-question
-    *ngIf="entry.question.getType() == 'ShortQuestion'"
-    [questionDetails]="entry.question"
-    [position]="entry.position"
-    (deleteQuestion)="this.deleteQuestion($event)"
-  ></app-short-question>
+<div class="container">
+  <div class="row">
+    <div class="col"></div>
+    <div class="col-8 titleWrapper">
+      <textarea
+        rows="1"
+        appTextareaAutoresize
+        class="formTitleInput"
+        placeholder="Form Title"
+        [(ngModel)]="this.title"
+      ></textarea>
+      <textarea
+        rows="1"
+        appTextareaAutoresize
+        class="descriptionInput"
+        placeholder="Description"
+        [(ngModel)]="this.description"
+      ></textarea>
+    </div>
+    <div class="col"></div>
+  </div>
 
-  <app-long-question
-    *ngIf="entry.question.getType() == 'LongQuestion'"
-    [questionDetails]="entry.question"
-    [position]="entry.position"
-    (deleteQuestion)="this.deleteQuestion($event)"
-  ></app-long-question>
+  <div class="row questionRows" *ngFor="let entry of this.questions">
+    <div class="col"></div>
+    <div class="col-8">
+      <app-short-question
+        *ngIf="entry.question.getType() == 'ShortQuestion'"
+        [questionDetails]="entry.question"
+        [position]="entry.position"
+        (deleteQuestion)="this.deleteQuestion($event)"
+        (updateQuestion)="updateQuestion($event)"
+      ></app-short-question>
 
-  <app-question-separator
-    [position]="entry.position"
-    (newQuestion)="addQuestion($event)"
-  ></app-question-separator>
+      <app-multiple-options-question
+        *ngIf="entry.question.getType() == 'MultipleQuestion'"
+        [questionDetails]="entry.question"
+        [position]="entry.position"
+        (deleteQuestion)="deleteQuestion($event)"
+        (updateQuestion)="updateQuestion($event)"
+      ></app-multiple-options-question>
+
+      <app-select-boxes-question
+        *ngIf="entry.question.getType() == 'SelectBoxesQuestion'"
+        [questionDetails]="entry.question"
+        [position]="entry.position"
+        (deleteQuestion)="deleteQuestion($event)"
+        (updateQuestion)="updateQuestion($event)"
+      ></app-select-boxes-question>
+
+      <app-grid-multiple-options-question
+        *ngIf="entry.question.getType() == 'GridMultipleQuestion'"
+        [questionDetails]="entry.question"
+        [position]="entry.position"
+        (deleteQuestion)="deleteQuestion($event)"
+        (updateQuestion)="updateQuestion($event)"
+      ></app-grid-multiple-options-question>
+
+      <app-grid-select-boxes-question
+        *ngIf="entry.question.getType() == 'GridSelectQuestion'"
+        [questionDetails]="entry.question"
+        [position]="entry.position"
+        (deleteQuestion)="deleteQuestion($event)"
+        (updateQuestion)="updateQuestion($event)"
+      ></app-grid-select-boxes-question>
+
+      <app-question-separator
+        [position]="entry.position"
+        (newQuestion)="addQuestion($event)"
+      ></app-question-separator>
+    </div>
+    <div class="col"></div>
+  </div>
+
+  <div class="row" *ngIf="this.questions.length == 0">
+    <div class="col"></div>
+    <div class="col-8">
+      <app-question-separator
+        [position]="0"
+        (newQuestion)="addQuestion($event)"
+      ></app-question-separator>
+    </div>
+    <div class="col"></div>
+  </div>
 </div>
-
-<app-question-separator
-  *ngIf="this.questions.length == 0"
-  [position]="0"
-  (newQuestion)="addQuestion($event)"
-></app-question-separator>
 
 <br />
 

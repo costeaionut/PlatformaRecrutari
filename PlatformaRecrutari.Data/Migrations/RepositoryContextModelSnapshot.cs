@@ -19,6 +19,88 @@ namespace PlatformaRecrutari.Data.Migrations
                 .HasAnnotation("ProductVersion", "5.0.13")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Form", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SessionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionId");
+
+                    b.ToTable("Forms");
+                });
+
+            modelBuilder.Entity("PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FormQuestions.BaseQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FormId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Question")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Required")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormId");
+
+                    b.ToTable("SimpleQuestions");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("BaseQuestion");
+                });
+
+            modelBuilder.Entity("PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Inputed_Options.InputsOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InputsOptions");
+                });
+
             modelBuilder.Entity("PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.RecruitmentSession", b =>
                 {
                     b.Property<int>("Id")
@@ -32,12 +114,6 @@ namespace PlatformaRecrutari.Data.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Form")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Interview")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsOpen")
                         .HasColumnType("bit");
 
@@ -45,9 +121,6 @@ namespace PlatformaRecrutari.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Workshop")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -133,6 +206,34 @@ namespace PlatformaRecrutari.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FormQuestions.GridQuestion", b =>
+                {
+                    b.HasBaseType("PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FormQuestions.BaseQuestion");
+
+                    b.Property<bool>("OneAnswerPerColumn")
+                        .HasColumnType("bit");
+
+                    b.HasDiscriminator().HasValue("GridQuestion");
+                });
+
+            modelBuilder.Entity("PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Form", b =>
+                {
+                    b.HasOne("PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.RecruitmentSession", null)
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FormQuestions.BaseQuestion", b =>
+                {
+                    b.HasOne("PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Form", null)
+                        .WithMany()
+                        .HasForeignKey("FormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.RecruitmentSession", b =>

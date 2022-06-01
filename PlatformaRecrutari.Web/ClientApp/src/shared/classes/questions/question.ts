@@ -1,16 +1,16 @@
-import { QuestionTypes } from "../../enums/question-types";
+import { QuestionTypes } from "../../enums/question-types-separator";
 
 export class Question {
-  private type: String;
-  private required: Boolean;
+  private type: string;
+  private required: boolean;
 
-  public constructor(_type: String, _required: Boolean = false) {
+  public constructor(_type: string, _required: boolean = false) {
     this.type = _type;
     this.required = _required;
   }
 
-  public setRequired = (_required: Boolean) => (this.required = _required);
-  public setType = (_type: String) => {
+  public setRequired = (_required: boolean) => (this.required = _required);
+  public setType = (_type: string) => {
     if ((<any>Object).values(QuestionTypes).includes(_type)) {
       this.type = _type;
     } else {
