@@ -9,6 +9,7 @@ namespace PlatformaRecrutari.Dto.Sessions
 {
     public class FormDto
     {
+        public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public List<ShortQuestionDto> ShortQuestions { get; set; }

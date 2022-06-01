@@ -7,6 +7,7 @@ using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FormQuestions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Inputed_Options;
 using PlatformaRecrutari.Dto.Sessions;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PlatformaRecrutari.Web.Controllers
@@ -22,8 +23,8 @@ namespace PlatformaRecrutari.Web.Controllers
         private readonly IFormManager _formManager;
 
         public SessionController(
-            ISessionManager sessionsManager, 
-            IMapper mapper, 
+            ISessionManager sessionsManager,
+            IMapper mapper,
             IFormManager formManager)
         {
             _sessionManager = sessionsManager;
@@ -55,8 +56,8 @@ namespace PlatformaRecrutari.Web.Controllers
             {
                 var newMultipleQuestion = _mapper.Map<BaseQuestion>(item);
                 newMultipleQuestion.FormId = createdForm.Id;
-               var createdQuestion =  
-                    await _formManager.addSimpleQuestionToForm(newMultipleQuestion);
+                var createdQuestion =
+                     await _formManager.addSimpleQuestionToForm(newMultipleQuestion);
 
                 for (int i = 0; i < item.Options.Count; i++)
                 {
@@ -77,9 +78,9 @@ namespace PlatformaRecrutari.Web.Controllers
             {
                 var newSelectBoxes = _mapper.Map<BaseQuestion>(item);
                 newSelectBoxes.FormId = createdForm.Id;
-                var createdQuestion = 
+                var createdQuestion =
                     await _formManager.addSimpleQuestionToForm(newSelectBoxes);
-                
+
                 for (int i = 0; i < item.Options.Count; i++)
                 {
                     InputsOption newInputOption = new InputsOption();
@@ -98,7 +99,7 @@ namespace PlatformaRecrutari.Web.Controllers
             {
                 var newGridMultiplQuestion = _mapper.Map<GridQuestion>(item);
                 newGridMultiplQuestion.FormId = createdForm.Id;
-                var createdQuestion = 
+                var createdQuestion =
                     await _formManager.addGridQuestionToForm(newGridMultiplQuestion);
 
                 for (int i = 0; i < item.Rows.Count; i++)
@@ -178,7 +179,7 @@ namespace PlatformaRecrutari.Web.Controllers
 
             return result != null ? Ok(result) : BadRequest("Something went wrong!");
         }
-        
+
         [HttpPost("UpdateSessionInfo")]
         public async Task<IActionResult> UpdateSessionInfo([FromBody] RecruitmentSessionDto newSessionInfo)
         {
@@ -188,7 +189,13 @@ namespace PlatformaRecrutari.Web.Controllers
             var session = _mapper.Map<RecruitmentSession>(newSessionInfo);
             var result = await _sessionManager.UpdateSessionInfo(session);
 
-            return result != null ? Ok(result) : BadRequest("Something went wrong!"); 
+            return result != null ? Ok(result) : BadRequest("Something went wrong!");
+        }
+
+        [HttpGet("RecruitmentSessions")]
+        public ActionResult<List<RecruitmentSessionDto>> getAllSessions()
+        {
+            return Ok(this._sessionManager.GetAllSessions());
         }
 
     }

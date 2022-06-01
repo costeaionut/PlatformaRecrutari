@@ -57,5 +57,8 @@ namespace PlatformaRecrutari.Data.Managers
             originalData.IsOpen = newData.IsOpen;
         }
 
+        public List<RecruitmentSession> GetAllSessions() =>
+            this._context.RecruitmentSessions.ToList();
+        
     }
 }

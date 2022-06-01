@@ -31,6 +31,7 @@ export class CreateFormComponent implements OnInit {
 
   changePage = (direction: number): void => {
     this.formInfo = {
+      id: 0,
       title: this.title,
       description: this.description,
       questions: this.questions,

@@ -5,7 +5,7 @@ import { MultipleQuestion } from "../classes/questions/multiple-question";
 import { Question } from "../classes/questions/question";
 import { SelectBoxesQuestion } from "../classes/questions/select-boxes-question";
 import { ShortQuestion } from "../classes/questions/short-question";
-import { CreateSessionDto } from "../dto/create-session-dto";
+import { CreateSessionDto } from "../dto/session/create-session-dto";
 import { FormDto } from "../dto/form-dto";
 import { GridMultipleQuestionDto } from "../dto/questions/grid-multiple-question";
 import { GridSelectBoxesQuestionDto } from "../dto/questions/grid-select-boxes-question-dto";
@@ -122,7 +122,7 @@ export class DtoMapperService {
     };
 
     let sessionDto: CreateSessionDto = {
-      id: 0,
+      id: sessionInfo.id,
       creatorId: sessionInfo.creatorId,
       title: sessionInfo.title,
       startDate: sessionInfo.startDate,

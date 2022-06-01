@@ -1,1 +1,43 @@
-<p>session-manager works!</p>
+<div class="container">
+  <div class="row" style="margin-bottom: 15px">
+    <div class="col" align="center"></div>
+    <div class="col" align="center"><h4>Recruitment Sessions</h4></div>
+    <div class="col" align="center"></div>
+  </div>
+  <div class="row" style="border-bottom: 1px solid rgba(128, 128, 128, 0.35)">
+    <div class="col" align="center">
+      <button
+        (click)="goToActiveSessions()"
+        class="sessionTypeButton"
+        [ngClass]="{ selected: this.displayActiveSessions }"
+      >
+        Active Session
+      </button>
+    </div>
+    <div class="col" align="center">
+      <button
+        (click)="goToMySessions()"
+        class="sessionTypeButton"
+        [ngClass]="{ selected: this.displayMySessions }"
+      >
+        My Sessions
+      </button>
+    </div>
+    <div class="col" align="center">
+      <button
+        (click)="goToPreviousSessions()"
+        class="sessionTypeButton"
+        [ngClass]="{ selected: this.displayPreviousSessions }"
+      >
+        Previous Sessions
+      </button>
+    </div>
+    <div class="col" align="center">
+      <button class="sessionTypeButton" (click)="goToCreateSessionPage()">
+        Create Sessions
+      </button>
+    </div>
+  </div>
+</div>
+
+<button (click)="showSessions()">Click me</button>

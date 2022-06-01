@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { CreateSessionDto } from "src/shared/dto/create-session-dto";
+import { CreateSessionDto } from "src/shared/dto/session/create-session-dto";
 import { FormDto } from "src/shared/dto/form-dto";
 import { FormInfo } from "src/shared/interfaces/form/formInfo";
 import { DtoMapperService } from "src/shared/services/dto-mapper.service";
@@ -23,6 +23,7 @@ export class SessionCreationManagerComponent implements OnInit {
   ngOnInit() {
     this.currentStep = 1;
     this.sessionInfo = {
+      id: 0,
       title: "",
       creatorId: "",
       startDate: new Date(),
@@ -31,6 +32,7 @@ export class SessionCreationManagerComponent implements OnInit {
     };
 
     this.formInfo = {
+      id: 0,
       title: "",
       description: "",
       questions: [],

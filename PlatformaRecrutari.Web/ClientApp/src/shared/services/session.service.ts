@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { CreateSessionDto } from "../dto/create-session-dto";
+import { CreateSessionDto } from "../dto/session/create-session-dto";
+import { SessionDto } from "../dto/session/get-session-dto";
 import { ApiCallPaths } from "./../paths/apiCallPaths";
 
 @Injectable({
@@ -17,6 +18,12 @@ export class SessionService {
     return this.http.post<any>(
       this.baseUrl + ApiCallPaths.createSessionPath,
       body
+    );
+  }
+
+  public getAllSessions() {
+    return this.http.get<Array<SessionDto>>(
+      this.baseUrl + ApiCallPaths.getAllSessionsPath
     );
   }
 }
