@@ -4,57 +4,183 @@
 
     <div *ngIf="showError" class="alert alert-danger" role="alert">
       <div *ngFor="let err of errorMessage">
-        <span>{{err}}</span>
+        <span>{{ err }}</span>
         <br />
       </div>
     </div>
 
-    <form [formGroup]="registerForm" autocomplete="off" novalidate (ngSubmit)="registerUser(registerForm.value)">
+    <form
+      [formGroup]="registerForm"
+      autocomplete="off"
+      novalidate
+      (ngSubmit)="registerUser(registerForm.value)"
+    >
       <div class="form-group row">
-        <label for="firstName" class="col-form-label col-sm-2">First Name:</label>
+        <label for="firstName" class="col-form-label col-sm-2"
+          >First Name:</label
+        >
         <div class="col-md-5">
-          <input type="text" id="firstName" formControlName="firstName" class="form-control" />
+          <input
+            type="text"
+            id="firstName"
+            formControlName="firstName"
+            class="form-control"
+          />
+        </div>
+        <div class="col-md-5">
+          <em
+            *ngIf="
+              validateControl('firstName') && hasError('firstName', 'required')
+            "
+            >First name is required</em
+          >
         </div>
       </div>
       <div class="form-group row">
         <label for="lastName" class="col-form-label col-sm-2">Last Name:</label>
         <div class="col-md-5">
-          <input type="text" id="lastName" formControlName="lastName" class="form-control" />
+          <input
+            type="text"
+            id="lastName"
+            formControlName="lastName"
+            class="form-control"
+          />
+        </div>
+        <div class="col-md-5">
+          <em
+            *ngIf="
+              validateControl('lastName') && hasError('lastName', 'required')
+            "
+            >Last name is required</em
+          >
         </div>
       </div>
+
+      <div class="form-group row">
+        <label for="phoneNumber" class="col-form-label col-sm-2"
+          >Phone Number:</label
+        >
+        <div class="col-md-5">
+          <input
+            type="text"
+            id="phoneNumber"
+            formControlName="phoneNumber"
+            class="form-control"
+          />
+        </div>
+        <div class="col-md-5">
+          <em
+            *ngIf="
+              validateControl('phoneNumber') &&
+              hasError('phoneNumber', 'required')
+            "
+            >Phone number is required</em
+          >
+          <em *ngIf="isPhoneNumberValid()"> Phone number is not valid </em>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="facebookLink" class="col-form-label col-sm-2"
+          >Facebook profile:</label
+        >
+        <div class="col-md-5">
+          <input
+            type="text"
+            id="facebookLink"
+            formControlName="facebookLink"
+            class="form-control"
+          />
+        </div>
+        <div class="col-md-5">
+          <em
+            *ngIf="
+              validateControl('facebookLink') &&
+              hasError('facebookLink', 'required')
+            "
+            >Facebook profile is required</em
+          >
+          <em
+            *ngIf="
+              validateControl('facebookLink') &&
+              hasError('facebookLink', 'pattern')
+            "
+          >
+            Facebook link is invalid!
+          </em>
+        </div>
+      </div>
+
       <div class="form-group row">
         <label for="email" class="col-form-label col-sm-2">Email:</label>
         <div class="col-md-5">
-          <input type="email" id="email" formControlName="email" class="form-control" />
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            class="form-control"
+          />
         </div>
         <div class="col-md-5">
-          <em *ngIf="validateControl('email') && hasError('email', 'email')">Please provide a valid email</em>
-          <em *ngIf="validateControl('email') && hasError('email', 'required')">Email is required</em>
+          <em *ngIf="validateControl('email') && hasError('email', 'email')"
+            >Please provide a valid email</em
+          >
+          <em *ngIf="validateControl('email') && hasError('email', 'required')"
+            >Email is required</em
+          >
         </div>
       </div>
       <div class="form-group row">
         <label for="password" class="col-form-label col-sm-2">Password:</label>
         <div class="col-md-5">
-          <input type="password" id="password" formControlName="password" class="form-control" />
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            class="form-control"
+          />
         </div>
         <div class="col-md-5">
-          <em *ngIf="validateControl('password') && hasError('password', 'required')">Password is required</em>
+          <em
+            *ngIf="
+              validateControl('password') && hasError('password', 'required')
+            "
+            >Password is required</em
+          >
         </div>
       </div>
       <div class="form-group row">
-        <label for="confirm" class="col-form-label col-sm-2">Confirm Password:</label>
+        <label for="confirm" class="col-form-label col-sm-2"
+          >Confirm Password:</label
+        >
         <div class="col-md-5">
-          <input type="password" id="confirm" formControlName="confirm" class="form-control" />
+          <input
+            type="password"
+            id="confirm"
+            formControlName="confirm"
+            class="form-control"
+          />
         </div>
         <div class="col-md-5">
-          <em *ngIf="validateControl('confirm') && hasError('confirm', 'required')">Confirmation is required</em>
+          <em
+            *ngIf="
+              validateControl('confirm') && hasError('confirm', 'required')
+            "
+            >Confirmation is required</em
+          >
           <em *ngIf="hasError('confirm', 'mustMatch')">Passwords must match</em>
         </div>
       </div>
-      <br>
+      <br />
       <div class="form-group row">
         <div class="col-md-1">
-          <button type="submit" class="btn btn-info" [disabled]="!registerForm.valid">Register</button>
+          <button
+            type="submit"
+            class="btn btn-info"
+            [disabled]="!registerForm.valid"
+          >
+            Register
+          </button>
         </div>
       </div>
     </form>

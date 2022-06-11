@@ -15,6 +15,12 @@ namespace PlatformaRecrutari.Dto.User
         [Required(ErrorMessage = "Lastname is required.")]
         public string LastName { get; set; }
         
+        [Required(ErrorMessage = "Phone Number is required")]
+        public string PhoneNumber { get; set; }
+
+        [Required(ErrorMessage = "Facebook link is required")]
+        public string Facebook { get; set; }
+
         [Required(ErrorMessage = "Email is required.")]
         public string Email { get; set; }
         
