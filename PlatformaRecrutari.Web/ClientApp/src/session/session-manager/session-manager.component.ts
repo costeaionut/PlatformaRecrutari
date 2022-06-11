@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import { UserInfo } from "src/shared/interfaces/user/userInfo";
 import { AuthenticationService } from "src/shared/services/authentication.service";
 import { SessionService } from "src/shared/services/session.service";
+import Swal from "sweetalert2";
 
 @Component({
   selector: "app-session-manager",
@@ -37,7 +38,7 @@ export class SessionManagerComponent implements OnInit {
       res.forEach((element) => {
         if (element.creatorId == this.currentUser.id)
           this.currentSession.push(element as SessionInfo);
-        if (new Date(element.endDate).getTime() < Date.now())
+        if (new Date(element.endDate).setHours(23, 59, 59, 99) < Date.now())
           this.previousSessions.push(element);
       });
     });
@@ -58,6 +59,12 @@ export class SessionManagerComponent implements OnInit {
   }
 
   goToCreateSessionPage() {
-    this.router.navigate(["/create-session"]);
+    if (this.currentSession.length != 0) {
+      Swal.fire({
+        title:
+          "You have already created a session! Please delete it and try again!",
+        icon: "error",
+      });
+    } else this.router.navigate(["/create-session"]);
   }
 }

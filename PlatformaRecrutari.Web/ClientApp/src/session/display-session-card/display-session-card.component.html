@@ -18,10 +18,11 @@
       Status:
       <span
         [ngClass]="{
-          active: this.session.isOpen,
-          closed: !this.session.isOpen
+          active: getStatus() === 'Active',
+          upcoming: getStatus() === 'Upcoming',
+          closed: getStatus() === 'Finished'
         }"
-        >{{ parseStatus(this.session.isOpen) }}</span
+        >{{ getStatus() }}</span
       >
     </div>
   </div>

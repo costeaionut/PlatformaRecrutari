@@ -52,7 +52,10 @@ export class CreateSessionComponent implements OnInit {
   }
 
   areDatesValid = (startDate: Date, endDate: Date): boolean => {
-    return startDate < endDate && startDate < new Date();
+    return (
+      startDate.getTime() <= endDate.getTime() &&
+      startDate.getTime() >= new Date().setHours(0, 0, 0, 0)
+    );
   };
 
   public async changePage(formValue: any) {

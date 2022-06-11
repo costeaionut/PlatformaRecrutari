@@ -26,8 +26,16 @@ export class DisplaySessionCardComponent implements OnInit {
     return dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
   }
 
-  parseStatus(status: boolean): string {
-    if (status) return "Active";
-    return "Closed";
+  getStatus(): string {
+    let castedStartDate = new Date(this.session.startDate).setHours(0, 0, 0, 0);
+    let castedEndDate = new Date(this.session.endDate).setHours(23, 59, 59, 99);
+    let currentDate = new Date().getTime();
+
+    if (currentDate < castedStartDate) return "Upcoming";
+
+    if (castedStartDate < currentDate && currentDate < castedEndDate)
+      return "Active";
+
+    if (castedEndDate < currentDate) return "Finished";
   }
 }

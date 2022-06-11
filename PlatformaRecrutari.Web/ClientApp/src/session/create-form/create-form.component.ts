@@ -43,18 +43,6 @@ export class CreateFormComponent implements OnInit {
     console.log(this.questions);
   }
 
-  // Returns true if date1 is smaller than date2
-  compareDatesWithoutTimes(date1: Date, date2: Date) {
-    if (date1.getFullYear() < date2.getFullYear()) return true;
-    if (date1.getFullYear() === date2.getFullYear()) {
-      if (date1.getMonth() < date2.getMonth()) return true;
-      if (date1.getMonth() === date1.getMonth()) {
-        if (date1.getDay() < date2.getDay()) return true;
-      }
-    }
-    return false;
-  }
-
   errorChecker(): Array<string> {
     let localErrors: string[] = [];
     if (this.title.length == 0) localErrors.push("Title can't be empty!");
@@ -62,7 +50,10 @@ export class CreateFormComponent implements OnInit {
     if (this.formStartDate > this.formEndDate)
       localErrors.push("Start date can't be smaller than end date!");
 
-    if (this.compareDatesWithoutTimes(this.formStartDate, new Date()))
+    console.log(this.formStartDate.setHours(0, 0, 0, 0));
+    if (
+      new Date().setHours(0, 0, 0, 0) >= this.formStartDate.setHours(0, 0, 0, 0)
+    )
       localErrors.push("Start date can't be set earlier than today!");
 
     if (this.description.length == 0)
