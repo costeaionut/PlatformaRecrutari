@@ -16,6 +16,8 @@ export class CreateFormComponent implements OnInit {
   public title: string;
   public description: string;
   public questions: Array<QuestionPosition>;
+  public formStartDate: Date;
+  public formEndDate: Date;
 
   constructor() {}
 
@@ -23,6 +25,8 @@ export class CreateFormComponent implements OnInit {
     this.title = this.formInfo.title;
     this.questions = this.formInfo.questions;
     this.description = this.formInfo.description;
+    this.formStartDate = new Date();
+    this.formEndDate = new Date();
   }
 
   checkQuestions() {
@@ -31,9 +35,12 @@ export class CreateFormComponent implements OnInit {
 
   changePage = (direction: number): void => {
     this.formInfo = {
+      id: 0,
       title: this.title,
       description: this.description,
       questions: this.questions,
+      startDate: this.formStartDate,
+      endDate: this.formEndDate,
     };
 
     this.updateFormInfo.emit(this.formInfo);

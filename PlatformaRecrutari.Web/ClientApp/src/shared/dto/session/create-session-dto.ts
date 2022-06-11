@@ -1,4 +1,4 @@
-import { FormDto } from "./form-dto";
+import { FormDto } from "../form-dto";
 
 export interface CreateSessionDto {
   id: number;

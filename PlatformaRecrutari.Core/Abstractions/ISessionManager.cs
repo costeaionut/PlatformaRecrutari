@@ -12,5 +12,6 @@ namespace PlatformaRecrutari.Core.Abstractions
         Task<RecruitmentSession> CreateSession(RecruitmentSession newSession);
         Task<RecruitmentSession> ChangeSessionStatus(RecruitmentSession session);
         Task<RecruitmentSession> UpdateSessionInfo(RecruitmentSession newSessionData);
+        List<RecruitmentSession> GetAllSessions();
     }
 }

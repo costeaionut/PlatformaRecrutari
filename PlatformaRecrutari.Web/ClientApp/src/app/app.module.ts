@@ -14,12 +14,11 @@ import { SweetAlert2Module } from "@sweetalert2/ngx-sweetalert2";
 import { LoginUserComponent } from "../auth/login-user/login-user.component";
 import { JwtModule } from "@auth0/angular-jwt";
 import { SessionModule } from "../session/session.module";
-import { DisplaySessionComponent } from "../session/display-session/display-session.component";
-import { AuthenticatedGuard } from "../shared/guards/authenticated.guard";
 import { PmRoleGuard } from "../shared/guards/pm-role.guard";
-import { CreateSessionComponent } from "../session/create-session/create-session.component";
-import { SessionManagerComponent } from "../session/session-manager/session-manager.component";
+import { SessionCreationManagerComponent } from "../session/session-creation-manager/session-creation-manager.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { SessionManagerComponent } from "src/session/session-manager/session-manager.component";
+import { DisplaySessionsComponent } from "src/session/display-sessions/display-sessions.component";
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -54,13 +53,18 @@ export function tokenGetter() {
       { path: "register-user", component: RegisterUserComponent },
       { path: "login-user", component: LoginUserComponent },
       {
-        path: "display-session/:id",
-        component: DisplaySessionComponent,
+        path: "sessions",
+        component: SessionManagerComponent,
         canActivate: [PmRoleGuard],
       },
       {
         path: "create-session",
-        component: SessionManagerComponent,
+        component: SessionCreationManagerComponent,
+        canActivate: [PmRoleGuard],
+      },
+      {
+        path: "session/:id",
+        component: DisplaySessionsComponent,
         canActivate: [PmRoleGuard],
       },
     ]),

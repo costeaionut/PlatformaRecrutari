@@ -1,56 +1,78 @@
 <div class="container">
-  <div class="row">
-    <div
-      [ngClass]="{
-        activePage: this.currentStep === 1,
-        inactivePage: this.currentStep !== 1
-      }"
-      class="col border rounded"
-      style="height: 7px"
-    >
-      <br />
+  <div class="row" style="margin-bottom: 15px">
+    <div class="col" align="center"></div>
+    <div class="col" align="center"><h4>Recruitment Sessions</h4></div>
+    <div class="col" align="center"></div>
+  </div>
+  <div class="row" style="border-bottom: 1px solid rgba(128, 128, 128, 0.35)">
+    <div class="col" align="center">
+      <button
+        (click)="goToActiveSessions()"
+        class="sessionTypeButton"
+        [ngClass]="{ selected: this.displayActiveSessions }"
+      >
+        Active Session
+      </button>
     </div>
-    <div
-      [ngClass]="{
-        activePage: this.currentStep === 2,
-        inactivePage: this.currentStep !== 2
-      }"
-      class="col border rounded"
-      style="height: 7px"
-    >
-      <br />
+    <div class="col" align="center">
+      <button
+        (click)="goToMySessions()"
+        class="sessionTypeButton"
+        [ngClass]="{ selected: this.displayMySessions }"
+      >
+        My Sessions
+      </button>
     </div>
-    <div
-      [ngClass]="{
-        activePage: this.currentStep === 3,
-        inactivePage: this.currentStep !== 3
-      }"
-      class="col border rounded"
-      style="height: 7px"
-    >
-      <br />
+    <div class="col" align="center">
+      <button
+        (click)="goToPreviousSessions()"
+        class="sessionTypeButton"
+        [ngClass]="{ selected: this.displayPreviousSessions }"
+      >
+        Previous Sessions
+      </button>
     </div>
-    <br />
+    <div class="col" align="center">
+      <button class="sessionTypeButton" (click)="goToCreateSessionPage()">
+        Create Sessions
+      </button>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="this.displayActiveSessions">
+    <div
+      class="col-4"
+      style="margin-top: 10px; margin-bottom: 10px"
+      *ngFor="let session of this.activeSessions"
+    >
+      <app-display-session-card
+        [parentSeeSessionInfoPage]="goToSessionInfo"
+        [session]="session"
+      ></app-display-session-card>
+    </div>
+  </div>
+  <div class="row" *ngIf="this.displayMySessions">
+    <div
+      class="col-4"
+      style="margin-top: 10px; margin-bottom: 10px"
+      *ngFor="let session of this.mySessions"
+    >
+      <app-display-session-card
+        [parentSeeSessionInfoPage]="goToSessionInfo"
+        [session]="session"
+      ></app-display-session-card>
+    </div>
+  </div>
+  <div class="row" *ngIf="this.displayPreviousSessions">
+    <div
+      class="col-4"
+      style="margin-top: 10px; margin-bottom: 10px"
+      *ngFor="let session of this.previousSessions"
+    >
+      <app-display-session-card
+        [parentSeeSessionInfoPage]="goToSessionInfo"
+        [session]="session"
+      ></app-display-session-card>
+    </div>
   </div>
 </div>
-<br />
-<app-create-session
-  *ngIf="this.currentStep == 1"
-  [sessionInfo]="this.sessionInfo"
-  [parentChangePage]="changePage"
-  (sessionInfoEmitter)="updateSession($event)"
-></app-create-session>
-
-<app-create-form
-  *ngIf="this.currentStep == 2"
-  [formInfo]="this.formInfo"
-  [parentChangePage]="changePage"
-  (updateFormInfo)="updateFormInfo($event)"
-></app-create-form>
-
-<app-display-form
-  *ngIf="this.currentStep == 3"
-  [formInfo]="this.formInfo"
-  [parentChangePage]="changePage"
-  [parentCreateSession]="createSession"
-></app-display-form>

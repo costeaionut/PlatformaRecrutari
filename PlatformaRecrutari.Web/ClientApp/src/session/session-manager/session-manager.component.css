@@ -1,7 +1,36 @@
-.activePage {
-  background-color: #6c757d;
+.sessionTypeButton{
+    border: none;
+    background-color: white;
+    width: 100%;
+    color: black;
+    border-bottom: 2px solid rgba(65, 105, 225, 0);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+
+    padding-top: 10px;
+
+    transition-property: border;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in;
+
+    transition-property: background-color;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in;
+
 }
 
-.inactivePage {
-  background-color: #aeb5bc;
+.col{
+    padding: 0;
+}
+
+.sessionTypeButton:hover{
+    background-color: rgba(228, 228, 228, 0.25);
+}
+
+.sessionTypeButton:focus{
+    outline: none;
+}
+
+.selected{
+    border-bottom: 2px solid rgba(65, 105, 225, 1);
 }

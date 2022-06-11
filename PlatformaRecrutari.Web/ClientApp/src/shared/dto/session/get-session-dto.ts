@@ -1,4 +1,4 @@
-interface SessionInfo {
+export interface SessionDto {
   id: number;
   creatorId: string;
   title: string;

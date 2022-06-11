@@ -1,9 +1,8 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CreateSessionComponent } from "./create-session/create-session.component";
-import { DisplaySessionComponent } from "./display-session/display-session.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { SessionManagerComponent } from "./session-manager/session-manager.component";
+import { SessionCreationManagerComponent } from "./session-creation-manager/session-creation-manager.component";
 import {
   MatDatepickerModule,
   MatFormFieldModule,
@@ -23,13 +22,15 @@ import { QuestionTypeSelectorComponent } from "./question-type-selector/question
 import { MultipleOptionsQuestionComponent } from "./question-components/multiple-options-question/multiple-options-question.component";
 import { SelectBoxesQuestionComponent } from "./question-components/select-boxes-question/select-boxes-question.component";
 import { GridMultipleOptionsQuestionComponent } from "./question-components/grid-multiple-options-question/grid-multiple-options-question.component";
-import { GridSelectBoxesQuestionComponent } from './question-components/grid-select-boxes-question/grid-select-boxes-question.component';
-import { DisplayFormComponent } from './display-form/display-form.component';
+import { GridSelectBoxesQuestionComponent } from "./question-components/grid-select-boxes-question/grid-select-boxes-question.component";
+import { DisplayFormComponent } from "./display-form/display-form.component";
+import { SessionManagerComponent } from "./session-manager/session-manager.component";
+import { DisplaySessionsComponent } from "./display-sessions/display-sessions.component";
+import { DisplaySessionCardComponent } from "./display-session-card/display-session-card.component";
 @NgModule({
   declarations: [
     CreateSessionComponent,
-    DisplaySessionComponent,
-    SessionManagerComponent,
+    SessionCreationManagerComponent,
     CreateFormComponent,
     QuestionSeparatorComponent,
     ShortQuestionComponent,
@@ -40,6 +41,9 @@ import { DisplayFormComponent } from './display-form/display-form.component';
     GridMultipleOptionsQuestionComponent,
     GridSelectBoxesQuestionComponent,
     DisplayFormComponent,
+    SessionManagerComponent,
+    DisplaySessionsComponent,
+    DisplaySessionCardComponent,
   ],
   imports: [
     FormsModule,
@@ -54,9 +58,9 @@ import { DisplayFormComponent } from './display-form/display-form.component';
     SweetAlert2Module.forRoot(),
   ],
   exports: [
-    CreateSessionComponent,
-    DisplaySessionComponent,
+    DisplaySessionsComponent,
     SessionManagerComponent,
+    SessionCreationManagerComponent,
   ],
 })
 export class SessionModule {}

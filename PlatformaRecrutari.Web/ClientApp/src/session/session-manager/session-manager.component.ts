@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
-import { CreateSessionDto } from "src/shared/dto/create-session-dto";
-import { FormDto } from "src/shared/dto/form-dto";
-import { FormInfo } from "src/shared/interfaces/form/formInfo";
-import { DtoMapperService } from "src/shared/services/dto-mapper.service";
+import { Router } from "@angular/router";
+import { SessionDto } from "src/shared/dto/session/get-session-dto";
+import { UserInfo } from "src/shared/interfaces/user/userInfo";
+import { AuthenticationService } from "src/shared/services/authentication.service";
 import { SessionService } from "src/shared/services/session.service";
 
 @Component({
@@ -11,58 +11,74 @@ import { SessionService } from "src/shared/services/session.service";
   styleUrls: ["./session-manager.component.css"],
 })
 export class SessionManagerComponent implements OnInit {
-  currentStep: number;
-  sessionInfo: SessionInfo;
-  formInfo: FormInfo;
+  displayActiveSessions: boolean;
+  displayMySessions: boolean;
+  displayPreviousSessions: boolean;
+
+  activeSessions: Array<SessionInfo>;
+  mySessions: Array<SessionInfo>;
+  previousSessions: Array<SessionInfo>;
+
+  currentUser: UserInfo;
 
   constructor(
-    private dtoMapper: DtoMapperService,
-    private sessionService: SessionService
+    private router: Router,
+    private sessionService: SessionService,
+    private authService: AuthenticationService
   ) {}
 
-  ngOnInit() {
-    this.currentStep = 1;
-    this.sessionInfo = {
-      title: "",
-      creatorId: "",
-      startDate: new Date(),
-      endDate: new Date(),
-      isOpen: false,
-    };
+  async ngOnInit() {
+    this.activeSessions = Array<SessionInfo>();
+    this.previousSessions = Array<SessionInfo>();
+    this.mySessions = Array<SessionInfo>();
 
-    this.formInfo = {
-      title: "",
-      description: "",
-      questions: [],
-    };
+    this.displayActiveSessions = true;
+    this.displayMySessions = false;
+    this.displayPreviousSessions = false;
+
+    this.currentUser = await this.authService.getCurrentUser().toPromise();
+    console.log(this.currentUser);
+
+    this.sessionService.getAllSessions().subscribe((res) => {
+      res.forEach((element) => {
+        if (element.isOpen) this.activeSessions.push(element as SessionInfo);
+        if (element.creatorId === this.currentUser.id)
+          this.mySessions.push(element as SessionInfo);
+        if (new Date(element.endDate).getTime() < Date.now())
+          this.previousSessions.push(element);
+      });
+    });
   }
 
-  createSession = (): void => {
-    let sessionInfoDto: CreateSessionDto = this.dtoMapper.mapSessionInfoToDto(
-      this.sessionInfo,
-      this.formInfo
-    );
-
-    this.sessionService.createSession(sessionInfoDto).subscribe(
-      (res) => {},
-      (error) => console.error(error)
-    );
+  goToSessionInfo = (id: number) => {
+    this.router.navigate(["/session/" + id]);
   };
 
-  changePage = (page: number): void => {
-    if (
-      (page === 1 && this.currentStep !== 3) ||
-      (page === -1 && this.currentStep !== 1)
-    ) {
-      this.currentStep += page;
-    }
-  };
+  goToActiveSessions() {
+    this.displayActiveSessions = true;
+    this.displayMySessions = false;
+    this.displayPreviousSessions = false;
+  }
 
-  updateSession = (newValues: SessionInfo): void => {
-    this.sessionInfo = newValues;
-  };
+  showSessions() {
+    console.log(this.activeSessions);
+    console.log(this.mySessions);
+    console.log(this.previousSessions);
+  }
 
-  updateFormInfo = (newFormInfo: FormInfo): void => {
-    this.formInfo = newFormInfo;
-  };
+  goToMySessions() {
+    this.displayActiveSessions = false;
+    this.displayMySessions = true;
+    this.displayPreviousSessions = false;
+  }
+
+  goToPreviousSessions() {
+    this.displayActiveSessions = false;
+    this.displayMySessions = false;
+    this.displayPreviousSessions = true;
+  }
+
+  goToCreateSessionPage() {
+    this.router.navigate(["/create-session"]);
+  }
 }

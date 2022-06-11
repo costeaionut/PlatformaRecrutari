@@ -1,0 +1,56 @@
+<div class="container">
+  <div class="row">
+    <div
+      [ngClass]="{
+        activePage: this.currentStep === 1,
+        inactivePage: this.currentStep !== 1
+      }"
+      class="col border rounded"
+      style="height: 7px"
+    >
+      <br />
+    </div>
+    <div
+      [ngClass]="{
+        activePage: this.currentStep === 2,
+        inactivePage: this.currentStep !== 2
+      }"
+      class="col border rounded"
+      style="height: 7px"
+    >
+      <br />
+    </div>
+    <div
+      [ngClass]="{
+        activePage: this.currentStep === 3,
+        inactivePage: this.currentStep !== 3
+      }"
+      class="col border rounded"
+      style="height: 7px"
+    >
+      <br />
+    </div>
+    <br />
+  </div>
+</div>
+<br />
+<app-create-session
+  *ngIf="this.currentStep == 1"
+  [sessionInfo]="this.sessionInfo"
+  [parentChangePage]="changePage"
+  (sessionInfoEmitter)="updateSession($event)"
+></app-create-session>
+
+<app-create-form
+  *ngIf="this.currentStep == 2"
+  [formInfo]="this.formInfo"
+  [parentChangePage]="changePage"
+  (updateFormInfo)="updateFormInfo($event)"
+></app-create-form>
+
+<app-display-form
+  *ngIf="this.currentStep == 3"
+  [formInfo]="this.formInfo"
+  [parentChangePage]="changePage"
+  [parentCreateSession]="createSession"
+></app-display-form>
