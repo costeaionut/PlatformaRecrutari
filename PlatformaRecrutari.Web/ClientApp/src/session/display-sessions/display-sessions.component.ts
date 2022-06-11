@@ -1,15 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
-  selector: 'app-display-sessions',
-  templateUrl: './display-sessions.component.html',
-  styleUrls: ['./display-sessions.component.css']
+  selector: "app-display-sessions",
+  templateUrl: "./display-sessions.component.html",
+  styleUrls: ["./display-sessions.component.css"],
 })
 export class DisplaySessionsComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

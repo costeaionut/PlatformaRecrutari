@@ -50,6 +50,10 @@ export class SessionManagerComponent implements OnInit {
     });
   }
 
+  goToSessionInfo = (id: number) => {
+    this.router.navigate(["/session/" + id]);
+  };
+
   goToActiveSessions() {
     this.displayActiveSessions = true;
     this.displayMySessions = false;

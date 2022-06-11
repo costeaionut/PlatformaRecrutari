@@ -18,6 +18,7 @@ import { PmRoleGuard } from "../shared/guards/pm-role.guard";
 import { SessionCreationManagerComponent } from "../session/session-creation-manager/session-creation-manager.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { SessionManagerComponent } from "src/session/session-manager/session-manager.component";
+import { DisplaySessionsComponent } from "src/session/display-sessions/display-sessions.component";
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -59,6 +60,11 @@ export function tokenGetter() {
       {
         path: "create-session",
         component: SessionCreationManagerComponent,
+        canActivate: [PmRoleGuard],
+      },
+      {
+        path: "session/:id",
+        component: DisplaySessionsComponent,
         canActivate: [PmRoleGuard],
       },
     ]),

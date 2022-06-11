@@ -26,7 +26,7 @@ import { GridSelectBoxesQuestionComponent } from "./question-components/grid-sel
 import { DisplayFormComponent } from "./display-form/display-form.component";
 import { SessionManagerComponent } from "./session-manager/session-manager.component";
 import { DisplaySessionsComponent } from "./display-sessions/display-sessions.component";
-import { DisplaySessionCardComponent } from './display-session-card/display-session-card.component';
+import { DisplaySessionCardComponent } from "./display-session-card/display-session-card.component";
 @NgModule({
   declarations: [
     CreateSessionComponent,
@@ -57,6 +57,10 @@ import { DisplaySessionCardComponent } from './display-session-card/display-sess
     BrowserAnimationsModule,
     SweetAlert2Module.forRoot(),
   ],
-  exports: [SessionManagerComponent, SessionCreationManagerComponent],
+  exports: [
+    DisplaySessionsComponent,
+    SessionManagerComponent,
+    SessionCreationManagerComponent,
+  ],
 })
 export class SessionModule {}
