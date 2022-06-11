@@ -79,7 +79,9 @@
       </div>
 
       <div *ngIf="!this.validDates" class="alert alert-danger" role="alert">
-        This is a danger alert—check it out!
+        <em> Start date can't be after the end date! </em>
+        <br />
+        <em> Start date can't be set earlier than today! </em>
       </div>
 
       <button

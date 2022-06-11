@@ -4,6 +4,8 @@ import { FormDto } from "src/shared/dto/form-dto";
 import { FormInfo } from "src/shared/interfaces/form/formInfo";
 import { DtoMapperService } from "src/shared/services/dto-mapper.service";
 import { SessionService } from "src/shared/services/session.service";
+import Swal from "sweetalert2";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-session-creation-manager",
@@ -14,10 +16,12 @@ export class SessionCreationManagerComponent implements OnInit {
   currentStep: number;
   sessionInfo: SessionInfo;
   formInfo: FormInfo;
+  submitting: boolean;
 
   constructor(
     private dtoMapper: DtoMapperService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -39,17 +43,35 @@ export class SessionCreationManagerComponent implements OnInit {
       startDate: new Date(),
       endDate: new Date(),
     };
+
+    this.submitting = false;
   }
 
   createSession = (): void => {
+    this.submitting = true;
     let sessionInfoDto: CreateSessionDto = this.dtoMapper.mapSessionInfoToDto(
       this.sessionInfo,
       this.formInfo
     );
-
     this.sessionService.createSession(sessionInfoDto).subscribe(
-      (res) => {},
-      (error) => console.error(error)
+      (res) => {
+        Swal.fire({
+          title: "Form created successfully!",
+          icon: "success",
+          timer: 1500,
+        }).then(() => {
+          this.router.navigate(["/sessions"]);
+          this.submitting = false;
+        });
+      },
+      (error) => {
+        Swal.fire({
+          title: "There has been an error! Please try again later.",
+          icon: "error",
+          timer: 1500,
+        });
+        this.submitting = false;
+      }
     );
   };
 

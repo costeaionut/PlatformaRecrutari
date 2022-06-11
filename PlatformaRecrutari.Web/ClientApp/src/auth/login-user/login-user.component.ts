@@ -56,9 +56,14 @@ export class LoginUserComponent implements OnInit {
         this._authService.sendLoginNotificationToListeners(
           res.isAuthSuccessful
         );
-
-        this._router.navigate([this._returnUrl]);
-        this.submittingForm = false;
+        Swal.fire({
+          title: "Login successful!",
+          icon: "success",
+          timer: 1500,
+        }).then(() => {
+          this._router.navigate([this._returnUrl]);
+          this.submittingForm = false;
+        });
       },
       (error) => {
         if (error.status == 401) {

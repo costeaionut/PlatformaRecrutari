@@ -7,20 +7,11 @@
   <div class="row" style="border-bottom: 1px solid rgba(128, 128, 128, 0.35)">
     <div class="col" align="center">
       <button
-        (click)="goToActiveSessions()"
+        (click)="goToCurrentSession()"
         class="sessionTypeButton"
-        [ngClass]="{ selected: this.displayActiveSessions }"
+        [ngClass]="{ selected: this.displayCurrentSession }"
       >
-        Active Session
-      </button>
-    </div>
-    <div class="col" align="center">
-      <button
-        (click)="goToMySessions()"
-        class="sessionTypeButton"
-        [ngClass]="{ selected: this.displayMySessions }"
-      >
-        My Sessions
+        Current Session
       </button>
     </div>
     <div class="col" align="center">
@@ -39,23 +30,11 @@
     </div>
   </div>
 
-  <div class="row" *ngIf="this.displayActiveSessions">
+  <div class="row" *ngIf="this.displayCurrentSession">
     <div
       class="col-4"
       style="margin-top: 10px; margin-bottom: 10px"
-      *ngFor="let session of this.activeSessions"
-    >
-      <app-display-session-card
-        [parentSeeSessionInfoPage]="goToSessionInfo"
-        [session]="session"
-      ></app-display-session-card>
-    </div>
-  </div>
-  <div class="row" *ngIf="this.displayMySessions">
-    <div
-      class="col-4"
-      style="margin-top: 10px; margin-bottom: 10px"
-      *ngFor="let session of this.mySessions"
+      *ngFor="let session of this.currentSession"
     >
       <app-display-session-card
         [parentSeeSessionInfoPage]="goToSessionInfo"

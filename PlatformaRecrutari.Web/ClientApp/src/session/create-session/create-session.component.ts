@@ -51,14 +51,15 @@ export class CreateSessionComponent implements OnInit {
     return this.sessionForm.controls[controlName].hasError(errorName);
   }
 
-  validateDates = (startDate: Date, endDate: Date): Boolean =>
-    startDate < endDate;
+  areDatesValid = (startDate: Date, endDate: Date): boolean => {
+    return startDate < endDate && startDate < new Date();
+  };
 
   public async changePage(formValue: any) {
     const result = await this._authService.getCurrentUser().toPromise();
     this.validDates = true;
 
-    if (!this.validateDates(formValue.startDate, formValue.endDate)) {
+    if (!this.areDatesValid(formValue.startDate, formValue.endDate)) {
       this.validDates = false;
       return;
     }
@@ -67,7 +68,7 @@ export class CreateSessionComponent implements OnInit {
     this.sessionInfo.title = formValue.title;
     this.sessionInfo.startDate = formValue.startDate;
     this.sessionInfo.endDate = formValue.endDate;
-    this.sessionInfo.isOpen = true;
+    this.sessionInfo.isOpen = false;
 
     this.sessionInfoEmitter.emit(this.sessionInfo);
     this.parentChangePage(1);

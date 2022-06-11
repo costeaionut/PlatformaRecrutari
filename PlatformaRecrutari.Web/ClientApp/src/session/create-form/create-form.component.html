@@ -118,6 +118,16 @@
     </div>
     <div class="col"></div>
   </div>
+
+  <div class="row" *ngIf="hasErrors">
+    <div class="col"></div>
+    <div class="col-8 errorMessageWrapper">
+      <div *ngFor="let error of this.errors">
+        <em>{{ error }}</em>
+      </div>
+    </div>
+    <div class="col"></div>
+  </div>
 </div>
 
 <br />

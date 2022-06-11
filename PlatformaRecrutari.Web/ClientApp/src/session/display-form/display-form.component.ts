@@ -10,7 +10,7 @@ export class DisplayFormComponent implements OnInit {
   @Input() formInfo: FormInfo;
   @Input() parentChangePage;
   @Input() parentCreateSession;
-
+  @Input() submittingForm;
   constructor() {}
 
   ngOnInit() {}
