@@ -91,5 +91,22 @@ namespace PlatformaRecrutari.Web.Controllers
                 role = _roleManager.GetRoleType(user.RoleId)
             });
         }
+    
+        [HttpGet("GetUserById/{id}"), Authorize]
+        public async Task<IActionResult> GetUserById(string id) {
+
+            if (id == null)
+                return BadRequest("IdNotSent");
+
+            User user = await this._userManager.FindByIdAsync(id);
+
+            if (user == null)
+                return NotFound();
+
+            UserDto userInfo = this._mapper.Map<UserDto>(user);
+            userInfo.Role = _roleManager.GetRoleType(user.RoleId);
+
+            return Ok(userInfo);
+        }
     }
 }

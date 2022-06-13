@@ -65,5 +65,11 @@ namespace PlatformaRecrutari.Data.Managers
 
         public List<RecruitmentSession> GetUsersSessions(string creatorId) =>
             this._context.RecruitmentSessions.Where(s => s.CreatorId == creatorId).ToList();
+        public void DeleteSession(RecruitmentSession sessionToDelete)
+        {
+            this._context.RecruitmentSessions.Remove(sessionToDelete);
+            this._context.SaveChanges();
+        }
+        
     }
 }

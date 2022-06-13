@@ -1,2 +1,23 @@
-<p>display-sessions works!</p>
-{{ this.currentSession.title }}
+<div *ngIf="this.currentSession && this.creator && this.currentUser">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h2>{{ this.currentSession.title }}</h2>
+        <h6>
+          Session's creator is {{ creator.firstName }} {{ creator.lastName }}
+        </h6>
+      </div>
+      <div *ngIf="shouldShowActions()" class="col" align="right">
+        <button
+          (click)="deleteSession()"
+          style="margin: 5px"
+          type="button"
+          class="btn btn-danger"
+        >
+          Delete
+        </button>
+        <button type="button" class="btn btn-primary">Edit Session</button>
+      </div>
+    </div>
+  </div>
+</div>

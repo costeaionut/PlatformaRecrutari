@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using PlatformaRecrutari.Core.Abstractions;
 using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FormQuestions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Inputed_Options;
 using PlatformaRecrutari.Dto.Sessions;
+using PlatformaRecrutari.Dto.User;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,9 +20,9 @@ namespace PlatformaRecrutari.Web.Controllers
     public class SessionController : ControllerBase
     {
 
-        private readonly ISessionManager _sessionManager;
         private readonly IMapper _mapper;
         private readonly IFormManager _formManager;
+        private readonly ISessionManager _sessionManager;
 
         public SessionController(
             ISessionManager sessionsManager,
@@ -202,9 +204,22 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<RecruitmentSessionDto> getUserById(int id) =>
+        public ActionResult<RecruitmentSessionDto> getSessionById(int id) =>
             this._mapper.Map<RecruitmentSessionDto>(this._sessionManager.GetSessionById(id));
         
+        [HttpPost("DeleteSession/{sessionId:int}")]
+        public IActionResult deleteSession([FromBody] UserDto requester, int sessionId) {
+            if (requester == null || sessionId == null)
+                return BadRequest("NullData");
 
+            RecruitmentSession session = this._sessionManager.GetSessionById(sessionId);
+
+            if (sessionId != session.Id)
+                return Unauthorized("Current user is not the creator");
+
+            this._sessionManager.DeleteSession(session);
+
+            return Ok();
+        } 
     }
 }

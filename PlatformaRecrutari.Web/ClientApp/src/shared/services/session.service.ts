@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { CreateSessionDto } from "../dto/session/create-session-dto";
 import { SessionDto } from "../dto/session/get-session-dto";
+import { UserInfo } from "../interfaces/user/userInfo";
 import { ApiCallPaths } from "./../paths/apiCallPaths";
 
 @Injectable({
@@ -30,6 +31,13 @@ export class SessionService {
   public getSessionById(id: number) {
     return this.http.get<SessionDto>(
       this.baseUrl + ApiCallPaths.getSessionById + id
+    );
+  }
+
+  public deleteSession(body: UserInfo, sessionId: number) {
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.deleteSession + sessionId,
+      body
     );
   }
 }

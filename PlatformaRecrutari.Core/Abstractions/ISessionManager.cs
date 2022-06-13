@@ -15,5 +15,6 @@ namespace PlatformaRecrutari.Core.Abstractions
         List<RecruitmentSession> GetAllSessions();
         RecruitmentSession GetSessionById(int sessionId);
         List<RecruitmentSession> GetUsersSessions(string creatorId);
+        void DeleteSession(RecruitmentSession sessionToDelete);
     }
 }

@@ -20,6 +20,11 @@ namespace DAW.Web.MapperProfiles
                 .ForMember(u => u.UserName, opt => opt.MapFrom(f => f.Email))
                 .ReverseMap();
 
+            CreateMap<User, UserDto>()
+                .ForMember(ud => ud.Role, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(u => u.RoleId, opt => opt.Ignore());
+
             CreateMap<RecruitmentSessionDto, RecruitmentSession>()
                 .ReverseMap();
 
