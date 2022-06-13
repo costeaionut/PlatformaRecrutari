@@ -36,7 +36,7 @@ export class SessionManagerComponent implements OnInit {
 
     this.sessionService.getAllSessions().subscribe((res) => {
       res.forEach((element) => {
-        if (element.creatorId == this.currentUser.id)
+        if (Date.now() < new Date(element.endDate).setHours(23, 59, 59, 99))
           this.currentSession.push(element as SessionInfo);
         if (new Date(element.endDate).setHours(23, 59, 59, 99) < Date.now())
           this.previousSessions.push(element as SessionInfo);

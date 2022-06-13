@@ -52,7 +52,7 @@ export class CreateFormComponent implements OnInit {
 
     console.log(this.formStartDate.setHours(0, 0, 0, 0));
     if (
-      new Date().setHours(0, 0, 0, 0) >= this.formStartDate.setHours(0, 0, 0, 0)
+      new Date().setHours(0, 0, 0, 0) > this.formStartDate.setHours(0, 0, 0, 0)
     )
       localErrors.push("Start date can't be set earlier than today!");
 
