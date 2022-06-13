@@ -26,4 +26,10 @@ export class SessionService {
       this.baseUrl + ApiCallPaths.getAllSessionsPath
     );
   }
+
+  public getSessionById(id: number) {
+    return this.http.get<SessionDto>(
+      this.baseUrl + ApiCallPaths.getSessionById + id
+    );
+  }
 }

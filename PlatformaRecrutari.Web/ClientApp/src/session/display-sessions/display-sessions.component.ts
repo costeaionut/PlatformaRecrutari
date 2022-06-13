@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
+import { ActivatedRoute, ParamMap } from "@angular/router";
+import { SessionService } from "src/shared/services/session.service";
 
 @Component({
   selector: "app-display-sessions",
@@ -6,7 +8,17 @@ import { Component, Input, OnInit } from "@angular/core";
   styleUrls: ["./display-sessions.component.css"],
 })
 export class DisplaySessionsComponent implements OnInit {
-  constructor() {}
+  currentSession: SessionInfo;
 
-  ngOnInit() {}
+  constructor(
+    private sessionService: SessionService,
+    private route: ActivatedRoute
+  ) {}
+
+  ngOnInit() {
+    const id = Number(this.route.snapshot.paramMap.get("id"));
+    this.sessionService.getSessionById(id).subscribe((res) => {
+      this.currentSession = res;
+    });
+  }
 }

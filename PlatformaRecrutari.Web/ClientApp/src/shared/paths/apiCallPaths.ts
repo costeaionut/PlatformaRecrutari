@@ -5,4 +5,5 @@ export enum ApiCallPaths {
   getCurrentUserPath = "api/Accounts/GetCurrentUser",
   createSessionPath = "api/Session/CreateSession",
   getAllSessionsPath = "api/Session/RecruitmentSessions",
+  getSessionById = "api/Session/",
 }

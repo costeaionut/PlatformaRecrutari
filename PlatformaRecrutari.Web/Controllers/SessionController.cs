@@ -38,6 +38,9 @@ namespace PlatformaRecrutari.Web.Controllers
             if (newSession == null || !ModelState.IsValid)
                 return BadRequest("Session's data is not valid.");
 
+            if (_sessionManager.GetUsersSessions(newSession.CreatorId).Count != 0)
+                return BadRequest("This user has already created a session.");
+
             var session = _mapper.Map<RecruitmentSession>(newSession);
             var createdSession = await _sessionManager.CreateSession(session);
 
@@ -197,6 +200,11 @@ namespace PlatformaRecrutari.Web.Controllers
         {
             return Ok(this._sessionManager.GetAllSessions());
         }
+
+        [HttpGet("{id:int}")]
+        public ActionResult<RecruitmentSessionDto> getUserById(int id) =>
+            this._mapper.Map<RecruitmentSessionDto>(this._sessionManager.GetSessionById(id));
+        
 
     }
 }

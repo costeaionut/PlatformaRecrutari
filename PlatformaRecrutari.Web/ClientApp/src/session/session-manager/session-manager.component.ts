@@ -39,7 +39,7 @@ export class SessionManagerComponent implements OnInit {
         if (element.creatorId == this.currentUser.id)
           this.currentSession.push(element as SessionInfo);
         if (new Date(element.endDate).setHours(23, 59, 59, 99) < Date.now())
-          this.previousSessions.push(element);
+          this.previousSessions.push(element as SessionInfo);
       });
     });
   }

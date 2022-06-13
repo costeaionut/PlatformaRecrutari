@@ -65,12 +65,24 @@ export class SessionCreationManagerComponent implements OnInit {
         });
       },
       (error) => {
-        Swal.fire({
-          title: "There has been an error! Please try again later.",
-          icon: "error",
-          timer: 1500,
-        });
-        this.submitting = false;
+        console.log(error.error);
+        if (error.error === "This user has already created a session.") {
+          Swal.fire({
+            title:
+              "You have already created a session! Please delete the existing one and try again!",
+            icon: "error",
+          }).then(() => {
+            this.router.navigate(["/sessions"]);
+            this.submitting = false;
+          });
+        } else {
+          Swal.fire({
+            title: "There has been an error! Please try again later.",
+            icon: "error",
+            timer: 1500,
+          });
+          this.submitting = false;
+        }
       }
     );
   };

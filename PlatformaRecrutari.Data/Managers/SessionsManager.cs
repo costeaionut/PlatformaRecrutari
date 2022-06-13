@@ -59,6 +59,11 @@ namespace PlatformaRecrutari.Data.Managers
 
         public List<RecruitmentSession> GetAllSessions() =>
             this._context.RecruitmentSessions.ToList();
-        
+       
+        public RecruitmentSession GetSessionById(int id) =>
+            this._context.RecruitmentSessions.FirstOrDefault(s => s.Id == id);
+
+        public List<RecruitmentSession> GetUsersSessions(string creatorId) =>
+            this._context.RecruitmentSessions.Where(s => s.CreatorId == creatorId).ToList();
     }
 }
