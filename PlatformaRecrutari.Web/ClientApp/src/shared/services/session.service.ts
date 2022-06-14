@@ -28,6 +28,13 @@ export class SessionService {
     );
   }
 
+  public updateSessionInfo(session: SessionInfo) {
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.updateSessionPath,
+      session
+    );
+  }
+
   public getSessionById(id: number) {
     return this.http.get<SessionDto>(
       this.baseUrl + ApiCallPaths.getSessionById + id

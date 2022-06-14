@@ -2,13 +2,23 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <h2>{{ this.currentSession.title }}</h2>
-        <h6>
-          Session's creator is {{ creator.firstName }} {{ creator.lastName }}
-        </h6>
+        <h2 *ngIf="!this.editing">{{ this.currentSession.title }}</h2>
+        <input
+          [(ngModel)]="currentSession.title"
+          *ngIf="this.editing"
+          class="titleEdit"
+          type="text"
+        />
+        <p>
+          Session's creator is
+          <i
+            ><b>{{ creator.firstName }} {{ creator.lastName }}</b></i
+          >
+        </p>
       </div>
       <div *ngIf="shouldShowActions()" class="col" align="right">
         <button
+          *ngIf="this.editing"
           (click)="deleteSession()"
           style="margin: 5px"
           type="button"
@@ -16,7 +26,83 @@
         >
           Delete
         </button>
-        <button type="button" class="btn btn-primary">Edit Session</button>
+        <button
+          *ngIf="!editing"
+          (click)="edit()"
+          type="button"
+          class="btn btn-primary"
+        >
+          Edit Session
+        </button>
+        <button
+          *ngIf="editing"
+          (click)="stopEditing()"
+          type="button"
+          class="btn btn-success"
+          [disabled]="this.invalid"
+        >
+          Done editing
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div *ngIf="!this.editing" class="col">
+        Session is active from:
+        <i>{{ parseDate(this.currentSession.startDate) }}</i> -
+        <i>{{ parseDate(this.currentSession.endDate) }}</i>
+      </div>
+      <div *ngIf="this.editing" class="col">
+        <div class="startDate">
+          <label style="margin-right: 5px"> Start date:</label>
+          <input
+            class="form-control"
+            style="width: 15%; display: inline"
+            matInput
+            [matDatepicker]="startPicker"
+            [(ngModel)]="this.currentSession.startDate"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="startPicker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+          <em *ngIf="this.startDateErrors()" style="color: red">
+            {{ this.startDateErrors() }}
+          </em>
+        </div>
+        <div class="endDate">
+          <label style="margin-right: 12px">End date:</label>
+          <input
+            class="form-control"
+            style="width: 15%; display: inline"
+            matInput
+            [matDatepicker]="endPicker"
+            [(ngModel)]="this.currentSession.endDate"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="endPicker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+          <em *ngIf="this.endDateErrors()" style="color: red">
+            {{ this.endDateErrors() }}
+          </em>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <p>
+          Status:
+          <span
+            [ngClass]="{
+              active: getStatus() === 'Active',
+              upcoming: getStatus() === 'Upcoming',
+              closed: getStatus() === 'Finished'
+            }"
+            >{{ getStatus() }}</span
+          >
+        </p>
       </div>
     </div>
   </div>

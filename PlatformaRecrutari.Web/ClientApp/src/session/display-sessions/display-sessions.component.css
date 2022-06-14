@@ -1,0 +1,27 @@
+.titleEdit{
+    min-height: 40px;
+    min-width: 75%;
+    border-radius: 0;
+
+    font-size: 30px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+
+    margin-bottom: 5px;
+}
+
+.titleEdit:focus{
+    outline: none;
+}
+
+.active{
+    color: rgb(69, 190, 35);
+}
+.closed{
+    color: red;
+}
+
+.upcoming{
+    color: rgb(255, 204, 0)
+}

@@ -11,6 +11,7 @@ using PlatformaRecrutari.Dto.Sessions;
 using PlatformaRecrutari.Dto.User;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace PlatformaRecrutari.Web.Controllers
 {
@@ -40,7 +41,15 @@ namespace PlatformaRecrutari.Web.Controllers
             if (newSession == null || !ModelState.IsValid)
                 return BadRequest("Session's data is not valid.");
 
-            if (_sessionManager.GetUsersSessions(newSession.CreatorId).Count != 0)
+            var sessions = _sessionManager.GetUsersSessions(newSession.CreatorId);
+            List<RecruitmentSession> active = new();
+            foreach (var s in sessions)
+            {
+                if (s.StartDate < DateTime.Now && DateTime.Now < s.EndDate)
+                    active.Add(s);
+            }
+
+            if (active.Count != 0)
                 return BadRequest("This user has already created a session.");
 
             var session = _mapper.Map<RecruitmentSession>(newSession);
