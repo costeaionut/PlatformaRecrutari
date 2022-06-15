@@ -8,18 +8,8 @@ import { FormInfo } from "src/shared/interfaces/form/formInfo";
 })
 export class DisplayFormComponent implements OnInit {
   @Input() formInfo: FormInfo;
-  @Input() parentChangePage;
-  @Input() parentCreateSession;
-  @Input() submittingForm;
+
   constructor() {}
 
   ngOnInit() {}
-
-  changePage = (direction: number): void => {
-    this.parentChangePage(direction);
-  };
-
-  createSession() {
-    this.parentCreateSession();
-  }
 }

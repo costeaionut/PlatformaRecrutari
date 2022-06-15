@@ -1,10 +1,12 @@
-<p>Review Session Details page will be soon implemented</p>
+<div>Display form will soon be implemented</div>
 
-<button class="btn btn-primary" (click)="changePage(-1)">Previous step</button>
-<button
-  class="btn btn-primary float-right"
-  [disabled]="submittingForm"
-  (click)="createSession()"
->
-  Create session
-</button>
+<div class="container">
+  <div class="row">
+    <div class="col"></div>
+    <div class="col-8 titleWrapper">
+      <h2>{{ this.formInfo.title }}</h2>
+      <h6>{{ this.formInfo.description }}</h6>
+    </div>
+    <div class="col"></div>
+  </div>
+</div>

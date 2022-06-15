@@ -18,6 +18,7 @@ export class DisplaySessionsComponent implements OnInit {
   creator: UserInfo;
   editing: boolean;
   invalid: boolean;
+  whatToDisplay: string;
 
   constructor(
     private sessionService: SessionService,
@@ -28,6 +29,7 @@ export class DisplaySessionsComponent implements OnInit {
 
   async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get("id"));
+    this.whatToDisplay = "form";
     this.editing = false;
     this.currentSession = await this.sessionService
       .getSessionById(id)
@@ -38,6 +40,10 @@ export class DisplaySessionsComponent implements OnInit {
       .toPromise();
 
     this.currentUser = await this.authService.getCurrentUser().toPromise();
+  }
+
+  changeDisplay(display: string) {
+    this.whatToDisplay = display;
   }
 
   shouldShowActions() {

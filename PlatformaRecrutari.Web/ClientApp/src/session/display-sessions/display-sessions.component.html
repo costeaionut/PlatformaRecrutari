@@ -106,4 +106,59 @@
       </div>
     </div>
   </div>
+  <div class="container">
+    <div class="row" style="border-bottom: 1px solid rgba(128, 128, 128, 0.35)">
+      <div class="col" style="padding: 0" align="center">
+        <button
+          class="sessionTypeButton"
+          [ngClass]="{ selected: this.whatToDisplay == 'form' }"
+          (click)="this.changeDisplay('form')"
+        >
+          Form
+        </button>
+      </div>
+      <div
+        class="col"
+        style="padding: 0; border-left: 1px solid rgba(128, 128, 128, 0.155)"
+        align="center"
+      >
+        <button
+          class="sessionTypeButton"
+          [ngClass]="{ selected: this.whatToDisplay == 'workshops' }"
+          (click)="this.changeDisplay('workshops')"
+        >
+          Workshops
+        </button>
+      </div>
+      <div
+        class="col"
+        style="padding: 0; border-left: 1px solid rgba(128, 128, 128, 0.155)"
+        align="center"
+      >
+        <button
+          class="sessionTypeButton"
+          [ngClass]="{ selected: this.whatToDisplay == 'interviews' }"
+          (click)="this.changeDisplay('interviews')"
+        >
+          Interviews
+        </button>
+      </div>
+      <div
+        class="col"
+        style="padding: 0; border-left: 1px solid rgba(128, 128, 128, 0.155)"
+        align="center"
+      >
+        <button
+          class="sessionTypeButton"
+          [ngClass]="{ selected: this.whatToDisplay == 'candidates' }"
+          (click)="this.changeDisplay('candidates')"
+        >
+          Candidates
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <app-display-form [formInfo]=""></app-display-form>
+  </div>
 </div>

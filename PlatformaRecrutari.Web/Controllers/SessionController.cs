@@ -45,7 +45,7 @@ namespace PlatformaRecrutari.Web.Controllers
             List<RecruitmentSession> active = new();
             foreach (var s in sessions)
             {
-                if (s.StartDate < DateTime.Now && DateTime.Now < s.EndDate)
+                if ((s.StartDate < DateTime.Now && DateTime.Now < s.EndDate) || DateTime.Now < s.StartDate)
                     active.Add(s);
             }
 

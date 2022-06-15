@@ -27,6 +27,7 @@ import { DisplayFormComponent } from "./display-form/display-form.component";
 import { SessionManagerComponent } from "./session-manager/session-manager.component";
 import { DisplaySessionsComponent } from "./display-sessions/display-sessions.component";
 import { DisplaySessionCardComponent } from "./display-session-card/display-session-card.component";
+import { SessionCreationReviewComponent } from './session-creation-review/session-creation-review.component';
 @NgModule({
   declarations: [
     CreateSessionComponent,
@@ -44,6 +45,7 @@ import { DisplaySessionCardComponent } from "./display-session-card/display-sess
     SessionManagerComponent,
     DisplaySessionsComponent,
     DisplaySessionCardComponent,
+    SessionCreationReviewComponent,
   ],
   imports: [
     FormsModule,

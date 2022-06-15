@@ -48,10 +48,10 @@
   (updateFormInfo)="updateFormInfo($event)"
 ></app-create-form>
 
-<app-display-form
+<app-session-creation-review
   *ngIf="this.currentStep == 3"
   [formInfo]="this.formInfo"
   [parentChangePage]="changePage"
   [parentCreateSession]="createSession"
   [submittingForm]="submitting"
-></app-display-form>
+></app-session-creation-review>
