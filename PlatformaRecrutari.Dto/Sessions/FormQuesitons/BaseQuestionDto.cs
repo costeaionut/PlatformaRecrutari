@@ -8,6 +8,7 @@ namespace PlatformaRecrutari.Dto.Sessions.FormQuesitons
 {
     public class BaseQuestionDto
     {
+        public int Id { get; set; }
         public int Position { get; set; }
         public string Type { get; set; }
         public string Question { get; set; }

@@ -46,5 +46,62 @@ namespace PlatformaRecrutari.Data.Managers
             await _context.SaveChangesAsync();
             return res.Entity;
         }
+
+        public Form getFormBySessionId(int sessionId)
+        {
+            var forms = this._context.Forms.Where<Form>(f => f.SessionId == sessionId).ToList();
+            if (forms.Count > 1)
+                throw new Exception("MultipleFormsPerSession");
+            
+            return forms.FirstOrDefault();
+        }
+    
+        public List<BaseQuestion> getFormsBaseQuestion(int formId)
+            => this._context.SimpleQuestions.Where(sq => sq.FormId == formId).ToList();
+
+        public List<GridQuestion> getFormsGridQuestion(int formId) =>
+            this._context.GridQuestions.Where(gq => gq.FormId == formId).ToList();
+
+        public List<string> getColumnsForGridQuestion(int questionId)
+        {
+            var inputOptions = this._context.InputsOptions
+                   .Where(i => i.QuestionId == questionId).ToList();
+
+            var columns = new List<string>();
+
+            foreach (var inputOption in inputOptions)
+                if (inputOption.Type == InputTypes.Column)
+                    columns.Add(inputOption.Content);
+
+            return columns;
+        }
+
+        public List<string> getRowsForGridQuestion(int questionId)
+        {
+            var inputOptions = this._context.InputsOptions
+                   .Where(i => i.QuestionId == questionId).ToList();
+
+            var rows = new List<string>();
+
+            foreach (var inputOption in inputOptions)
+                if (inputOption.Type == InputTypes.Row)
+                    rows.Add(inputOption.Content);
+
+            return rows;
+        }
+
+        public List<string> getOptionsForBaseQuestion(int questionId)
+        {
+            var inputOptions = this._context.InputsOptions
+                   .Where(i => i.QuestionId == questionId).ToList();
+
+            var option = new List<string>();
+
+            foreach (var inputOption in inputOptions)
+                if (inputOption.Type == InputTypes.Option)
+                    option.Add(inputOption.Content);
+
+            return option;
+        }
     }
 }

@@ -1,12 +1,16 @@
-<div>Display form will soon be implemented</div>
-
-<div class="container">
+<div class="container" *ngIf="this.formInfo">
   <div class="row">
     <div class="col"></div>
     <div class="col-8 titleWrapper">
       <h2>{{ this.formInfo.title }}</h2>
       <h6>{{ this.formInfo.description }}</h6>
     </div>
+    <div class="col"></div>
+  </div>
+
+  <div class="row" *ngFor="let question of formInfo.questions">
+    <div class="col"></div>
+    <div class="col-8"></div>
     <div class="col"></div>
   </div>
 </div>

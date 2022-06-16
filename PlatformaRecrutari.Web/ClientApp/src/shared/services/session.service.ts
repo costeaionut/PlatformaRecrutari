@@ -1,5 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { FormDto } from "../dto/form-dto";
 import { CreateSessionDto } from "../dto/session/create-session-dto";
 import { SessionDto } from "../dto/session/get-session-dto";
 import { UserInfo } from "../interfaces/user/userInfo";
@@ -45,6 +46,12 @@ export class SessionService {
     return this.http.post(
       this.baseUrl + ApiCallPaths.deleteSession + sessionId,
       body
+    );
+  }
+
+  public getSessionForm(sessionId: number) {
+    return this.http.get<FormDto>(
+      this.baseUrl + ApiCallPaths.getFormFromSession + sessionId
     );
   }
 }

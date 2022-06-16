@@ -10,6 +10,9 @@ export class SelectBoxesQuestion extends Question {
     this.options = _options;
   }
 
+  public setId = (_id: number) => super.setId(_id);
+  public getId = () => super.getId();
+
   public setQuestion = (_question: string): void => {
     this.question = _question;
   };

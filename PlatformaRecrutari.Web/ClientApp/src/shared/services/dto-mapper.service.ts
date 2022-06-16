@@ -13,6 +13,7 @@ import { MultipleQuestionDto } from "../dto/questions/multiple-question-dto";
 import { SelectBoxesQuestionDto } from "../dto/questions/select-boxes-question-dto";
 import { ShortQuestionDto } from "../dto/questions/short-question-dto";
 import { FormInfo } from "../interfaces/form/formInfo";
+import { QuestionPosition } from "../interfaces/session/question-position";
 
 @Injectable({
   providedIn: "root",
@@ -48,6 +49,7 @@ export class DtoMapperService {
       switch (currentElement.question.getType()) {
         case "ShortQuestion":
           let shortQuestionDto: ShortQuestionDto = {
+            id: 0,
             question: (currentQuestion as ShortQuestion).getQuestion(),
             required: (currentQuestion as ShortQuestion).getRequired(),
             type: (currentQuestion as ShortQuestion).getType(),
@@ -58,6 +60,7 @@ export class DtoMapperService {
 
         case "MultipleQuestion":
           let multipleQuestion: MultipleQuestionDto = {
+            id: 0,
             question: (currentQuestion as MultipleQuestion).getQuestion(),
             type: (currentQuestion as MultipleQuestion).getType(),
             required: (currentQuestion as MultipleQuestion).getRequired(),
@@ -69,6 +72,7 @@ export class DtoMapperService {
 
         case "SelectBoxesQuestion":
           let selectBoxesQuestion: SelectBoxesQuestionDto = {
+            id: 0,
             question: (currentQuestion as SelectBoxesQuestion).getQuestion(),
             type: (currentQuestion as SelectBoxesQuestion).getType(),
             required: (currentQuestion as SelectBoxesQuestion).getRequired(),
@@ -80,6 +84,7 @@ export class DtoMapperService {
 
         case "GridSelectQuestion":
           let gridSelectBoxesQuestion: GridSelectBoxesQuestionDto = {
+            id: 0,
             question: (currentQuestion as GridSelectBoxes).getQuestion(),
             type: (currentQuestion as GridSelectBoxes).getType(),
             required: (currentQuestion as GridSelectBoxes).getRequired(),
@@ -95,6 +100,7 @@ export class DtoMapperService {
 
         case "GridMultipleQuestion":
           let gridMultipleQuestion: GridMultipleQuestionDto = {
+            id: 0,
             question: (currentQuestion as GridMultipleOptions).getQuestion(),
             type: (currentQuestion as GridMultipleOptions).getType(),
             required: (currentQuestion as GridMultipleOptions).getRequired(),
@@ -136,5 +142,108 @@ export class DtoMapperService {
     };
 
     return sessionDto;
+  };
+
+  mapFormDtoToFormInfo = (formDto: FormDto): FormInfo => {
+    let questions: Array<QuestionPosition> = new Array<QuestionPosition>();
+
+    formDto.shortQuestions.forEach((element) => {
+      let shortQuestion: ShortQuestion = new ShortQuestion(
+        element.question,
+        element.required
+      );
+      shortQuestion.setId(element.id);
+
+      let newQuestionPosition: QuestionPosition = {
+        question: shortQuestion,
+        position: element.position,
+      };
+
+      questions.push(newQuestionPosition);
+    });
+
+    formDto.multipleQuestions.forEach((element) => {
+      let multipleQuestion: MultipleQuestion = new MultipleQuestion(
+        element.question,
+        element.options,
+        element.required
+      );
+      multipleQuestion.setId(element.id);
+
+      let newQuestionPosition: QuestionPosition = {
+        question: multipleQuestion,
+        position: element.position,
+      };
+
+      questions.push(newQuestionPosition);
+    });
+
+    formDto.selectBoxesQuestions.forEach((element) => {
+      let selectBox: SelectBoxesQuestion = new SelectBoxesQuestion(
+        element.question,
+        element.options,
+        element.required
+      );
+      selectBox.setId(element.id);
+
+      let newQuestionPosition: QuestionPosition = {
+        question: selectBox,
+        position: element.position,
+      };
+
+      questions.push(newQuestionPosition);
+    });
+
+    formDto.gridMultipleQuestions.forEach((element) => {
+      let gridMultiple: GridMultipleOptions = new GridMultipleOptions(
+        element.question,
+        element.rows,
+        element.columns,
+        element.oneAnswerPerColumn,
+        element.required
+      );
+      gridMultiple.setId(element.id);
+
+      let newQuestionPosition: QuestionPosition = {
+        question: gridMultiple,
+        position: element.position,
+      };
+
+      questions.push(newQuestionPosition);
+    });
+
+    formDto.gridSelectBoxesQuestions.forEach((element) => {
+      let gridSelect: GridSelectBoxes = new GridSelectBoxes(
+        element.question,
+        element.rows,
+        element.columns,
+        element.oneAnswerPerColumn,
+        element.required
+      );
+      gridSelect.setId(element.id);
+
+      let newQuestionPosition: QuestionPosition = {
+        question: gridSelect,
+        position: element.position,
+      };
+
+      questions.push(newQuestionPosition);
+    });
+
+    let sortedQuestions = questions.sort((q1, q2) => {
+      if (q1.position < q2.position) return -1;
+      if (q1.position > q2.position) return 1;
+      return 0;
+    });
+
+    let formInfo: FormInfo = {
+      id: formDto.id,
+      title: formDto.title,
+      description: formDto.description,
+      startDate: new Date(formDto.startDate),
+      endDate: new Date(formDto.endDate),
+      questions: sortedQuestions,
+    };
+    return formInfo;
   };
 }

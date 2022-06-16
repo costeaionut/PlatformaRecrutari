@@ -12,6 +12,7 @@ using PlatformaRecrutari.Dto.User;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using PlatformaRecrutari.Dto.Sessions.FormQuesitons;
 
 namespace PlatformaRecrutari.Web.Controllers
 {
@@ -180,6 +181,80 @@ namespace PlatformaRecrutari.Web.Controllers
             }
 
             return createdSession != null ? Ok(session) : BadRequest();
+        }
+
+        [HttpGet("SessionForm/{id}")]
+        public IActionResult GetSessionsForm(int id) {
+            Form sessionForm = this._formManager.getFormBySessionId(id);
+            if (sessionForm == null)
+                return NotFound();
+
+            FormDto formInfo = this._mapper.Map<FormDto>(sessionForm);
+            formInfo.ShortQuestions = new List<ShortQuestionDto>();
+            formInfo.MultipleQuestions = new List<MultipleQuestionDto>();
+            formInfo.SelectBoxesQuestions = new List<SelectBoxesQuestionDto>();
+            formInfo.GridMultipleQuestions = new List<GridMultipleQuestionDto>();
+            formInfo.GridSelectBoxesQuestions = new List<GridSelectBoxesQuestionDto>();
+
+            List<BaseQuestion> baseQuestions = this._formManager.getFormsBaseQuestion(formInfo.Id);
+            List<GridQuestion> gridQuestions = this._formManager.getFormsGridQuestion(formInfo.Id);
+
+            foreach (var baseQuestion in baseQuestions)
+            {
+                switch (baseQuestion.Type)
+                {
+                    case QuestionTypes.Short:
+                        ShortQuestionDto shortQuestion = this._mapper.Map<ShortQuestionDto>(baseQuestion);
+                        formInfo.ShortQuestions.Add(shortQuestion);
+                        break;
+                    case QuestionTypes.MultipleOptions:
+                        MultipleQuestionDto multipleQuestion = 
+                            this._mapper.Map<MultipleQuestionDto>(baseQuestion);
+                        multipleQuestion.Options = _formManager
+                            .getOptionsForBaseQuestion(multipleQuestion.Id);
+                        formInfo.MultipleQuestions.Add(multipleQuestion);
+                        break;
+                    case QuestionTypes.SelectBoxes:
+                        SelectBoxesQuestionDto selectBoxes = 
+                            this._mapper.Map<SelectBoxesQuestionDto>(baseQuestion);
+                        selectBoxes.Options = _formManager.getOptionsForBaseQuestion(selectBoxes.Id);
+                        formInfo.SelectBoxesQuestions.Add(selectBoxes);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            foreach (var gridQuestion in gridQuestions)
+            {
+                switch (gridQuestion.Type)
+                {
+                    case QuestionTypes.GridMultipleOptions:
+                        GridMultipleQuestionDto gridMultiple = 
+                            this._mapper.Map<GridMultipleQuestionDto>(gridQuestion);
+
+                        gridMultiple.Rows = _formManager.getRowsForGridQuestion(gridMultiple.Id);
+                        gridMultiple.Columns = _formManager.getColumnsForGridQuestion(gridMultiple.Id);
+                        
+                        formInfo.GridMultipleQuestions.Add(gridMultiple);
+                        break;
+                    
+                    case QuestionTypes.GridSelectBoxes:
+                        GridSelectBoxesQuestionDto gridSelect =
+                            this._mapper.Map<GridSelectBoxesQuestionDto>(gridQuestion);
+
+                        gridSelect.Rows = _formManager.getRowsForGridQuestion(gridSelect.Id);
+                        gridSelect.Columns = _formManager.getColumnsForGridQuestion(gridSelect.Id);
+                        
+                        formInfo.GridSelectBoxesQuestions.Add(gridSelect);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            return Ok(formInfo);
         }
 
         [HttpPost("ChangeSessionStatus")]

@@ -1,5 +1,6 @@
 .titleWrapper{
     padding: 20px;
+    margin-top: 20px;
     border-radius: 5px;
     border: 1px solid rgb(174, 174, 174);
     border-left: 5px solid royalblue;
@@ -7,4 +8,9 @@
 
 .titleWrapper h2{
     margin-bottom: 10px;
+}
+
+.titleWrapper h6 {
+    overflow-x: auto;
+    overflow-y: hidden;
 }

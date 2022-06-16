@@ -12,6 +12,6 @@ namespace PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FormQuest
         public const string MultipleOptions = "MultipleQuestion";
         public const string SelectBoxes = "SelectBoxesQuestion";
         public const string GridMultipleOptions = "GridMultipleQuestion";
-        public const string GridSelectBoxes = "GridSelectBoxesQuestion";
+        public const string GridSelectBoxes = "GridSelectQuestion";
     }
 }

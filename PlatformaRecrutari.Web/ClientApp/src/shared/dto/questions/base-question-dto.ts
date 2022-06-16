@@ -1,6 +1,7 @@
 export interface BaseQuestionDto {
-  position: number;
+  id: number;
   type: string;
+  position: number;
   question: string;
   required: boolean;
 }

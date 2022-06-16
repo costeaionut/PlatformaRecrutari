@@ -7,7 +7,8 @@ export enum ApiCallPaths {
 
   createSessionPath = "api/Session/CreateSession/",
   getAllSessionsPath = "api/Session/RecruitmentSessions/",
-  updateSessionPath = "api/Session/UpdateSessionInfo",
+  updateSessionPath = "api/Session/UpdateSessionInfo/",
+  getFormFromSession = "api/Session/SessionForm/",
   getSessionById = "api/Session/",
   deleteSession = "api/Session/DeleteSession/",
 }

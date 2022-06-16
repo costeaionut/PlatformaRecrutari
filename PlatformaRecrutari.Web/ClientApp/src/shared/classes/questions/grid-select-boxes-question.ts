@@ -20,6 +20,9 @@ export class GridSelectBoxes extends Question {
     this.oneAnswearPerColumn = _oneAnswearPerColumn;
   }
 
+  public setId = (_id: number) => super.setId(_id);
+  public getId = () => super.getId();
+
   public setQuestion = (_question: string): void => {
     this.question = _question;
   };
