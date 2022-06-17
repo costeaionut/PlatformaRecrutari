@@ -18,6 +18,14 @@
         [canAnswer]="false"
       >
       </app-short-question-display>
+
+      <app-multiple-question-display
+        *ngIf="this.question.question.getType() == 'MultipleQuestion'"
+        [question]="question.question"
+        [position]="question.position"
+        [canAnswer]="false"
+      >
+      </app-multiple-question-display>
     </div>
     <div class="col"></div>
   </div>

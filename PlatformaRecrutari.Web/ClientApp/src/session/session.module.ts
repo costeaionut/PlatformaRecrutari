@@ -8,6 +8,11 @@ import {
   MatFormFieldModule,
   MatNativeDateModule,
   MatInputModule,
+  MatRadioGroup,
+  MatRadioButton,
+  MatRippleModule,
+  MatButtonModule,
+  MatRadioModule,
 } from "@angular/material";
 
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -27,9 +32,9 @@ import { DisplayFormComponent } from "./display-form/display-form.component";
 import { SessionManagerComponent } from "./session-manager/session-manager.component";
 import { DisplaySessionsComponent } from "./display-sessions/display-sessions.component";
 import { DisplaySessionCardComponent } from "./display-session-card/display-session-card.component";
-import { SessionCreationReviewComponent } from './session-creation-review/session-creation-review.component';
-import { ShortQuestionDisplayComponent } from './display-form-quesitons/short-question-display/short-question-display.component';
-import { MultipleQuestionDisplayComponent } from './display-form-quesitons/multiple-question-display/multiple-question-display.component';
+import { SessionCreationReviewComponent } from "./session-creation-review/session-creation-review.component";
+import { ShortQuestionDisplayComponent } from "./display-form-quesitons/short-question-display/short-question-display.component";
+import { MultipleQuestionDisplayComponent } from "./display-form-quesitons/multiple-question-display/multiple-question-display.component";
 @NgModule({
   declarations: [
     CreateSessionComponent,
@@ -54,6 +59,8 @@ import { MultipleQuestionDisplayComponent } from './display-form-quesitons/multi
   imports: [
     FormsModule,
     CommonModule,
+    MatRadioModule,
+    MatRippleModule,
     MatInputModule,
     MatFormFieldModule,
     MatNativeDateModule,

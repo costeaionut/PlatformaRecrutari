@@ -1,1 +1,27 @@
-<p>multiple-question-display works!</p>
+<div class="container questionWrapper">
+  <div class="row">
+    <div class="col">
+      <h4>{{ question.getQuestion() }}</h4>
+      <mat-radio-group
+        aria-labelledby="example-radio-group-label"
+        class="example-radio-group"
+        [(ngModel)]="selectedOption"
+      >
+        <div class="container">
+          <div class="row">
+            <div class="col" *ngFor="let option of this.options">
+              <mat-radio-button
+                [disabled]="!canAnswer"
+                color="primary"
+                class="example-radio-button"
+                [value]="option"
+              >
+                {{ option }}
+              </mat-radio-button>
+            </div>
+          </div>
+        </div>
+      </mat-radio-group>
+    </div>
+  </div>
+</div>
