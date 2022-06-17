@@ -1,0 +1,15 @@
+<div class="container questionWrapper">
+  <div class="row">
+    <div class="col">
+      <h4>{{ question.getQuestion() }}</h4>
+      <textarea
+        rows="1"
+        [(ngModel)]="answer"
+        [disabled]="!canAnswer"
+        placeholder="Type your answer here."
+        aria-describedby="basic-addon1"
+        appTextareaAutoresize
+      ></textarea>
+    </div>
+  </div>
+</div>

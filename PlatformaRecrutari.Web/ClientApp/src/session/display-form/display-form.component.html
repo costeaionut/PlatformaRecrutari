@@ -10,7 +10,15 @@
 
   <div class="row" *ngFor="let question of formInfo.questions">
     <div class="col"></div>
-    <div class="col-8"></div>
+    <div class="col-8" style="padding: 0; margin-top: 15px">
+      <app-short-question-display
+        *ngIf="this.question.question.getType() == 'ShortQuestion'"
+        [question]="question.question"
+        [position]="question.position"
+        [canAnswer]="false"
+      >
+      </app-short-question-display>
+    </div>
     <div class="col"></div>
   </div>
 </div>

@@ -1,0 +1,27 @@
+.questionWrapper{
+    padding: 25px;
+    border-radius: 5px;
+    border: 1px solid rgb(174, 174, 174);
+    border-left: 5px solid royalblue;
+}
+
+textarea{
+    overflow: hidden;
+    width: 100%;
+    resize: none;
+    padding: 5px;
+    padding-bottom: 0px;
+    margin-top: 10px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    background-color: inherit;
+}
+
+textarea:focus{
+    outline: none;
+}
+
+textarea:disabled{
+    background-color: rgba(128, 128, 128, 0.08);
+}

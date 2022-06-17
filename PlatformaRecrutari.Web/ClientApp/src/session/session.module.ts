@@ -28,6 +28,8 @@ import { SessionManagerComponent } from "./session-manager/session-manager.compo
 import { DisplaySessionsComponent } from "./display-sessions/display-sessions.component";
 import { DisplaySessionCardComponent } from "./display-session-card/display-session-card.component";
 import { SessionCreationReviewComponent } from './session-creation-review/session-creation-review.component';
+import { ShortQuestionDisplayComponent } from './display-form-quesitons/short-question-display/short-question-display.component';
+import { MultipleQuestionDisplayComponent } from './display-form-quesitons/multiple-question-display/multiple-question-display.component';
 @NgModule({
   declarations: [
     CreateSessionComponent,
@@ -46,6 +48,8 @@ import { SessionCreationReviewComponent } from './session-creation-review/sessio
     DisplaySessionsComponent,
     DisplaySessionCardComponent,
     SessionCreationReviewComponent,
+    ShortQuestionDisplayComponent,
+    MultipleQuestionDisplayComponent,
   ],
   imports: [
     FormsModule,
