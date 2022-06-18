@@ -7,4 +7,43 @@
       </h4>
     </div>
   </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="border: none" scope="col"></th>
+          <th
+            style="border: none; text-align: center"
+            scope="col"
+            *ngFor="let col of this.question.getColumns()"
+          >
+            {{ col }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of this.question.getRows(); index as rowIndex">
+          <th style="width: 20%" scope="row">{{ row }}</th>
+          <td
+            style="text-align: center"
+            *ngFor="let col of this.question.getColumns(); index as colIndex"
+          >
+            <mat-radio-group style="margin-left: 8px">
+              <mat-radio-button
+                [value]="col"
+                color="primary"
+                [disabled]="!canAnswer"
+                [checked]="this.answerGrid[rowIndex] == colIndex"
+                (change)="selectCheckbox(rowIndex, colIndex)"
+              >
+              </mat-radio-button>
+            </mat-radio-group>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="this.hasError">
+    <em>{{ this.error }}</em>
+  </div>
 </div>
