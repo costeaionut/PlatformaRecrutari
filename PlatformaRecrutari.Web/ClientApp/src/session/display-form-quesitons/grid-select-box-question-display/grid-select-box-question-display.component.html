@@ -30,6 +30,7 @@
           >
             <mat-checkbox
               color="primary"
+              [(ngModel)]="this.answerGrid[rowIndex][colIndex]"
               (change)="selectOption(rowIndex, colIndex)"
               [disabled]="!canAnswer"
             ></mat-checkbox>

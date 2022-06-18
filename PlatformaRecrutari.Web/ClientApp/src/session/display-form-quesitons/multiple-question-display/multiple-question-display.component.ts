@@ -29,7 +29,6 @@ export class MultipleQuestionDisplayComponent implements OnInit {
       answer: this.selectedOption,
       position: this.position,
     };
-    console.log(newAnswer);
     this.changeAnswer.emit(newAnswer);
   }
 }
