@@ -35,6 +35,9 @@ import { DisplaySessionCardComponent } from "./display-session-card/display-sess
 import { SessionCreationReviewComponent } from "./session-creation-review/session-creation-review.component";
 import { ShortQuestionDisplayComponent } from "./display-form-quesitons/short-question-display/short-question-display.component";
 import { MultipleQuestionDisplayComponent } from "./display-form-quesitons/multiple-question-display/multiple-question-display.component";
+import { SelectBoxQuestionDisplayComponent } from './display-form-quesitons/select-box-question-display/select-box-question-display.component';
+import { GridMultipleQuestionDisplayComponent } from './display-form-quesitons/grid-multiple-question-display/grid-multiple-question-display.component';
+import { GridSelectBoxQuestionDisplayComponent } from './display-form-quesitons/grid-select-box-question-display/grid-select-box-question-display.component';
 @NgModule({
   declarations: [
     CreateSessionComponent,
@@ -55,6 +58,9 @@ import { MultipleQuestionDisplayComponent } from "./display-form-quesitons/multi
     SessionCreationReviewComponent,
     ShortQuestionDisplayComponent,
     MultipleQuestionDisplayComponent,
+    SelectBoxQuestionDisplayComponent,
+    GridMultipleQuestionDisplayComponent,
+    GridSelectBoxQuestionDisplayComponent,
   ],
   imports: [
     FormsModule,
