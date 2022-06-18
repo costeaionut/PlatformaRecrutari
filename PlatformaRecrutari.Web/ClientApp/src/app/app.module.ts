@@ -19,6 +19,7 @@ import { SessionCreationManagerComponent } from "../session/session-creation-man
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { SessionManagerComponent } from "src/session/session-manager/session-manager.component";
 import { DisplaySessionsComponent } from "src/session/display-sessions/display-sessions.component";
+import { CandidateApplicationFormComponent } from "src/session/candidate-application-form/candidate-application-form.component";
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -66,6 +67,11 @@ export function tokenGetter() {
         path: "session/:id",
         component: DisplaySessionsComponent,
         canActivate: [PmRoleGuard],
+      },
+      {
+        path: "apply",
+        component: CandidateApplicationFormComponent,
+        canActivate: [],
       },
     ]),
     BrowserAnimationsModule,

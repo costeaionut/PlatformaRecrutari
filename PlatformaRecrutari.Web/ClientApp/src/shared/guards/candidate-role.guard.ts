@@ -13,13 +13,12 @@ import { AuthenticatedGuard } from "./authenticated.guard";
 @Injectable({
   providedIn: "root",
 })
-export class PmRoleGuard implements CanActivate {
+export class CandidateRoleGuard implements CanActivate {
   constructor(
     private jwtHelper: JwtHelperService,
     private router: Router,
     private authGuard: AuthenticatedGuard
   ) {}
-
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
@@ -42,7 +41,7 @@ export class PmRoleGuard implements CanActivate {
     if (
       decodedJwtData[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-      ] != "ProjectManager" ||
+      ] != "Candidate" ||
       decodedJwtData.exp <= Date.now() / 1000
     ) {
       this.router.navigate(["/"]);

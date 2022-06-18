@@ -39,12 +39,40 @@
           </li>
 
           <li
+            *ngIf="isUserCandidate()"
+            class="nav-item"
+            [routerLinkActive]="['link-active']"
+          >
+            <a class="nav-link text-dark" [routerLink]="['/sessions']">Apply</a>
+          </li>
+
+          <li
             *ngIf="this.isUserAuthenticated"
             class="nav-item"
             [routerLinkActive]="['link-active']"
           >
             <a class="nav-link text-dark" [routerLink]="['']" (click)="logout()"
               >Logout</a
+            >
+          </li>
+
+          <li
+            *ngIf="!this.isUserAuthenticated"
+            class="nav-item"
+            [routerLinkActive]="['link-active']"
+          >
+            <a class="nav-link text-dark" [routerLink]="['/login-user']"
+              >Login</a
+            >
+          </li>
+
+          <li
+            *ngIf="!this.isUserAuthenticated"
+            class="nav-item"
+            [routerLinkActive]="['link-active']"
+          >
+            <a class="nav-link text-dark" [routerLink]="['/register-user']"
+              >Register</a
             >
           </li>
         </ul>

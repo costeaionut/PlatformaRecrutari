@@ -39,6 +39,7 @@ import { MultipleQuestionDisplayComponent } from "./display-form-quesitons/multi
 import { SelectBoxQuestionDisplayComponent } from "./display-form-quesitons/select-box-question-display/select-box-question-display.component";
 import { GridMultipleQuestionDisplayComponent } from "./display-form-quesitons/grid-multiple-question-display/grid-multiple-question-display.component";
 import { GridSelectBoxQuestionDisplayComponent } from "./display-form-quesitons/grid-select-box-question-display/grid-select-box-question-display.component";
+import { CandidateApplicationFormComponent } from "./candidate-application-form/candidate-application-form.component";
 @NgModule({
   declarations: [
     CreateSessionComponent,
@@ -62,6 +63,7 @@ import { GridSelectBoxQuestionDisplayComponent } from "./display-form-quesitons/
     SelectBoxQuestionDisplayComponent,
     GridMultipleQuestionDisplayComponent,
     GridSelectBoxQuestionDisplayComponent,
+    CandidateApplicationFormComponent,
   ],
   imports: [
     FormsModule,
@@ -82,6 +84,7 @@ import { GridSelectBoxQuestionDisplayComponent } from "./display-form-quesitons/
     DisplaySessionsComponent,
     SessionManagerComponent,
     SessionCreationManagerComponent,
+    CandidateApplicationFormComponent,
   ],
 })
 export class SessionModule {}
