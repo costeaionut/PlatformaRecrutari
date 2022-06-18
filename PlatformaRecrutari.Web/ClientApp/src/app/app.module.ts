@@ -20,6 +20,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { SessionManagerComponent } from "src/session/session-manager/session-manager.component";
 import { DisplaySessionsComponent } from "src/session/display-sessions/display-sessions.component";
 import { CandidateApplicationFormComponent } from "src/session/candidate-application-form/candidate-application-form.component";
+import { CandidateRoleGuard } from "src/shared/guards/candidate-role.guard";
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -71,7 +72,7 @@ export function tokenGetter() {
       {
         path: "apply",
         component: CandidateApplicationFormComponent,
-        canActivate: [],
+        canActivate: [CandidateRoleGuard],
       },
     ]),
     BrowserAnimationsModule,

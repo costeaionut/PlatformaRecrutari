@@ -13,6 +13,7 @@ namespace PlatformaRecrutari.Core.Abstractions
         Task<RecruitmentSession> ChangeSessionStatus(RecruitmentSession session);
         Task<RecruitmentSession> UpdateSessionInfo(RecruitmentSession newSessionData);
         List<RecruitmentSession> GetAllSessions();
+        RecruitmentSession GetActiveSession();
         RecruitmentSession GetSessionById(int sessionId);
         List<RecruitmentSession> GetUsersSessions(string creatorId);
         void DeleteSession(RecruitmentSession sessionToDelete);

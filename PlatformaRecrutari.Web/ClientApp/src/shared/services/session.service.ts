@@ -54,4 +54,8 @@ export class SessionService {
       this.baseUrl + ApiCallPaths.getFormFromSession + sessionId
     );
   }
+
+  public getActiveForm() {
+    return this.http.get<FormDto>(this.baseUrl + ApiCallPaths.activeFormPath);
+  }
 }

@@ -9,6 +9,7 @@
         rows="1"
         [(ngModel)]="answer"
         [disabled]="!canAnswer"
+        (change)="updateAnswer()"
         placeholder="Type your answer here."
         aria-describedby="basic-addon1"
         appTextareaAutoresize

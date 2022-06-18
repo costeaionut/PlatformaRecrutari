@@ -17,7 +17,7 @@ using PlatformaRecrutari.Dto.Sessions.FormQuesitons;
 namespace PlatformaRecrutari.Web.Controllers
 {
     [ApiController]
-    [Authorize(Roles = RoleType.ProjectManager)]
+    [Authorize(Roles = "Candidate, ProjectManager")]
     [Route("api/[controller]")]
     public class SessionController : ControllerBase
     {
@@ -37,6 +37,7 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpPost("CreateSession")]
+        [Authorize(Roles = RoleType.ProjectManager)]
         public async Task<IActionResult> CreateSession([FromBody] RecruitmentSessionDto newSession)
         {
             if (newSession == null || !ModelState.IsValid)
@@ -184,10 +185,11 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpGet("SessionForm/{id}")]
+        [Authorize(Roles = RoleType.ProjectManager)]
         public IActionResult GetSessionsForm(int id) {
             Form sessionForm = this._formManager.getFormBySessionId(id);
             if (sessionForm == null)
-                return NotFound();
+                return NotFound("NoFormFound");
 
             FormDto formInfo = this._mapper.Map<FormDto>(sessionForm);
             formInfo.ShortQuestions = new List<ShortQuestionDto>();
@@ -258,6 +260,7 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpPost("ChangeSessionStatus")]
+        [Authorize(Roles = RoleType.ProjectManager)]
         public async Task<IActionResult> ChangeSessionStatus([FromBody] RecruitmentSessionDto sessionDto)
         {
             if (sessionDto == null || !ModelState.IsValid)
@@ -270,6 +273,7 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpPost("UpdateSessionInfo")]
+        [Authorize(Roles = RoleType.ProjectManager)]
         public async Task<IActionResult> UpdateSessionInfo([FromBody] RecruitmentSessionDto newSessionInfo)
         {
             if (newSessionInfo == null || !ModelState.IsValid)
@@ -282,16 +286,29 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpGet("RecruitmentSessions")]
+        [Authorize(Roles = RoleType.ProjectManager)]
         public ActionResult<List<RecruitmentSessionDto>> getAllSessions()
         {
             return Ok(this._sessionManager.GetAllSessions());
         }
 
+        [HttpGet("ActiveSession")]
+        public IActionResult GetActiveForm()
+        {
+            RecruitmentSession activeSession = this._sessionManager.GetActiveSession();
+            if (activeSession == null)
+                return NotFound("NoActiveSession");
+
+            return this.GetSessionsForm(activeSession.Id);
+        }
+
         [HttpGet("{id:int}")]
+        [Authorize(Roles = RoleType.ProjectManager)]
         public ActionResult<RecruitmentSessionDto> getSessionById(int id) =>
             this._mapper.Map<RecruitmentSessionDto>(this._sessionManager.GetSessionById(id));
-        
+
         [HttpPost("DeleteSession/{sessionId:int}")]
+        [Authorize(Roles = RoleType.ProjectManager)]
         public IActionResult deleteSession([FromBody] UserDto requester, int sessionId) {
             if (requester == null || sessionId == null)
                 return BadRequest("NullData");

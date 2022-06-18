@@ -1,1 +1,21 @@
-<p>candidate-application-form works!</p>
+<div *ngIf="this.formInfo">
+  <div class="container">
+    <app-display-form
+      [canAnswer]="true"
+      [formInfo]="this.formInfo"
+      [answers]="this.formAnswer"
+      [parentUpdateAnswers]="updateAnswers"
+    ></app-display-form>
+    <button
+      type="button"
+      (click)="showAnswers()"
+      class="btn btn-primary float-right"
+      style="margin-top: 10px; margin-bottom: 10px"
+    >
+      Send your answer
+    </button>
+    <br />
+    <br />
+    <br />
+  </div>
+</div>

@@ -44,7 +44,7 @@ export class GridMultipleQuestionDisplayComponent implements OnInit {
         for (let i = 0; i < this.answerGrid.length; i++) {
           if (this.answerGrid[i] == -1) {
             this.hasError = true;
-            this.error = "Please choose at leas one answer per row!";
+            this.error = "Please choose at least one answer per row!";
             return true;
           }
         }

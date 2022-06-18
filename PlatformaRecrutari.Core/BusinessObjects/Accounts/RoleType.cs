@@ -12,5 +12,6 @@ namespace PlatformaRecrutari.Core.BusinessObjects
         public const string Volunteer = "Volunteer";
         public const string ProjectManager = "ProjectManager";
         public const string User = "User";
+        public const string Candidate = "Candidate";
     }
 }

@@ -70,6 +70,15 @@ namespace PlatformaRecrutari.Data.Managers
             this._context.RecruitmentSessions.Remove(sessionToDelete);
             this._context.SaveChanges();
         }
-        
+
+        public RecruitmentSession GetActiveSession()
+        {
+            RecruitmentSession activeSession = 
+                this._context.RecruitmentSessions
+                .Where(rs => rs.StartDate <= DateTime.Now && rs.EndDate >= DateTime.Now)
+                .FirstOrDefault();
+
+            return activeSession;
+        }
     }
 }

@@ -8,14 +8,19 @@
     <div class="col"></div>
   </div>
 
-  <div class="row" *ngFor="let question of formInfo.questions">
+  <div
+    class="row"
+    *ngFor="let question of formInfo.questions; index as questionIndex"
+  >
     <div class="col"></div>
     <div class="col-8" style="padding: 0; margin-top: 15px">
       <app-short-question-display
         *ngIf="this.question.question.getType() == 'ShortQuestion'"
         [question]="question.question"
         [position]="question.position"
-        [canAnswer]="false"
+        [answer]="this.answers[questionIndex]"
+        [canAnswer]="this.canAnswer"
+        (changeAnswer)="this.updateAnswer($event)"
       >
       </app-short-question-display>
 
@@ -23,7 +28,7 @@
         *ngIf="this.question.question.getType() == 'MultipleQuestion'"
         [question]="question.question"
         [position]="question.position"
-        [canAnswer]="false"
+        [canAnswer]="this.canAnswer"
       >
       </app-multiple-question-display>
 
@@ -31,21 +36,21 @@
         *ngIf="this.question.question.getType() == 'SelectBoxesQuestion'"
         [question]="this.question.question"
         [position]="this.question.position"
-        [canAnswer]="false"
+        [canAnswer]="this.canAnswer"
       ></app-select-box-question-display>
 
       <app-grid-multiple-question-display
         *ngIf="this.question.question.getType() == 'GridMultipleQuestion'"
         [question]="this.question.question"
         [position]="this.question.position"
-        [canAnswer]="false"
+        [canAnswer]="this.canAnswer"
       ></app-grid-multiple-question-display>
 
       <app-grid-select-box-question-display
         *ngIf="this.question.question.getType() == 'GridSelectQuestion'"
         [question]="this.question.question"
         [position]="this.question.position"
-        [canAnswer]="false"
+        [canAnswer]="this.canAnswer"
       ></app-grid-select-box-question-display>
     </div>
     <div class="col"></div>
