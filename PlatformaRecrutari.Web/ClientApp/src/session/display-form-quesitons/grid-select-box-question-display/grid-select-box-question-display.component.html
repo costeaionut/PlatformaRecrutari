@@ -7,4 +7,38 @@
       </h4>
     </div>
   </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <td style="border-top: none" scope="col"></td>
+          <td
+            scope="col"
+            style="border-top: none"
+            *ngFor="let column of this.question.getColumns()"
+          >
+            {{ column }}
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of this.question.getRows(); index as rowIndex">
+          <th scope="row">{{ row }}</th>
+          <td
+            style="text-align: center"
+            *ngFor="let col of this.question.getColumns(); index as colIndex"
+          >
+            <mat-checkbox
+              color="primary"
+              (change)="selectOption(rowIndex, colIndex)"
+              [disabled]="!canAnswer"
+            ></mat-checkbox>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="this.hasError" class="errorDisplay">
+    <em>{{ this.error }}</em>
+  </div>
 </div>
