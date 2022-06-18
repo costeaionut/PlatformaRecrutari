@@ -28,7 +28,9 @@
         *ngIf="this.question.question.getType() == 'MultipleQuestion'"
         [question]="question.question"
         [position]="question.position"
+        [answer]="this.answers[questionIndex]"
         [canAnswer]="this.canAnswer"
+        (changeAnswer)="this.updateAnswer($event)"
       >
       </app-multiple-question-display>
 
@@ -37,6 +39,8 @@
         [question]="this.question.question"
         [position]="this.question.position"
         [canAnswer]="this.canAnswer"
+        [answer]="this.answers[questionIndex]"
+        (changeAnswer)="this.updateAnswer($event)"
       ></app-select-box-question-display>
 
       <app-grid-multiple-question-display

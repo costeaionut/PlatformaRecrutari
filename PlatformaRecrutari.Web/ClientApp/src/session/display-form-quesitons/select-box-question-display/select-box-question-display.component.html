@@ -10,6 +10,7 @@
   <div class="row">
     <div class="col" *ngFor="let option of this.question.getOptions()">
       <mat-checkbox
+        (change)="this.updateAnswer()"
         [(ngModel)]="this.checkboxes[option]"
         color="primary"
         [disabled]="!canAnswer"
