@@ -11,7 +11,13 @@ export class SelectBoxQuestionDisplayComponent implements OnInit {
   @Input() position: number;
   @Input() canAnswer: number;
 
+  checkboxes = new Map<string, boolean>();
+
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.question.getOptions().forEach((option) => {
+      this.checkboxes[option] = false;
+    });
+  }
 }

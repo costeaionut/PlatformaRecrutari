@@ -17,6 +17,5 @@ export class MultipleQuestionDisplayComponent implements OnInit {
 
   ngOnInit() {
     this.options = this.question.getOptions();
-    console.log(this.options);
   }
 }

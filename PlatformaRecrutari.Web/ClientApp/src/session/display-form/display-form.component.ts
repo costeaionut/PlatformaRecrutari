@@ -24,7 +24,6 @@ export class DisplayFormComponent implements OnInit {
         .toPromise();
 
       this.formInfo = this.dtoMapper.mapFormDtoToFormInfo(formDto);
-      console.log(this.formInfo);
     }
   }
 }

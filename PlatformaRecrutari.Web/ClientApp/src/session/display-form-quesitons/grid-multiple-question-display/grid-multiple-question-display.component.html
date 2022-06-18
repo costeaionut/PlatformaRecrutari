@@ -1,7 +1,10 @@
 <div class="container questionWrapper">
   <div class="row">
     <div class="col">
-      <h4>{{ question.getQuestion() }}</h4>
+      <h4>
+        {{ question.getQuestion() }}
+        <span *ngIf="this.question.getRequired()" style="color: red">*</span>
+      </h4>
     </div>
   </div>
 </div>

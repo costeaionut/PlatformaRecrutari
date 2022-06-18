@@ -26,6 +26,27 @@
         [canAnswer]="false"
       >
       </app-multiple-question-display>
+
+      <app-select-box-question-display
+        *ngIf="this.question.question.getType() == 'SelectBoxesQuestion'"
+        [question]="this.question.question"
+        [position]="this.question.position"
+        [canAnswer]="false"
+      ></app-select-box-question-display>
+
+      <app-grid-multiple-question-display
+        *ngIf="this.question.question.getType() == 'GridMultipleQuestion'"
+        [question]="this.question.question"
+        [position]="this.question.position"
+        [canAnswer]="false"
+      ></app-grid-multiple-question-display>
+
+      <app-grid-select-box-question-display
+        *ngIf="this.question.question.getType() == 'GridSelectQuestion'"
+        [question]="this.question.question"
+        [position]="this.question.position"
+        [canAnswer]="false"
+      ></app-grid-select-box-question-display>
     </div>
     <div class="col"></div>
   </div>
