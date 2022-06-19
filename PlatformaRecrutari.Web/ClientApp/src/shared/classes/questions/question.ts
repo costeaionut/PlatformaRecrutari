@@ -24,5 +24,7 @@ export class Question {
   }
   public getType = () => this.type;
   public getRequired = () => this.required;
-  public getId = () => this.id;
+  public getId(): number {
+    return this.id;
+  }
 }

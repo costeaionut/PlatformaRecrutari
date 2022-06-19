@@ -103,5 +103,8 @@ namespace PlatformaRecrutari.Data.Managers
 
             return option;
         }
+
+        public Form getFormById(int formId) =>
+            this._context.Forms.FirstOrDefault(f => f.Id == formId);
     }
 }

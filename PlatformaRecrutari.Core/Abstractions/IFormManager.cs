@@ -8,6 +8,7 @@ namespace PlatformaRecrutari.Core.Abstractions
 {
     public interface IFormManager
     {
+        Form getFormById(int formId);
         Task<Form> createForm(Form newForm);
         Task<BaseQuestion> addSimpleQuestionToForm(BaseQuestion newQuestion);
         Task<GridQuestion> addGridQuestionToForm(GridQuestion newQuestion);

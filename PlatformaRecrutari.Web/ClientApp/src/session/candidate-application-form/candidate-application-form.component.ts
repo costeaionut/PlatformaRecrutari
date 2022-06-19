@@ -1,7 +1,12 @@
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { FormDto } from "src/shared/dto/form-dto";
+import { FormAnswer } from "src/shared/interfaces/form/answers/formAnswer";
 import { FormInfo } from "src/shared/interfaces/form/formInfo";
+import { UserInfo } from "src/shared/interfaces/user/userInfo";
+import { AuthenticationService } from "src/shared/services/authentication.service";
 import { DtoMapperService } from "src/shared/services/dto-mapper.service";
+import { ParticipantsService } from "src/shared/services/participants.service";
 import { SessionService } from "src/shared/services/session.service";
 import Swal from "sweetalert2";
 
@@ -15,13 +20,17 @@ export class CandidateApplicationFormComponent implements OnInit {
   formAnswer: Array<string>;
   formError: Array<boolean>;
   formStatus: string;
+  currentUser: UserInfo;
 
   constructor(
+    private participantsService: ParticipantsService,
+    private authService: AuthenticationService,
     private sessionService: SessionService,
-    private dtoMapper: DtoMapperService
+    private dtoMapper: DtoMapperService,
+    private router: Router
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     let formDto: FormDto;
     this.sessionService.getActiveForm().subscribe(
       (res) => {
@@ -55,6 +64,7 @@ export class CandidateApplicationFormComponent implements OnInit {
         }
       }
     );
+    this.currentUser = await this.authService.getCurrentUser().toPromise();
   }
 
   updateAnswers = (newAnswers: Array<string>) => {
@@ -72,7 +82,41 @@ export class CandidateApplicationFormComponent implements OnInit {
           "There are errors in the form!\nPlease complete all the questions correctly!",
         icon: "error",
       });
-      console.log(this.formError);
-    } else console.log(this.formAnswer);
+    } else {
+      let newAnswers: FormAnswer = this.dtoMapper.mapToFormAnswer(
+        this.formInfo,
+        this.currentUser,
+        this.formAnswer
+      );
+
+      Swal.fire({
+        title: "Are you sure?\nOnce submitted the answers can't be edited!",
+        icon: "info",
+      }).then((answer) => {
+        if (answer.value)
+          this.participantsService.sendAnswers(newAnswers).subscribe(
+            (res) => {
+              Swal.fire({
+                title: "Answer submitted succesfully!",
+                icon: "success",
+                timer: 2000,
+              }).then((res) => {
+                this.router.navigate(["/"]);
+              });
+            },
+            (error) => {
+              Swal.fire({
+                title: "Something went wrong...\nPlease try again later!",
+                icon: "error",
+                timer: 2000,
+              }).then((res) => {
+                this.router.navigate(["/apply"]);
+              });
+            }
+          );
+      });
+
+      console.log(newAnswers);
+    }
   }
 }

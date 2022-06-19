@@ -9,7 +9,9 @@ export class ShortQuestion extends Question {
   }
 
   public setId = (_id: number): void => super.setId(_id);
-  public getId = () => super.getId();
+  public getId(): number {
+    return super.getId();
+  }
 
   public getQuestion = () => this.question;
   public setQuestion(_question: string) {

@@ -17,8 +17,8 @@ using PlatformaRecrutari.Dto.Sessions.FormQuesitons;
 namespace PlatformaRecrutari.Web.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "Candidate, ProjectManager")]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Candidate, ProjectManager")]
     public class SessionController : ControllerBase
     {
 

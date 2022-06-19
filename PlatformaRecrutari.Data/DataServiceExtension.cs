@@ -27,6 +27,7 @@ namespace PlatformaRecrutari.Data
             service.AddScoped<IRoleManager, RoleManager>();
             service.AddScoped<ISessionManager, SessionsManager>();
             service.AddScoped<IFormManager, FormManager>();
+            service.AddScoped<IParticipantsManager, ParticiapantsManager>();
 
             return service;
         }

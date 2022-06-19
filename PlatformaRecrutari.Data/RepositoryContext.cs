@@ -23,6 +23,7 @@ namespace PlatformaRecrutari.Data
         public DbSet<Role> Roles { get; set; }
         
         public DbSet<Form> Forms { get; set; }
+        public DbSet<FormAnswers> FormAnswers { get; set; }
         public DbSet<InputsOption> InputsOptions { get; set; }
         public DbSet<GridQuestion> GridQuestions { get; set; }
         public DbSet<BaseQuestion> SimpleQuestions { get; set; }
@@ -57,6 +58,24 @@ namespace PlatformaRecrutari.Data
                 .HasOne<Form>()
                 .WithMany()
                 .HasForeignKey(gq => gq.FormId);
+
+            modelBuilder.Entity<FormAnswers>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(fa => fa.CandidateId);
+
+            modelBuilder.Entity<FormAnswers>()
+                .Property(fa => fa.Answer)
+                .IsRequired();
+
+            modelBuilder.Entity<FormAnswers>()
+                .HasOne<BaseQuestion>()
+                .WithMany()
+                .HasForeignKey(fa => fa.QuestionId);
+
+            modelBuilder.Entity<FormAnswers>()
+                .HasKey(k => new { k.QuestionId, k.CandidateId });
+
         }
     }
 }

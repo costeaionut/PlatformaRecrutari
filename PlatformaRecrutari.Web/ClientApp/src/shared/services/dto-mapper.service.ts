@@ -14,6 +14,9 @@ import { SelectBoxesQuestionDto } from "../dto/questions/select-boxes-question-d
 import { ShortQuestionDto } from "../dto/questions/short-question-dto";
 import { FormInfo } from "../interfaces/form/formInfo";
 import { QuestionPosition } from "../interfaces/session/question-position";
+import { FormAnswer } from "../interfaces/form/answers/formAnswer";
+import { UserInfo } from "../interfaces/user/userInfo";
+import { QuestionAnswer } from "../interfaces/form/answers/questionAnswer";
 
 @Injectable({
   providedIn: "root",
@@ -246,4 +249,29 @@ export class DtoMapperService {
     };
     return formInfo;
   };
+
+  mapToFormAnswer(
+    formInfo: FormInfo,
+    submitterInfo: UserInfo,
+    answers: string[]
+  ): FormAnswer {
+    let questionAnswers: QuestionAnswer[] = new Array<QuestionAnswer>();
+
+    formInfo.questions.forEach((question) => {
+      let newQuestionAnswer: QuestionAnswer = {
+        questionId: question.question.getId(),
+        answer: answers[question.position],
+      };
+
+      questionAnswers.push(newQuestionAnswer);
+    });
+
+    let formAnswer: FormAnswer = {
+      formId: formInfo.id,
+      candidateId: submitterInfo.id,
+      answers: questionAnswers,
+    };
+
+    return formAnswer;
+  }
 }
