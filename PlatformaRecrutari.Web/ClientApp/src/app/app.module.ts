@@ -21,6 +21,8 @@ import { SessionManagerComponent } from "src/session/session-manager/session-man
 import { DisplaySessionsComponent } from "src/session/display-sessions/display-sessions.component";
 import { CandidateApplicationFormComponent } from "src/session/candidate-application-form/candidate-application-form.component";
 import { CandidateRoleGuard } from "src/shared/guards/candidate-role.guard";
+import { UserProfileComponent } from "src/auth/user-profile/user-profile.component";
+import { AuthenticatedGuard } from "src/shared/guards/authenticated.guard";
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -73,6 +75,11 @@ export function tokenGetter() {
         path: "apply",
         component: CandidateApplicationFormComponent,
         canActivate: [CandidateRoleGuard],
+      },
+      {
+        path: "user/:id",
+        component: UserProfileComponent,
+        canActivate: [AuthenticatedGuard],
       },
     ]),
     BrowserAnimationsModule,

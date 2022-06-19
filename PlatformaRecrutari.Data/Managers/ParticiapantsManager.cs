@@ -37,5 +37,28 @@ namespace PlatformaRecrutari.Data.Managers
                 .Distinct()
                 .ToList();
 
+        public List<FormAnswers> FindParticipantAnswers(string userId, int formId) {
+            List<int> questionIds = new(); 
+            questionIds.AddRange(
+                this._context.SimpleQuestions
+                .Where(sq => sq.FormId == formId)
+                .Select(sq => sq.Id)
+                .Distinct()
+                .ToList()
+            );
+            
+            questionIds.AddRange(
+                this._context.GridQuestions
+                .Where(gq => gq.Id == formId && !questionIds.Contains(gq.Id))
+                .Select(gq => gq.Id)
+                .Distinct()
+                .ToList()
+            );
+
+            return this._context.FormAnswers
+                .Where(fa => fa.CandidateId == userId && questionIds.Contains(fa.QuestionId))
+                .ToList();
+        }
+
     }
 }

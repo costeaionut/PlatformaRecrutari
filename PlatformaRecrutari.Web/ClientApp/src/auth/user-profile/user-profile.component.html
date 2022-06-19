@@ -1,0 +1,104 @@
+<div *ngIf="this.currentUser && this.profileUser">
+  <div class="container selectorWrapper">
+    <div class="row" align="center">
+      <div class="col">
+        <button
+          class="sessionTypeButton"
+          (click)="changeDisplay('UserInfo')"
+          [ngClass]="{ selected: this.display == 'UserInfo' }"
+        >
+          User Info
+        </button>
+      </div>
+      <div class="col">
+        <button
+          class="sessionTypeButton"
+          (click)="changeDisplay('FormInfo')"
+          [ngClass]="{ selected: this.display == 'FormInfo' }"
+        >
+          Form Info
+        </button>
+      </div>
+      <div class="col">
+        <button
+          class="sessionTypeButton"
+          (click)="changeDisplay('WorkshopInterview')"
+          [ngClass]="{ selected: this.display == 'WorkshopInterview' }"
+        >
+          Workshop & Interview
+        </button>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="this.display == 'UserInfo'" class="container">
+    <div class="row">
+      <div class="col"></div>
+      <div class="col-8 userInfoContainer">
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <h3>
+                {{ this.profileUser.firstName }} {{ this.profileUser.lastName }}
+              </h3>
+            </div>
+            <div
+              class="col"
+              *ngIf="this.currentUser.id === this.profileUser.id"
+            >
+              <div ngbDropdown class="float-right">
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  id="dropdownBasic1"
+                  ngbDropdownToggle
+                >
+                  Edit profile
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                  <button ngbDropdownItem (click)="changePassword()">
+                    Change password
+                  </button>
+                  <button ngbDropdownItem (click)="changeInfo()">
+                    Change informations
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-3">Profile:</div>
+            <div class="col">*Profile will be added later*(cti/info/mate)</div>
+          </div>
+          <div class="row">
+            <div class="col-3">Class:</div>
+            <div class="col">*Class will be added later* (151/152)etc</div>
+          </div>
+          <div class="row">
+            <div class="col-3">Facebook:</div>
+            <div class="col">
+              <a href="https://{{ this.profileUser.facebook }}">{{
+                this.profileUser.facebook
+              }}</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-3">Email:</div>
+            <div class="col">{{ this.profileUser.email }}</div>
+          </div>
+          <div class="row">
+            <div class="col-3">Phone number:</div>
+            <div class="col">{{ this.profileUser.phoneNumber }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col"></div>
+    </div>
+  </div>
+  <div *ngIf="this.display == 'FormInfo'">
+    <app-display-form
+      [formInfo]="this.activeForm"
+      [canAnswer]="false"
+      [answers]="this.userAnswers"
+    ></app-display-form>
+  </div>
+</div>

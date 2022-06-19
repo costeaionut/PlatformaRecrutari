@@ -114,5 +114,22 @@ namespace PlatformaRecrutari.Web.Controllers
 
             return Ok(participantsInfo); 
         }
+    
+        [HttpGet("FindParticipantAnswer/{userId}/{formId}")]
+        public async Task<IActionResult> GetParticipantAnswers(string userId, int formId) {
+
+            if (userId == null || formId == null)
+                return BadRequest("MissingInfo");
+
+            User answerer = await this._userManager.FindByIdAsync(userId);
+            if (answerer == null)
+                return NotFound("MissingUser");
+
+            Form formInfo = this._formManager.getFormById(formId);
+            if (formInfo == null)
+                return NotFound("MissingForm");
+
+            return Ok(this._participantsManager.FindParticipantAnswers(userId, formId)); 
+        }
     }
 }

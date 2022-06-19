@@ -51,7 +51,7 @@ export class DisplaySessionsComponent implements OnInit {
 
   goToUserProfile(userIndex: number) {
     let userGuid: string = this.participants[userIndex].id;
-    Swal.fire({ title: `Going to:\n ${userGuid}`, icon: "info" });
+    this.router.navigate([`/user/${userGuid}`]);
   }
 
   changeDisplay(display: string) {

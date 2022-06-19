@@ -292,7 +292,7 @@ namespace PlatformaRecrutari.Web.Controllers
             return Ok(this._sessionManager.GetAllSessions());
         }
 
-        [HttpGet("ActiveSession")]
+        [HttpGet("ActiveForm")]
         public ActionResult<FormDto> GetActiveForm()
         {
             RecruitmentSession activeSession = this._sessionManager.GetActiveSession();
@@ -312,6 +312,12 @@ namespace PlatformaRecrutari.Web.Controllers
                 return BadRequest($"ClosedForm||{sessionsForm.EndDate}");
 
             return Ok(sessionsForm);
+        }
+
+        [HttpGet("ActiveSession")]
+        public ActionResult<RecruitmentSession> GetActiveSession()
+        {
+            return Ok(this._sessionManager.GetActiveSession());
         }
 
         [HttpGet("{id:int}")]

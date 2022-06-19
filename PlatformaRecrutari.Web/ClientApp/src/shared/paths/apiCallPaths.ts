@@ -6,7 +6,8 @@ export enum ApiCallPaths {
   getCurrentUserPath = "api/Accounts/GetCurrentUser/",
 
   createSessionPath = "api/Session/CreateSession/",
-  activeFormPath = "api/Session/ActiveSession/",
+  activeFormPath = "api/Session/ActiveForm/",
+  activeSessionPath = "api/Session/ActiveSession/",
   getAllSessionsPath = "api/Session/RecruitmentSessions/",
   updateSessionPath = "api/Session/UpdateSessionInfo/",
   getFormFromSession = "api/Session/SessionForm/",
@@ -15,4 +16,5 @@ export enum ApiCallPaths {
 
   addFormAnswrs = "api/Participants/AddFormResponse/",
   getSessionParticipants = "api/Participants/GetSessionsParticipants/",
+  getParticipantAnswer = "api/Participants/FindParticipantAnswer/",
 }

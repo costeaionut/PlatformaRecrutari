@@ -81,8 +81,9 @@ import { CandidateApplicationFormComponent } from "./candidate-application-form/
     SweetAlert2Module.forRoot(),
   ],
   exports: [
-    DisplaySessionsComponent,
+    DisplayFormComponent,
     SessionManagerComponent,
+    DisplaySessionsComponent,
     SessionCreationManagerComponent,
     CandidateApplicationFormComponent,
   ],

@@ -12,5 +12,6 @@ namespace PlatformaRecrutari.Core.Abstractions
         FormAnswers AddFormAnswer(FormAnswers answerToBeAdded);
         void DeleteFormAnswer(FormAnswers answerToBeDeleted);
         List<string> FindParticipantIdByQuestionIdRange(List<int> questionIds);
+        List<FormAnswers> FindParticipantAnswers(string userId, int formId);
     }
 }
