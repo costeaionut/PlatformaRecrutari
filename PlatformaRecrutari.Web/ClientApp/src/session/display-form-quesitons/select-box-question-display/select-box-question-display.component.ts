@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { SelectBoxesQuestion } from "src/shared/classes/questions/select-boxes-question";
 import { AnswerPosition } from "src/shared/interfaces/session/answer-position";
+import { ErrorPosition } from "src/shared/interfaces/session/error-position";
 
 @Component({
   selector: "app-select-box-question-display",
@@ -15,12 +16,18 @@ export class SelectBoxQuestionDisplayComponent implements OnInit {
 
   @Output() changeAnswer: EventEmitter<AnswerPosition> =
     new EventEmitter<AnswerPosition>();
+  @Output() changeError: EventEmitter<ErrorPosition> =
+    new EventEmitter<ErrorPosition>();
 
+  error: string;
+  touched: boolean;
+  hasError: boolean;
   checkboxes = new Map<string, boolean>();
 
   constructor() {}
 
   ngOnInit() {
+    this.touched = false;
     this.question.getOptions().forEach((option) => {
       this.checkboxes[option] = false;
     });
@@ -32,13 +39,33 @@ export class SelectBoxQuestionDisplayComponent implements OnInit {
       });
     }
   }
+
+  checkForErrors(): boolean {
+    if (this.touched && this.question.getRequired() && this.answer == "") {
+      this.error = "This question is required! Please select at least one box.";
+      this.hasError = true;
+      return true;
+    }
+    this.error = "";
+    this.hasError = false;
+    return false;
+  }
+
   updateAnswer() {
     this.answer = "";
+    this.touched = true;
     this.question.getOptions().forEach((option) => {
       if (this.answer == "") {
         if (this.checkboxes[option]) this.answer += `${option}`;
       } else if (this.checkboxes[option]) this.answer += `;;${option}`;
     });
+
+    let res: boolean = this.checkForErrors();
+
+    let newErrorStatuts: ErrorPosition = {
+      hasError: res,
+      position: this.position,
+    };
 
     let newAnswer: AnswerPosition = {
       answer: this.answer,
@@ -46,5 +73,6 @@ export class SelectBoxQuestionDisplayComponent implements OnInit {
     };
 
     this.changeAnswer.emit(newAnswer);
+    this.changeError.emit(newErrorStatuts);
   }
 }

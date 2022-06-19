@@ -186,7 +186,7 @@ namespace PlatformaRecrutari.Web.Controllers
 
         [HttpGet("SessionForm/{id}")]
         [Authorize(Roles = RoleType.ProjectManager)]
-        public IActionResult GetSessionsForm(int id) {
+        public ActionResult<FormDto> GetSessionsForm(int id) {
             Form sessionForm = this._formManager.getFormBySessionId(id);
             if (sessionForm == null)
                 return NotFound("NoFormFound");
@@ -256,7 +256,7 @@ namespace PlatformaRecrutari.Web.Controllers
                 }
             }
 
-            return Ok(formInfo);
+            return formInfo;
         }
 
         [HttpPost("ChangeSessionStatus")]
@@ -287,19 +287,31 @@ namespace PlatformaRecrutari.Web.Controllers
 
         [HttpGet("RecruitmentSessions")]
         [Authorize(Roles = RoleType.ProjectManager)]
-        public ActionResult<List<RecruitmentSessionDto>> getAllSessions()
+        public ActionResult<List<RecruitmentSessionDto>> GetAllSessions()
         {
             return Ok(this._sessionManager.GetAllSessions());
         }
 
         [HttpGet("ActiveSession")]
-        public IActionResult GetActiveForm()
+        public ActionResult<FormDto> GetActiveForm()
         {
             RecruitmentSession activeSession = this._sessionManager.GetActiveSession();
             if (activeSession == null)
                 return NotFound("NoActiveSession");
 
-            return this.GetSessionsForm(activeSession.Id);
+            var sessionsFormResponse = this.GetSessionsForm(activeSession.Id);
+            var sessionsForm = sessionsFormResponse.Value;
+
+            if (sessionsForm == null)
+                return NotFound("NoFormInSession");
+
+            if (DateTime.Now < sessionsForm.StartDate)
+                return BadRequest($"UpcomingForm||{sessionsForm.StartDate}");
+
+            if (sessionsForm.EndDate < DateTime.Now)
+                return BadRequest($"ClosedForm||{sessionsForm.EndDate}");
+
+            return Ok(sessionsForm);
         }
 
         [HttpGet("{id:int}")]

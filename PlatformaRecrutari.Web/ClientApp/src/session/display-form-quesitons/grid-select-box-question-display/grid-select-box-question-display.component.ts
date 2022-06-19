@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { GridSelectBoxes } from "src/shared/classes/questions/grid-select-boxes-question";
 import { AnswerPosition } from "src/shared/interfaces/session/answer-position";
+import { ErrorPosition } from "src/shared/interfaces/session/error-position";
 
 @Component({
   selector: "app-grid-select-box-question-display",
@@ -14,6 +15,8 @@ export class GridSelectBoxQuestionDisplayComponent implements OnInit {
   @Input() answer: string;
   @Output() changeAnswer: EventEmitter<AnswerPosition> =
     new EventEmitter<AnswerPosition>();
+  @Output() changeError: EventEmitter<ErrorPosition> =
+    new EventEmitter<ErrorPosition>();
 
   answerGrid: Array<Array<boolean>>;
   hasError: boolean;
@@ -96,7 +99,6 @@ export class GridSelectBoxQuestionDisplayComponent implements OnInit {
     for (let i = 0; i < this.answerGrid.length; i++) {
       this.answer += `${rows[i]}::`;
       for (let j = 0; j < this.answerGrid[i].length; j++) {
-        console.log(this.answer);
         if (this.answerGrid[i][j])
           if (this.answer.substring(this.answer.length - 2) == "::")
             this.answer += `${cols[j]}`;
@@ -104,19 +106,23 @@ export class GridSelectBoxQuestionDisplayComponent implements OnInit {
       }
       if (i + 1 != this.answerGrid.length) this.answer += ";;";
     }
+  }
 
+  updateAnswer() {
+    this.touched = true;
+    var res: boolean = this.checkForErrors();
+    this.constructAnswer();
     let newAnswer: AnswerPosition = {
       answer: this.answer,
       position: this.position,
     };
 
-    this.changeAnswer.emit(newAnswer);
-  }
+    let newErrorStatus: ErrorPosition = {
+      hasError: res,
+      position: this.position,
+    };
 
-  selectOption(rowIndex: number, colIndex: number) {
-    this.touched = true;
-    this.answerGrid[rowIndex][colIndex] = !this.answerGrid[rowIndex][colIndex];
-    this.checkForErrors();
-    this.constructAnswer();
+    this.changeAnswer.emit(newAnswer);
+    this.changeError.emit(newErrorStatus);
   }
 }

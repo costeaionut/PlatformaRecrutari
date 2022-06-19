@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { GridMultipleOptions } from "src/shared/classes/questions/grid-multiple-options-question";
 import { AnswerPosition } from "src/shared/interfaces/session/answer-position";
+import { ErrorPosition } from "src/shared/interfaces/session/error-position";
 
 @Component({
   selector: "app-grid-multiple-question-display",
@@ -14,6 +15,8 @@ export class GridMultipleQuestionDisplayComponent implements OnInit {
   @Input() answer: string;
   @Output() changeAnswer: EventEmitter<AnswerPosition> =
     new EventEmitter<AnswerPosition>();
+  @Output() changeError: EventEmitter<ErrorPosition> =
+    new EventEmitter<ErrorPosition>();
 
   error: string;
   touched: boolean;
@@ -86,19 +89,25 @@ export class GridMultipleQuestionDisplayComponent implements OnInit {
       if (i + 1 == rows.length) this.answer += `${selectedCol}`;
       else this.answer += `${selectedCol};;`;
     }
+  }
+
+  selectCheckbox(row: number, col: number) {
+    this.touched = true;
+    this.answerGrid[row] = col;
+    let res: boolean = this.checkForErrors();
+    this.constructAnswer();
 
     let newAnswer: AnswerPosition = {
       answer: this.answer,
       position: this.position,
     };
 
-    this.changeAnswer.emit(newAnswer);
-  }
+    let newErrorStatus: ErrorPosition = {
+      hasError: res,
+      position: this.position,
+    };
 
-  selectCheckbox(row: number, col: number) {
-    this.touched = true;
-    this.answerGrid[row] = col;
-    this.checkForErrors();
-    this.constructAnswer();
+    this.changeAnswer.emit(newAnswer);
+    this.changeError.emit(newErrorStatus);
   }
 }

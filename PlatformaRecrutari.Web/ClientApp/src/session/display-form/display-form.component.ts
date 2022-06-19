@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, Output } from "@angular/core";
 import { FormInfo } from "src/shared/interfaces/form/formInfo";
 import { AnswerPosition } from "src/shared/interfaces/session/answer-position";
+import { ErrorPosition } from "src/shared/interfaces/session/error-position";
 import { DtoMapperService } from "src/shared/services/dto-mapper.service";
 import { SessionService } from "src/shared/services/session.service";
 
@@ -15,6 +16,7 @@ export class DisplayFormComponent implements OnInit {
   @Input() canAnswer: boolean;
 
   @Input() parentUpdateAnswers;
+  @Input() parentUpdateErrors;
   @Input() answers: Array<string>;
 
   constructor(
@@ -30,6 +32,10 @@ export class DisplayFormComponent implements OnInit {
 
       this.formInfo = this.dtoMapper.mapFormDtoToFormInfo(formDto);
     }
+  }
+
+  updateErrors(newErrorStatus: ErrorPosition) {
+    this.parentUpdateErrors(newErrorStatus.position, newErrorStatus.hasError);
   }
 
   updateAnswer(newAnswer: AnswerPosition) {

@@ -5,6 +5,7 @@
       [formInfo]="this.formInfo"
       [answers]="this.formAnswer"
       [parentUpdateAnswers]="updateAnswers"
+      [parentUpdateErrors]="updateErrors"
     ></app-display-form>
     <button
       type="button"
@@ -17,5 +18,15 @@
     <br />
     <br />
     <br />
+  </div>
+</div>
+<div class="container" *ngIf="!this.formInfo && this.formStatus">
+  <div class="row">
+    <div class="col">
+      <h3>We are sorry!</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">{{ this.formStatus }}</div>
   </div>
 </div>

@@ -21,6 +21,7 @@
         [answer]="this.answers[questionIndex]"
         [canAnswer]="this.canAnswer"
         (changeAnswer)="this.updateAnswer($event)"
+        (changeError)="this.updateErrors($event)"
       >
       </app-short-question-display>
 
@@ -31,6 +32,7 @@
         [answer]="this.answers[questionIndex]"
         [canAnswer]="this.canAnswer"
         (changeAnswer)="this.updateAnswer($event)"
+        (changeError)="this.updateErrors($event)"
       >
       </app-multiple-question-display>
 
@@ -41,6 +43,7 @@
         [canAnswer]="this.canAnswer"
         [answer]="this.answers[questionIndex]"
         (changeAnswer)="this.updateAnswer($event)"
+        (changeError)="this.updateErrors($event)"
       ></app-select-box-question-display>
 
       <app-grid-multiple-question-display
@@ -50,6 +53,7 @@
         [canAnswer]="this.canAnswer"
         [answer]="this.answers[questionIndex]"
         (changeAnswer)="this.updateAnswer($event)"
+        (changeError)="this.updateErrors($event)"
       ></app-grid-multiple-question-display>
 
       <app-grid-select-box-question-display
@@ -59,6 +63,7 @@
         [canAnswer]="this.canAnswer"
         [answer]="this.answers[questionIndex]"
         (changeAnswer)="this.updateAnswer($event)"
+        (changeError)="this.updateErrors($event)"
       ></app-grid-select-box-question-display>
     </div>
     <div class="col"></div>
