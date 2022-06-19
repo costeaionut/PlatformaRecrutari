@@ -29,8 +29,8 @@ export class DisplayFormComponent implements OnInit {
       let formDto = await this.sessionManager
         .getSessionForm(this.sessionId)
         .toPromise();
-
       this.formInfo = this.dtoMapper.mapFormDtoToFormInfo(formDto);
+      this.answers = Array(this.formInfo.questions.length).fill("");
     }
   }
 

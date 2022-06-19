@@ -1,4 +1,8 @@
-<div *ngIf="this.currentSession && this.creator && this.currentUser">
+<div
+  *ngIf="
+    this.currentSession && this.creator && this.currentUser && this.participants
+  "
+>
   <div class="container">
     <div class="row">
       <div class="col">
@@ -160,5 +164,26 @@
   </div>
   <div class="container" *ngIf="this.whatToDisplay == 'form'">
     <app-display-form [sessionId]="this.currentSession.id"></app-display-form>
+  </div>
+  <div class="table-responsive" *ngIf="this.whatToDisplay == 'candidates'">
+    <table class="table">
+      <thead>
+        <tr>
+          <td colspan="3" scope="col">Participants Information</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          class="participantInfo"
+          (click)="goToUserProfile(userIndex)"
+          *ngFor="let user of this.participants; index as userIndex"
+        >
+          <td style="width: 5%">{{ userIndex + 1 }}</td>
+          <td style="width: 20%">{{ user.firstName }}</td>
+          <td style="width: 20%">{{ user.lastName }}</td>
+          <td style="color: orange; text-align: right">Recruitment status</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

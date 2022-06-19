@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { UserInfo } from "src/shared/interfaces/user/userInfo";
 import { AuthenticationService } from "src/shared/services/authentication.service";
+import { ParticipantsService } from "src/shared/services/participants.service";
 import { SessionService } from "src/shared/services/session.service";
 import Swal from "sweetalert2";
 import { TypedRule } from "tslint/lib/rules";
@@ -20,9 +21,12 @@ export class DisplaySessionsComponent implements OnInit {
   invalid: boolean;
   whatToDisplay: string;
 
+  participants: Array<UserInfo>;
+
   constructor(
-    private sessionService: SessionService,
+    private participantsService: ParticipantsService,
     private authService: AuthenticationService,
+    private sessionService: SessionService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -40,6 +44,14 @@ export class DisplaySessionsComponent implements OnInit {
       .toPromise();
 
     this.currentUser = await this.authService.getCurrentUser().toPromise();
+    this.participants = await this.participantsService
+      .getSessionParticipants(this.currentSession.id)
+      .toPromise();
+  }
+
+  goToUserProfile(userIndex: number) {
+    let userGuid: string = this.participants[userIndex].id;
+    Swal.fire({ title: `Going to:\n ${userGuid}`, icon: "info" });
   }
 
   changeDisplay(display: string) {

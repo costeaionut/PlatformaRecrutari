@@ -29,5 +29,13 @@ namespace PlatformaRecrutari.Data.Managers
             this._context.FormAnswers.Remove(answerToBeDeleted);
             this._context.SaveChanges();
         }
+
+        public List<string> FindParticipantIdByQuestionIdRange(List<int> questionIds) =>
+            this._context.FormAnswers
+                .Where(fa =>questionIds.Contains(fa.QuestionId))
+                .Select(fa => fa.CandidateId)
+                .Distinct()
+                .ToList();
+
     }
 }

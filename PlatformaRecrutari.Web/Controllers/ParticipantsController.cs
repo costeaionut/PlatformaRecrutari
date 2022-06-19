@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using PlatformaRecrutari.Core.Abstractions;
 using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
 using PlatformaRecrutari.Dto.Sessions.FormAnswers;
+using PlatformaRecrutari.Dto.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,18 +20,21 @@ namespace PlatformaRecrutari.Web.Controllers
     [Route("api/[controller]")]
     public class ParticipantsController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly IFormManager _formManager;
         private readonly UserManager<User> _userManager;
         private readonly ISessionManager _sessionManager;
         private readonly IParticipantsManager _participantsManager;
 
         public ParticipantsController(
+            IMapper mapper,
             IFormManager formManager,
-            ISessionManager sessionManager,
             UserManager<User> userManager,
+            ISessionManager sessionManager,
             IParticipantsManager participantsManager
             )
         {
+            _mapper = mapper;
             _formManager = formManager;
             _userManager = userManager;
             _sessionManager = sessionManager;
@@ -79,6 +84,35 @@ namespace PlatformaRecrutari.Web.Controllers
             }
             
             return Ok(answersAlreadyAdded);
+        }
+    
+        [HttpGet("GetSessionsParticipants/{sessionId:int}")]
+        public async Task<IActionResult> GetSessionsParticipants(int sessionId) {
+
+            Form sessionForm = _formManager.getFormBySessionId(sessionId);
+
+            if (sessionForm == null)
+                return BadRequest("MissingSessionForm");
+
+            var formBaseQuestion = _formManager.getFormsBaseQuestion(sessionForm.Id);
+            var formGridQuestion = _formManager.getFormsGridQuestion(sessionForm.Id);
+
+            if (formBaseQuestion == null && formGridQuestion == null)
+                return BadRequest("MissingQuestions");
+
+            List<int> questionIds = new();
+            foreach (var baseQuestion in formBaseQuestion)
+                questionIds.Add(baseQuestion.Id);
+
+            foreach (var gridQuestion in formGridQuestion)
+                questionIds.Add(gridQuestion.Id);
+
+            List<UserDto> participantsInfo = new();
+            List<string> candidateIds = _participantsManager.FindParticipantIdByQuestionIdRange(questionIds);
+            foreach (var candidateId in candidateIds)
+                participantsInfo.Add(_mapper.Map<UserDto>(await _userManager.FindByIdAsync(candidateId)));
+
+            return Ok(participantsInfo); 
         }
     }
 }

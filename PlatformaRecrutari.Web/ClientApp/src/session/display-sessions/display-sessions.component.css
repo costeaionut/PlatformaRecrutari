@@ -58,3 +58,14 @@
 .selected{
     border-bottom: 2px solid rgba(65, 105, 225, 1);
 }
+
+.participantInfo{
+    transition-property: background-color;
+    transition-duration: 0.5s;
+}
+
+.participantInfo:hover{
+    border-radius: 5px;
+    background-color: rgba(128, 128, 128, 0.183);
+    cursor:pointer;
+}

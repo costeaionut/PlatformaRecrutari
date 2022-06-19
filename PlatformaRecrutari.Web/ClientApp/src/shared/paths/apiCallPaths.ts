@@ -14,4 +14,5 @@ export enum ApiCallPaths {
   deleteSession = "api/Session/DeleteSession/",
 
   addFormAnswrs = "api/Participants/AddFormResponse/",
+  getSessionParticipants = "api/Participants/GetSessionsParticipants/",
 }
