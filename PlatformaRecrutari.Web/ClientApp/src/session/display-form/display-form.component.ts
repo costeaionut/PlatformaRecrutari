@@ -14,6 +14,7 @@ export class DisplayFormComponent implements OnInit {
   @Input() formInfo: FormInfo;
   @Input() sessionId: number;
   @Input() canAnswer: boolean;
+  @Input() displayTitle: boolean;
 
   @Input() parentUpdateAnswers;
   @Input() parentUpdateErrors;
@@ -25,6 +26,7 @@ export class DisplayFormComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    if (this.displayTitle === undefined) this.displayTitle = true;
     if (this.sessionId) {
       let formDto = await this.sessionManager
         .getSessionForm(this.sessionId)

@@ -1,5 +1,5 @@
 <div class="container" *ngIf="this.formInfo">
-  <div class="row">
+  <div *ngIf="this.displayTitle" class="row">
     <div class="col"></div>
     <div class="col-8 titleWrapper">
       <h2>{{ this.formInfo.title }}</h2>

@@ -40,7 +40,7 @@ export class DisplaySessionsComponent implements OnInit {
 
   async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get("id"));
-    this.whatToDisplay = "form";
+    this.whatToDisplay = "candidates";
     this.editing = false;
     this.currentSession = await this.sessionService
       .getSessionById(id)
@@ -147,9 +147,13 @@ export class DisplaySessionsComponent implements OnInit {
         this.participantsService
           .addParticipantFordFeedback(formFeedback)
           .subscribe(
-            (res) => {
-              Swal.fire({ title: "Form sent successfully", icon: "success" });
-              this.getParticipantsStatus();
+            async (res) => {
+              Swal.fire({
+                title: "Feedback saved successfully",
+                icon: "success",
+              });
+              await this.getParticipantsStatus();
+              this.orderParticipantsByWaitingStatus();
             },
             (err) => {
               Swal.fire({
