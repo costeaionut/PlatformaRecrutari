@@ -68,12 +68,6 @@ export class QuestionSeparatorComponent implements OnInit {
     const newQuestion: Question = await this.generateQuestion(questionType);
 
     if (!newQuestion) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "There was an error creating your question! Please try again later :)",
-        footer: '<a href="">Why do I have this issue?</a>',
-      });
       return;
     }
 

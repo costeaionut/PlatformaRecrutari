@@ -50,7 +50,6 @@ export class CreateFormComponent implements OnInit {
     if (this.formStartDate > this.formEndDate)
       localErrors.push("Start date can't be smaller than end date!");
 
-    console.log(this.formStartDate.setHours(0, 0, 0, 0));
     if (
       new Date().setHours(0, 0, 0, 0) > this.formStartDate.setHours(0, 0, 0, 0)
     )

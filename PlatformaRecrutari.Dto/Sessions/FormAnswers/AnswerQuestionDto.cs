@@ -12,7 +12,7 @@ namespace PlatformaRecrutari.Dto.Sessions.FormAnswers
         [Required(ErrorMessage = "RequiredQuestionId")]
         public int QuestionId { get; set; }
 
-        [Required(ErrorMessage = "RequiredAnswer")]
+        [Required(AllowEmptyStrings = true, ErrorMessage = "RequiredAnswer")]
         public string Answer { get; set; }
     }
 }
