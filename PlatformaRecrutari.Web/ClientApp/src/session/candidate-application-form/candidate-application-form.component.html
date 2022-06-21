@@ -1,4 +1,4 @@
-<div *ngIf="this.formInfo">
+<div *ngIf="this.formInfo && !this.currentUserHasAnswer">
   <div class="container">
     <app-display-form
       [canAnswer]="true"
@@ -9,7 +9,7 @@
     ></app-display-form>
     <button
       type="button"
-      (click)="showAnswers()"
+      (click)="sendAnswers()"
       class="btn btn-primary float-right"
       style="margin-top: 10px; margin-bottom: 10px"
     >
@@ -29,4 +29,13 @@
   <div class="row">
     <div class="col">{{ this.formStatus }}</div>
   </div>
+</div>
+<div *ngIf="this.currentUserHasAnswer">
+  <h3>You have already applied!</h3>
+  <span
+    >You can see your answer here on your
+    <a (click)="navigateToCurrentUserProfile()"
+      ><span class="link-profile">profile</span></a
+    ></span
+  >
 </div>

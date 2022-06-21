@@ -1,4 +1,7 @@
-<app-display-form [formInfo]="this.formInfo"></app-display-form>
+<app-display-form
+  [answers]="this.answers"
+  [formInfo]="this.formInfo"
+></app-display-form>
 
 <button class="btn btn-primary" (click)="changePage(-1)">Previous step</button>
 <button

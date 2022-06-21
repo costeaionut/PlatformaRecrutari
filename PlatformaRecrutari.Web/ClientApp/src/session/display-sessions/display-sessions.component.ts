@@ -1,8 +1,13 @@
 import { getTreeNoValidDataSourceError } from "@angular/cdk/tree";
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import { FormFeedbackResponse } from "src/shared/dto/feedback/response-form-feedback";
+import { FormFeedbackPost } from "src/shared/dto/feedback/send-form-feedback";
+import { FormDto } from "src/shared/dto/form-dto";
+import { FormInfo } from "src/shared/interfaces/form/formInfo";
 import { UserInfo } from "src/shared/interfaces/user/userInfo";
 import { AuthenticationService } from "src/shared/services/authentication.service";
+import { DtoMapperService } from "src/shared/services/dto-mapper.service";
 import { ParticipantsService } from "src/shared/services/participants.service";
 import { SessionService } from "src/shared/services/session.service";
 import Swal from "sweetalert2";
@@ -15,6 +20,7 @@ import { TypedRule } from "tslint/lib/rules";
 })
 export class DisplaySessionsComponent implements OnInit {
   currentSession: SessionInfo;
+  currentForm: FormInfo;
   currentUser: UserInfo;
   creator: UserInfo;
   editing: boolean;
@@ -22,10 +28,12 @@ export class DisplaySessionsComponent implements OnInit {
   whatToDisplay: string;
 
   participants: Array<UserInfo>;
+  participantsStatus: Array<string>;
 
   constructor(
     private participantsService: ParticipantsService,
     private authService: AuthenticationService,
+    private mapperService: DtoMapperService,
     private sessionService: SessionService,
     private route: ActivatedRoute,
     private router: Router
@@ -39,6 +47,12 @@ export class DisplaySessionsComponent implements OnInit {
       .getSessionById(id)
       .toPromise();
 
+    let currentFormDto: FormDto = await this.sessionService
+      .getSessionForm(this.currentSession.id)
+      .toPromise();
+
+    this.currentForm = this.mapperService.mapFormDtoToFormInfo(currentFormDto);
+
     this.creator = await this.authService
       .getUserById(this.currentSession.creatorId)
       .toPromise();
@@ -47,11 +61,70 @@ export class DisplaySessionsComponent implements OnInit {
     this.participants = await this.participantsService
       .getSessionParticipants(this.currentSession.id)
       .toPromise();
+
+    this.getParticipantsStatus();
+  }
+
+  async getParticipantsStatus() {
+    this.participantsStatus = Array(this.participants.length).fill("");
+
+    for (let i = 0; i < this.participants.length; i++) {
+      let status: FormFeedbackResponse = await this.participantsService
+        .getParticipantStatus(this.participants[i].id)
+        .toPromise();
+      switch (status.participantStatus) {
+        case "Waiting for form feedback":
+          this.participantsStatus[i] = "Waiting for form feedback";
+          break;
+        case "PassedForm":
+          this.participantsStatus[i] = "Passed form stage";
+          break;
+        case "RejectedForm":
+          this.participantsStatus[i] = "Rejected at form stage";
+          break;
+        default:
+          break;
+      }
+    }
   }
 
   goToUserProfile(userIndex: number) {
     let userGuid: string = this.participants[userIndex].id;
     this.router.navigate([`/user/${userGuid}`]);
+  }
+
+  giveFormFeedback(status: string, participantId: string) {
+    let formFeedback: FormFeedbackPost = {
+      candidateId: participantId,
+      feedbackGiverId: this.currentUser.id,
+      formId: this.currentForm.id,
+      status: status == "pass" ? "PassedForm" : "RejectedForm",
+    };
+    Swal.fire({
+      title: `Are you sure?`,
+      icon: "question",
+      showCancelButton: true,
+      cancelButtonColor: "red",
+      cancelButtonText: "No",
+      confirmButtonText: "Yes",
+      confirmButtonColor: "green",
+    }).then((res) => {
+      if (res.value)
+        this.participantsService
+          .addParticipantFordFeedback(formFeedback)
+          .subscribe(
+            (res) => {
+              Swal.fire({ title: "Form sent successfully", icon: "success" });
+              this.getParticipantsStatus();
+            },
+            (err) => {
+              Swal.fire({
+                title: "There was an error with your request",
+                icon: "error",
+              });
+            }
+          );
+    });
   }
 
   changeDisplay(display: string) {

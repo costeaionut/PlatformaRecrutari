@@ -1,5 +1,6 @@
 ﻿using PlatformaRecrutari.Core.Abstractions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,5 +61,16 @@ namespace PlatformaRecrutari.Data.Managers
                 .ToList();
         }
 
+        public FormFeedback FindParticipantFormFeedback(string userId, int formId) =>
+            this._context.FormFeedbacks
+            .FirstOrDefault(ff => ff.CandidateId == userId && ff.FormId == formId);
+
+        public FormFeedback AddFormFeedback(FormFeedback feedback)
+        {
+            var newFeedback = this._context.FormFeedbacks.Add(feedback);
+            this._context.SaveChanges();
+
+            return newFeedback.Entity;
+        }
     }
 }

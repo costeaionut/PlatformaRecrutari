@@ -17,4 +17,6 @@ export enum ApiCallPaths {
   addFormAnswrs = "api/Participants/AddFormResponse/",
   getSessionParticipants = "api/Participants/GetSessionsParticipants/",
   getParticipantAnswer = "api/Participants/FindParticipantAnswer/",
+  getPaticipantStatus = "api/Participants/FindParticipantStatus/",
+  postFormFeedback = "api/Participants/PostFormFeedback",
 }

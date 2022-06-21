@@ -66,6 +66,47 @@
 
 .participantInfo:hover{
     border-radius: 5px;
-    background-color: rgba(128, 128, 128, 0.183);
+    background-color: rgba(128, 128, 128, 0.1);
     cursor:pointer;
+}
+
+.actionButton{
+    border: none;
+    background-color: inherit;
+    width: auto;
+    height: auto;
+}
+
+.approve{
+    padding-left: 2px;
+    color:rgba(69, 190, 35, 0.6);
+}
+
+.approve:hover{
+    color:green;
+}
+
+.reject{
+    margin-left: 5px;
+    color: rgba(255, 0, 0, 0.5)
+}
+
+.reject:hover{
+    color:rgba(255, 0, 0, 1)
+}
+
+.participantActions{
+    cursor: default;
+}
+
+.approvedStatus{ 
+    color:rgba(69, 190, 35, 0.6);
+}
+
+.rejectedStatus{
+    color: red;
+}
+
+.waitingStatus{
+    color: orange;
 }

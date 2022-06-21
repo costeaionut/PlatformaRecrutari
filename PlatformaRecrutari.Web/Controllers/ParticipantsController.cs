@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using PlatformaRecrutari.Core.Abstractions;
 using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
+using PlatformaRecrutari.Dto.Responses.ParticipantStatus;
 using PlatformaRecrutari.Dto.Sessions.FormAnswers;
 using PlatformaRecrutari.Dto.User;
 using System;
@@ -130,6 +132,53 @@ namespace PlatformaRecrutari.Web.Controllers
                 return NotFound("MissingForm");
 
             return Ok(this._participantsManager.FindParticipantAnswers(userId, formId)); 
+        }
+    
+        [HttpGet("FindParticipantStatus/{userId}")]
+        public ActionResult<ParticipantStatusDto> GetParticipantSessionStatus(string userId)
+        {
+            RecruitmentSession activeSession = this._sessionManager.GetActiveSession();
+            if (activeSession == null)
+                return Ok("InactiveSession");
+
+            Form currentForm = this._formManager.getFormBySessionId(activeSession.Id);
+            if (currentForm == null)
+                return StatusCode(500, "MissingForm");
+
+            List<FormAnswers> usersAnswers =  
+                this._participantsManager.FindParticipantAnswers(userId, currentForm.Id);
+
+            if (usersAnswers.Count == 0)
+                return Ok("UserNotParticipant");
+
+            FormFeedback userFormFeedback = 
+                this._participantsManager.FindParticipantFormFeedback(userId, currentForm.Id);
+
+            if (userFormFeedback == null)
+            {
+                ParticipantStatusDto status = new ParticipantStatusDto(userId, StatusType.WaitingFormFeedback);
+                return status;
+            }
+            else
+            {
+                ParticipantStatusDto status = new ParticipantStatusDto(userId, userFormFeedback.Status);
+                return status;
+            }
+
+            /*
+             * Here will be implemented future get workshop feedback and interview feedback
+             */
+        }
+    
+        [HttpPost("PostFormFeedback")]
+        public IActionResult PostParticipantFormFeedback([FromBody] FormFeedback feedback)
+        {
+            if (feedback == null)
+                return BadRequest("MissingBody");
+
+            this._participantsManager.AddFormFeedback(feedback);
+
+            return Ok();
         }
     }
 }

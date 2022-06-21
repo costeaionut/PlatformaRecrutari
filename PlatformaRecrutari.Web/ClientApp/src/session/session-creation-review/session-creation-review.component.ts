@@ -12,9 +12,13 @@ export class SessionCreationReviewComponent implements OnInit {
   @Input() parentCreateSession;
   @Input() submittingForm;
 
+  answers: Array<string>;
+
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.answers = Array(this.formInfo.questions.length).fill("");
+  }
 
   changePage = (direction: number): void => {
     this.parentChangePage(direction);

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FormQuestions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Inputed_Options;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
 
 namespace PlatformaRecrutari.Data
 {
@@ -24,6 +25,7 @@ namespace PlatformaRecrutari.Data
         
         public DbSet<Form> Forms { get; set; }
         public DbSet<FormAnswers> FormAnswers { get; set; }
+        public DbSet<FormFeedback> FormFeedbacks { get; set; }
         public DbSet<InputsOption> InputsOptions { get; set; }
         public DbSet<GridQuestion> GridQuestions { get; set; }
         public DbSet<BaseQuestion> SimpleQuestions { get; set; }
@@ -75,6 +77,28 @@ namespace PlatformaRecrutari.Data
 
             modelBuilder.Entity<FormAnswers>()
                 .HasKey(k => new { k.QuestionId, k.CandidateId });
+
+            modelBuilder.Entity<FormFeedback>()
+                .HasKey(ff => new { ff.CandidateId, ff.FormId });
+
+            modelBuilder.Entity<FormFeedback>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(ff => ff.CandidateId);
+
+            modelBuilder.Entity<FormFeedback>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(ff => ff.FeedbackGiverId);
+
+            modelBuilder.Entity<FormFeedback>()
+                .HasOne<Form>()
+                .WithMany()
+                .HasForeignKey(ff => ff.FormId);
+
+            modelBuilder.Entity<FormFeedback>()
+                .Property(ff=> ff.Status)
+                .IsRequired(true);
 
         }
     }

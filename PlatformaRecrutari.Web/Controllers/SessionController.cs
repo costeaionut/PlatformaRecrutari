@@ -185,7 +185,6 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpGet("SessionForm/{id}")]
-        [Authorize(Roles = RoleType.ProjectManager)]
         public ActionResult<FormDto> GetSessionsForm(int id) {
             Form sessionForm = this._formManager.getFormBySessionId(id);
             if (sessionForm == null)
@@ -308,7 +307,9 @@ namespace PlatformaRecrutari.Web.Controllers
             if (DateTime.Now < sessionsForm.StartDate)
                 return BadRequest($"UpcomingForm||{sessionsForm.StartDate}");
 
-            if (sessionsForm.EndDate < DateTime.Now)
+            DateTime endDate = sessionsForm.EndDate + new TimeSpan(23,59,59);
+
+            if (endDate < DateTime.Now)
                 return BadRequest($"ClosedForm||{sessionsForm.EndDate}");
 
             return Ok(sessionsForm);

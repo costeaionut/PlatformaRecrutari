@@ -170,18 +170,64 @@
       <thead>
         <tr>
           <td colspan="3" scope="col">Participants Information</td>
+          <td scope="col">Status</td>
+          <td scope="col">Take an action</td>
         </tr>
       </thead>
       <tbody>
         <tr
           class="participantInfo"
-          (click)="goToUserProfile(userIndex)"
           *ngFor="let user of this.participants; index as userIndex"
         >
-          <td style="width: 5%">{{ userIndex + 1 }}</td>
-          <td style="width: 20%">{{ user.firstName }}</td>
-          <td style="width: 20%">{{ user.lastName }}</td>
-          <td style="color: orange; text-align: right">Recruitment status</td>
+          <td (click)="goToUserProfile(userIndex)" style="width: 5%">
+            {{ userIndex + 1 }}
+          </td>
+          <td (click)="goToUserProfile(userIndex)" style="width: 20%">
+            {{ user.firstName }}
+          </td>
+          <td (click)="goToUserProfile(userIndex)" style="width: 20%">
+            {{ user.lastName }}
+          </td>
+          <td
+            [ngClass]="{
+              approvedStatus:
+                this.participantsStatus[userIndex] == 'Passed form stage',
+              rejectedStatus:
+                this.participantsStatus[userIndex] == 'Rejected at form stage',
+              waitingStatus:
+                this.participantsStatus[userIndex] ==
+                'Waiting for form feedback'
+            }"
+            (click)="goToUserProfile(userIndex)"
+          >
+            {{ this.participantsStatus[userIndex] }}
+          </td>
+          <td class="participantActions">
+            <button
+              *ngIf="
+                this.participantsStatus[userIndex] ==
+                'Waiting for form feedback'
+              "
+              class="actionButton approve"
+              (click)="
+                giveFormFeedback('pass', this.participants[userIndex].id)
+              "
+            >
+              Pass
+            </button>
+            <button
+              *ngIf="
+                this.participantsStatus[userIndex] ==
+                'Waiting for form feedback'
+              "
+              class="actionButton reject"
+              (click)="
+                giveFormFeedback('reject', this.participants[userIndex].id)
+              "
+            >
+              Reject
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>

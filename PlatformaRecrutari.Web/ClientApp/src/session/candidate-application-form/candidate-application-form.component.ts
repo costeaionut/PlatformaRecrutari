@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { FormDto } from "src/shared/dto/form-dto";
 import { FormAnswer } from "src/shared/interfaces/form/answers/formAnswer";
+import { QuestionAnswer } from "src/shared/interfaces/form/answers/questionAnswer";
 import { FormInfo } from "src/shared/interfaces/form/formInfo";
 import { UserInfo } from "src/shared/interfaces/user/userInfo";
 import { AuthenticationService } from "src/shared/services/authentication.service";
@@ -21,6 +22,7 @@ export class CandidateApplicationFormComponent implements OnInit {
   formError: Array<boolean>;
   formStatus: string;
   currentUser: UserInfo;
+  currentUserHasAnswer: boolean;
 
   constructor(
     private participantsService: ParticipantsService,
@@ -36,6 +38,11 @@ export class CandidateApplicationFormComponent implements OnInit {
       (res) => {
         formDto = res;
         this.formInfo = this.dtoMapper.mapFormDtoToFormInfo(formDto);
+        this.participantsService
+          .getParticipantAnswer(this.currentUser.id, formDto.id)
+          .subscribe((res) => {
+            if (res.length != 0) this.currentUserHasAnswer = true;
+          });
         this.formAnswer = Array(this.formInfo.questions.length).fill("");
         this.formError = new Array<boolean>();
         this.formInfo.questions.forEach((question) => {
@@ -75,7 +82,7 @@ export class CandidateApplicationFormComponent implements OnInit {
     this.formError[position] = hasError;
   };
 
-  showAnswers() {
+  sendAnswers() {
     if (this.formError.includes(true)) {
       Swal.fire({
         title:
@@ -115,8 +122,9 @@ export class CandidateApplicationFormComponent implements OnInit {
             }
           );
       });
-
-      console.log(newAnswers);
     }
+  }
+  navigateToCurrentUserProfile() {
+    this.router.navigate([`/user/${this.currentUser.id}`]);
   }
 }
