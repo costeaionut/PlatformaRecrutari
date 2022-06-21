@@ -11,7 +11,6 @@ import { DtoMapperService } from "src/shared/services/dto-mapper.service";
 import { ParticipantsService } from "src/shared/services/participants.service";
 import { SessionService } from "src/shared/services/session.service";
 import Swal from "sweetalert2";
-import { TypedRule } from "tslint/lib/rules";
 
 @Component({
   selector: "app-display-sessions",
@@ -62,7 +61,8 @@ export class DisplaySessionsComponent implements OnInit {
       .getSessionParticipants(this.currentSession.id)
       .toPromise();
 
-    this.getParticipantsStatus();
+    await this.getParticipantsStatus();
+    this.orderParticipantsByWaitingStatus();
   }
 
   async getParticipantsStatus() {
@@ -91,6 +91,40 @@ export class DisplaySessionsComponent implements OnInit {
   goToUserProfile(userIndex: number) {
     let userGuid: string = this.participants[userIndex].id;
     this.router.navigate([`/user/${userGuid}`]);
+  }
+
+  orderParticipantsByWaitingStatus() {
+    let waitingUsers: UserInfo[] = [];
+    let passedUsers: UserInfo[] = [];
+    let rejectedUsers: UserInfo[] = [];
+
+    let waitingStatus: string[] = [];
+    let passedStatus: string[] = [];
+    let rejectedStatus: string[] = [];
+
+    for (let i = 0; i < this.participants.length; i++) {
+      switch (this.participantsStatus[i]) {
+        case "Waiting for form feedback":
+          waitingUsers.push(this.participants[i]);
+          waitingStatus.push(this.participantsStatus[i]);
+          break;
+        case "Passed form stage":
+          passedUsers.push(this.participants[i]);
+          passedStatus.push(this.participantsStatus[i]);
+          break;
+        case "Rejected at form stage":
+          rejectedUsers.push(this.participants[i]);
+          rejectedStatus.push(this.participantsStatus[i]);
+          break;
+      }
+    }
+
+    this.participants = [...waitingUsers, ...passedUsers, ...rejectedUsers];
+    this.participantsStatus = [
+      ...waitingStatus,
+      ...passedStatus,
+      ...rejectedStatus,
+    ];
   }
 
   giveFormFeedback(status: string, participantId: string) {
