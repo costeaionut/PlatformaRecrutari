@@ -16,6 +16,7 @@ import Swal from "sweetalert2";
 })
 export class QuestionSeparatorComponent implements OnInit {
   @Input() position: number;
+  @Input() disabled: boolean;
   @Output() newQuestion = new EventEmitter<QuestionPosition>();
   constructor() {}
 

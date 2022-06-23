@@ -13,6 +13,7 @@ import { UpdateQuestion } from "src/shared/classes/questions/update-question";
 })
 export class GridSelectBoxesQuestionComponent implements OnInit {
   @Input() position: number;
+  @Input() disabled: boolean;
   @Input() questionDetails: GridSelectBoxes;
 
   @Output() deleteQuestion = new EventEmitter<number>();

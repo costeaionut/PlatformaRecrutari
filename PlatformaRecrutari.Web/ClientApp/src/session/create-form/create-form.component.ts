@@ -7,6 +7,7 @@ import { ShortQuestion } from "src/shared/classes/questions/short-question";
 import { UpdateQuestion } from "src/shared/classes/questions/update-question";
 import { FormInfo } from "src/shared/interfaces/form/formInfo";
 import { QuestionPosition } from "src/shared/interfaces/session/question-position";
+import Swal from "sweetalert2";
 
 @Component({
   selector: "app-create-form",
@@ -15,6 +16,7 @@ import { QuestionPosition } from "src/shared/interfaces/session/question-positio
 })
 export class CreateFormComponent implements OnInit {
   @Input() parentChangePage;
+  @Input() parentSaveChanges;
   @Input() formInfo: FormInfo;
   @Output() updateFormInfo = new EventEmitter<FormInfo>();
 
@@ -32,11 +34,18 @@ export class CreateFormComponent implements OnInit {
     this.title = this.formInfo.title;
     this.questions = this.formInfo.questions;
     this.description = this.formInfo.description;
-    this.formStartDate = new Date();
-    this.formEndDate = new Date();
+    this.formStartDate = new Date(this.formInfo.startDate);
+    this.formEndDate = new Date(this.formInfo.endDate);
 
     this.hasErrors = false;
     this.errors = [];
+  }
+
+  disableFormEdit(): boolean {
+    if (this.parentSaveChanges === undefined) return false;
+    if (new Date() < new Date(this.formInfo.startDate)) return false;
+
+    return true;
   }
 
   checkQuestions() {
@@ -50,8 +59,12 @@ export class CreateFormComponent implements OnInit {
     if (this.formStartDate > this.formEndDate)
       localErrors.push("Start date can't be smaller than end date!");
 
+    if (new Date(this.formEndDate).setHours(23, 59, 59) < new Date().getTime())
+      localErrors.push("End date can't be smaller than today at 23:59!");
     if (
-      new Date().setHours(0, 0, 0, 0) > this.formStartDate.setHours(0, 0, 0, 0)
+      new Date().setHours(0, 0, 0, 0) >
+        this.formStartDate.setHours(0, 0, 0, 0) &&
+      this.parentSaveChanges === undefined
     )
       localErrors.push("Start date can't be set earlier than today!");
 
@@ -182,7 +195,6 @@ export class CreateFormComponent implements OnInit {
 
   changePage = (direction: number): void => {
     this.errors = this.errorChecker();
-    console.log(direction);
     if (direction != -1 && this.errors.length != 0) {
       this.hasErrors = true;
     } else {
@@ -212,6 +224,28 @@ export class CreateFormComponent implements OnInit {
     this.questions[updatedQuestion.position].question =
       updatedQuestion.questionDetails;
   };
+
+  saveChanges(): void {
+    this.errors = this.errorChecker();
+    if (this.errors.length != 0) {
+      this.hasErrors = true;
+      Swal.fire({
+        title: "Fix form's issues and try again! See bottom of the page.",
+        icon: "error",
+      });
+    } else {
+      this.hasErrors = false;
+      this.formInfo = {
+        id: 0,
+        title: this.title,
+        description: this.description,
+        questions: this.questions,
+        startDate: this.formStartDate,
+        endDate: this.formEndDate,
+      };
+      this.updateFormInfo.emit(this.formInfo);
+    }
+  }
 
   deleteQuestion = (value: number): void => {
     this.questions.splice(value, 1);

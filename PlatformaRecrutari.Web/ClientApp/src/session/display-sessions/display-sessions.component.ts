@@ -22,9 +22,13 @@ export class DisplaySessionsComponent implements OnInit {
   currentForm: FormInfo;
   currentUser: UserInfo;
   creator: UserInfo;
-  editing: boolean;
-  invalid: boolean;
   whatToDisplay: string;
+
+  editingSession: boolean;
+  invalidSession: boolean;
+
+  editingForm: boolean;
+  invalidForm: boolean;
 
   participants: Array<UserInfo>;
   participantsStatus: Array<string>;
@@ -41,7 +45,8 @@ export class DisplaySessionsComponent implements OnInit {
   async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get("id"));
     this.whatToDisplay = "candidates";
-    this.editing = false;
+    this.editingSession = false;
+    this.editingForm = false;
     this.currentSession = await this.sessionService
       .getSessionById(id)
       .toPromise();
@@ -180,16 +185,16 @@ export class DisplaySessionsComponent implements OnInit {
     let endDate = new Date(this.currentSession.endDate).getTime();
 
     if (endDate < startDate) {
-      this.invalid = true;
+      this.invalidSession = true;
       return "End date can't be earlier than start date!";
     }
 
     if (startDate < currentDate) {
-      this.invalid = true;
+      this.invalidSession = true;
       return "Start date can't be earlier than today!";
     }
 
-    this.invalid = false;
+    this.invalidSession = false;
     return null;
   }
 
@@ -198,11 +203,11 @@ export class DisplaySessionsComponent implements OnInit {
     let endDate = new Date(this.currentSession.endDate).getTime();
 
     if (endDate < startDate) {
-      this.invalid = true;
+      this.invalidSession = true;
       return "End date can't be earlier than start date!";
     }
 
-    this.invalid = false;
+    this.invalidSession = false;
     return null;
   }
 
@@ -214,8 +219,42 @@ export class DisplaySessionsComponent implements OnInit {
       confirmButtonColor: "green",
       confirmButtonText: "Yes",
     }).then((result) => {
-      if (result.value) this.editing = true;
+      if (result.value) this.editingSession = true;
     });
+  }
+
+  editForm() {
+    this.editingForm = true;
+  }
+
+  saveFormChanges() {
+    this.editingForm = false;
+  }
+
+  updateFormInfo(newFormInfo: FormInfo) {
+    let updatedForm: FormInfo = {
+      id: this.currentForm.id,
+      title: newFormInfo.title,
+      description: newFormInfo.description,
+      questions: newFormInfo.questions,
+      startDate: newFormInfo.startDate,
+      endDate: newFormInfo.endDate,
+    };
+    this.sessionService
+      .updateForm(this.mapperService.mapFormInfoToDto(updatedForm))
+      .subscribe(
+        (res) => {
+          Swal.fire({ title: "Form updated succesfully!", icon: "success" });
+          this.editingForm = false;
+          this.currentForm = updatedForm;
+        },
+        (err) => {
+          Swal.fire({
+            title: "Sorry something went wrong!\nPlease try again later.",
+            icon: "error",
+          });
+        }
+      );
   }
 
   async stopEditing() {
@@ -228,7 +267,7 @@ export class DisplaySessionsComponent implements OnInit {
       cancelButtonColor: "red",
       cancelButtonText: "No",
     }).then((result) => {
-      if (result.value) this.editing = false;
+      if (result.value) this.editingSession = false;
       this.currentSession.startDate = new Date(
         new Date(this.currentSession.startDate).setHours(3, 0, 0, 0)
       );
@@ -237,7 +276,7 @@ export class DisplaySessionsComponent implements OnInit {
       );
     });
 
-    if (!this.editing) {
+    if (!this.editingSession) {
       this.sessionService.updateSessionInfo(this.currentSession).subscribe(
         (result) => {
           Swal.fire({
@@ -311,5 +350,26 @@ export class DisplaySessionsComponent implements OnInit {
           );
       }
     });
+  }
+
+  getCurrentFormStatus(): string {
+    if (new Date() < new Date(this.currentForm.startDate)) return "NotStarted";
+    if (
+      new Date(this.currentForm.startDate) < new Date() &&
+      new Date().getTime() <
+        new Date(this.currentForm.endDate).setHours(23, 59, 59)
+    )
+      return "Active";
+    if (new Date(this.currentForm.endDate) < new Date()) return "Ended";
+  }
+
+  canGiveFormFeedback(userIndex: number): boolean {
+    if (
+      this.getCurrentFormStatus() == "Ended" &&
+      this.participantsStatus[userIndex] == "Waiting for form feedback"
+    )
+      return true;
+
+    return false;
   }
 }

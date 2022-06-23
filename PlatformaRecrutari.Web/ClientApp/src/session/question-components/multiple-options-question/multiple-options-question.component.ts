@@ -13,6 +13,7 @@ import { UpdateQuestion } from "src/shared/classes/questions/update-question";
 })
 export class MultipleOptionsQuestionComponent implements OnInit {
   @Input() position: number;
+  @Input() disabled: boolean;
   @Input() questionDetails: MultipleQuestion;
 
   @Output() deleteQuestion = new EventEmitter<number>();

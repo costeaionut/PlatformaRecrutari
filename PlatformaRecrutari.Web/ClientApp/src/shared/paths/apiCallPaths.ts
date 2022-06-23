@@ -13,6 +13,7 @@ export enum ApiCallPaths {
   getFormFromSession = "api/Session/SessionForm/",
   getSessionById = "api/Session/",
   deleteSession = "api/Session/DeleteSession/",
+  UpdateFormInfo = "api/Session/UpdateForm/",
 
   addFormAnswrs = "api/Participants/AddFormResponse/",
   getSessionParticipants = "api/Participants/GetSessionsParticipants/",

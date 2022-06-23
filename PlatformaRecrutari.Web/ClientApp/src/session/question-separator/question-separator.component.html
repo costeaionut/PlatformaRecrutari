@@ -9,6 +9,7 @@
 
     <div class="col-1 text-center">
       <button
+        [disabled]="this.disabled"
         class="btn btn-m btn-outline-secondary rounded-circle"
         (click)="addQuestion()"
       >

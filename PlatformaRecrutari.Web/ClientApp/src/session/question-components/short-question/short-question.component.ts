@@ -13,6 +13,7 @@ import { UpdateQuestion } from "src/shared/classes/questions/update-question";
 })
 export class ShortQuestionComponent implements OnInit {
   @Input() position: number;
+  @Input() disabled: boolean;
   @Input() questionDetails: ShortQuestion;
   @Output() deleteQuestion = new EventEmitter<Number>();
   @Output() updateQuestion = new EventEmitter<UpdateQuestion>();

@@ -24,10 +24,7 @@ import { QuestionAnswer } from "../interfaces/form/answers/questionAnswer";
 export class DtoMapperService {
   constructor() {}
 
-  mapSessionInfoToDto = (
-    sessionInfo: SessionInfo,
-    formInfo: FormInfo
-  ): CreateSessionDto => {
+  mapFormInfoToDto = (formInfo: FormInfo): FormDto => {
     let shortQuestionArray: Array<ShortQuestionDto> =
       new Array<ShortQuestionDto>();
 
@@ -52,7 +49,7 @@ export class DtoMapperService {
       switch (currentElement.question.getType()) {
         case "ShortQuestion":
           let shortQuestionDto: ShortQuestionDto = {
-            id: 0,
+            id: currentQuestion.getId() ? currentQuestion.getId() : 0,
             question: (currentQuestion as ShortQuestion).getQuestion(),
             required: (currentQuestion as ShortQuestion).getRequired(),
             type: (currentQuestion as ShortQuestion).getType(),
@@ -63,7 +60,7 @@ export class DtoMapperService {
 
         case "MultipleQuestion":
           let multipleQuestion: MultipleQuestionDto = {
-            id: 0,
+            id: currentQuestion.getId() ? currentQuestion.getId() : 0,
             question: (currentQuestion as MultipleQuestion).getQuestion(),
             type: (currentQuestion as MultipleQuestion).getType(),
             required: (currentQuestion as MultipleQuestion).getRequired(),
@@ -75,7 +72,7 @@ export class DtoMapperService {
 
         case "SelectBoxesQuestion":
           let selectBoxesQuestion: SelectBoxesQuestionDto = {
-            id: 0,
+            id: currentQuestion.getId() ? currentQuestion.getId() : 0,
             question: (currentQuestion as SelectBoxesQuestion).getQuestion(),
             type: (currentQuestion as SelectBoxesQuestion).getType(),
             required: (currentQuestion as SelectBoxesQuestion).getRequired(),
@@ -87,7 +84,7 @@ export class DtoMapperService {
 
         case "GridSelectQuestion":
           let gridSelectBoxesQuestion: GridSelectBoxesQuestionDto = {
-            id: 0,
+            id: currentQuestion.getId() ? currentQuestion.getId() : 0,
             question: (currentQuestion as GridSelectBoxes).getQuestion(),
             type: (currentQuestion as GridSelectBoxes).getType(),
             required: (currentQuestion as GridSelectBoxes).getRequired(),
@@ -103,7 +100,7 @@ export class DtoMapperService {
 
         case "GridMultipleQuestion":
           let gridMultipleQuestion: GridMultipleQuestionDto = {
-            id: 0,
+            id: currentQuestion.getId() ? currentQuestion.getId() : 0,
             question: (currentQuestion as GridMultipleOptions).getQuestion(),
             type: (currentQuestion as GridMultipleOptions).getType(),
             required: (currentQuestion as GridMultipleOptions).getRequired(),
@@ -114,13 +111,13 @@ export class DtoMapperService {
             columns: (currentQuestion as GridMultipleOptions).getColumns(),
             position: currentPosition,
           };
-          gridSelectBoxesQuestionArray.push(gridMultipleQuestion);
+          gridMultipleQuestionArray.push(gridMultipleQuestion);
           break;
       }
     }
 
     let formDto: FormDto = {
-      id: 0,
+      id: formInfo.id,
       title: formInfo.title,
       description: formInfo.description,
       startDate: new Date(formInfo.startDate.setHours(3, 0, 0)),
@@ -131,6 +128,14 @@ export class DtoMapperService {
       gridMultipleQuestions: gridMultipleQuestionArray,
       gridSelectBoxesQuestions: gridSelectBoxesQuestionArray,
     };
+    return formDto;
+  };
+
+  mapSessionInfoToDto = (
+    sessionInfo: SessionInfo,
+    formInfo: FormInfo
+  ): CreateSessionDto => {
+    let formDto: FormDto = this.mapFormInfoToDto(formInfo);
 
     let sessionDto: CreateSessionDto = {
       id: sessionInfo.id,

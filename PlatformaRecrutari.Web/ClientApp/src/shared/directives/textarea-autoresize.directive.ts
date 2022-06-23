@@ -1,10 +1,26 @@
-import { Directive, ElementRef, HostListener } from "@angular/core";
+import {
+  AfterContentInit,
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  HostListener,
+  OnInit,
+} from "@angular/core";
 
 @Directive({
   selector: "[appTextareaAutoresize]",
 })
-export class TextareaAutoresizeDirective {
+export class TextareaAutoresizeDirective implements OnInit {
   constructor(private elementRef: ElementRef) {}
+
+  ngOnInit(): void {
+    this.resize();
+  }
+
+  @HostListener(":click")
+  onClick() {
+    this.resize();
+  }
 
   @HostListener(":input")
   onInput() {

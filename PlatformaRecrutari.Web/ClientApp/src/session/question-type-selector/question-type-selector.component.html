@@ -2,6 +2,8 @@
   [(ngModel)]="this.questionType"
   (change)="updateQuestionType()"
   class="form-control"
+  [disabled]="this.disabled"
+  color="primary"
 >
   <option default value="ShortQuestion">Short Answear</option>
   <option value="MultipleQuestion">Multiple Options</option>

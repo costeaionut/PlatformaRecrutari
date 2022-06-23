@@ -1,4 +1,18 @@
 <div class="container">
+  <div class="row justify-content-end" style="margin-bottom: 5px">
+    <button (click)="this.saveChanges()" type="button" class="btn btn-success">
+      Save changes
+    </button>
+  </div>
+  <div class="row" *ngIf="hasErrors && this.parentSaveChanges !== undefined">
+    <div class="col"></div>
+    <div class="col-8 errorMessageWrapper">
+      <div *ngFor="let error of this.errors">
+        <em>{{ error }}</em>
+      </div>
+    </div>
+    <div class="col"></div>
+  </div>
   <div class="row">
     <div class="col"></div>
     <div class="col-8 titleWrapper">
@@ -8,6 +22,7 @@
         class="formTitleInput"
         placeholder="Form Title"
         [(ngModel)]="this.title"
+        [disabled]="this.disableFormEdit()"
       ></textarea>
       <textarea
         rows="1"
@@ -15,6 +30,7 @@
         class="descriptionInput"
         placeholder="Description"
         [(ngModel)]="this.description"
+        [disabled]="this.disableFormEdit()"
       ></textarea>
     </div>
     <div class="col"></div>
@@ -32,6 +48,7 @@
           matInput
           [(ngModel)]="this.formStartDate"
           [matDatepicker]="startPicker"
+          [disabled]="this.disableFormEdit()"
         />
         <mat-datepicker-toggle
           matSuffix
@@ -60,12 +77,20 @@
   <div class="row questionRows" *ngFor="let entry of this.questions">
     <div class="col"></div>
     <div class="col-8">
+      <app-question-separator
+        *ngIf="!this.disableFormEdit() && entry.position == 0"
+        [position]="-1"
+        [disabled]="this.disableFormEdit()"
+        (newQuestion)="addQuestion($event)"
+      ></app-question-separator>
+
       <app-short-question
         *ngIf="entry.question.getType() == 'ShortQuestion'"
         [questionDetails]="entry.question"
         [position]="entry.position"
         (deleteQuestion)="this.deleteQuestion($event)"
         (updateQuestion)="updateQuestion($event)"
+        [disabled]="this.disableFormEdit()"
       ></app-short-question>
 
       <app-multiple-options-question
@@ -74,14 +99,17 @@
         [position]="entry.position"
         (deleteQuestion)="deleteQuestion($event)"
         (updateQuestion)="updateQuestion($event)"
+        [disabled]="this.disableFormEdit()"
       ></app-multiple-options-question>
 
       <app-select-boxes-question
+        [disabled]="this.disableFormEdit()"
         *ngIf="entry.question.getType() == 'SelectBoxesQuestion'"
         [questionDetails]="entry.question"
         [position]="entry.position"
         (deleteQuestion)="deleteQuestion($event)"
         (updateQuestion)="updateQuestion($event)"
+        [disabled]="this.disableFormEdit()"
       ></app-select-boxes-question>
 
       <app-grid-multiple-options-question
@@ -90,6 +118,7 @@
         [position]="entry.position"
         (deleteQuestion)="deleteQuestion($event)"
         (updateQuestion)="updateQuestion($event)"
+        [disabled]="this.disableFormEdit()"
       ></app-grid-multiple-options-question>
 
       <app-grid-select-boxes-question
@@ -98,10 +127,13 @@
         [position]="entry.position"
         (deleteQuestion)="deleteQuestion($event)"
         (updateQuestion)="updateQuestion($event)"
+        [disabled]="this.disableFormEdit()"
       ></app-grid-select-boxes-question>
 
       <app-question-separator
+        *ngIf="!this.disableFormEdit()"
         [position]="entry.position"
+        [disabled]="this.disableFormEdit()"
         (newQuestion)="addQuestion($event)"
       ></app-question-separator>
     </div>
@@ -119,7 +151,7 @@
     <div class="col"></div>
   </div>
 
-  <div class="row" *ngIf="hasErrors">
+  <div class="row" *ngIf="hasErrors && this.parentChangePage !== undefined">
     <div class="col"></div>
     <div class="col-8 errorMessageWrapper">
       <div *ngFor="let error of this.errors">
@@ -132,7 +164,17 @@
 
 <br />
 
-<button class="btn btn-primary" (click)="changePage(-1)">Previous step</button>
-<button class="btn btn-primary float-right" (click)="changePage(1)">
+<button
+  *ngIf="this.parentChangePage"
+  class="btn btn-primary"
+  (click)="changePage(-1)"
+>
+  Previous step
+</button>
+<button
+  *ngIf="this.parentChangePage"
+  class="btn btn-primary float-right"
+  (click)="changePage(1)"
+>
   Next step
 </button>

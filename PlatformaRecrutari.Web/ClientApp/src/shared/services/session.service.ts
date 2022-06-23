@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { FormDto } from "../dto/form-dto";
 import { CreateSessionDto } from "../dto/session/create-session-dto";
 import { SessionDto } from "../dto/session/get-session-dto";
+import { FormInfo } from "../interfaces/form/formInfo";
 import { UserInfo } from "../interfaces/user/userInfo";
 import { ApiCallPaths } from "./../paths/apiCallPaths";
 
@@ -62,6 +63,13 @@ export class SessionService {
   public getActiveSession() {
     return this.http.get<SessionInfo>(
       this.baseUrl + ApiCallPaths.activeSessionPath
+    );
+  }
+
+  public updateForm(updatedFormInfo: FormDto) {
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.UpdateFormInfo,
+      updatedFormInfo
     );
   }
 }

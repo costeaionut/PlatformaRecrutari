@@ -6,10 +6,10 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <h2 *ngIf="!this.editing">{{ this.currentSession.title }}</h2>
+        <h2 *ngIf="!this.editingSession">{{ this.currentSession.title }}</h2>
         <input
           [(ngModel)]="currentSession.title"
-          *ngIf="this.editing"
+          *ngIf="this.editingSession"
           class="titleEdit"
           type="text"
         />
@@ -22,7 +22,7 @@
       </div>
       <div *ngIf="shouldShowActions()" class="col" align="right">
         <button
-          *ngIf="this.editing"
+          *ngIf="this.editingSession"
           (click)="deleteSession()"
           style="margin: 5px"
           type="button"
@@ -31,7 +31,7 @@
           Delete
         </button>
         <button
-          *ngIf="!editing"
+          *ngIf="!editingSession"
           (click)="edit()"
           type="button"
           class="btn btn-primary"
@@ -39,23 +39,23 @@
           Edit Session
         </button>
         <button
-          *ngIf="editing"
+          *ngIf="editingSession"
           (click)="stopEditing()"
           type="button"
           class="btn btn-success"
-          [disabled]="this.invalid"
+          [disabled]="this.invalidSession"
         >
           Done editing
         </button>
       </div>
     </div>
     <div class="row">
-      <div *ngIf="!this.editing" class="col">
+      <div *ngIf="!this.editingSession" class="col">
         Session is active from:
         <i>{{ parseDate(this.currentSession.startDate) }}</i> -
         <i>{{ parseDate(this.currentSession.endDate) }}</i>
       </div>
-      <div *ngIf="this.editing" class="col">
+      <div *ngIf="this.editingSession" class="col">
         <div class="startDate">
           <label style="margin-right: 5px"> Start date:</label>
           <input
@@ -163,7 +163,26 @@
     </div>
   </div>
   <div class="container" *ngIf="this.whatToDisplay == 'form'">
-    <app-display-form [sessionId]="this.currentSession.id"></app-display-form>
+    <div style="text-align: end; margin-top: 10px">
+      <button
+        *ngIf="!this.editingForm"
+        type="button"
+        class="btn btn-primary"
+        (click)="this.editForm()"
+      >
+        Edit form
+      </button>
+    </div>
+    <app-display-form
+      *ngIf="!this.editingForm"
+      [sessionId]="this.currentSession.id"
+    ></app-display-form>
+    <app-create-form
+      *ngIf="this.editingForm"
+      [formInfo]="this.currentForm"
+      [parentSaveChanges]="this.updateFormInfo"
+      (updateFormInfo)="this.updateFormInfo($event)"
+    ></app-create-form>
   </div>
   <div class="table-responsive" *ngIf="this.whatToDisplay == 'candidates'">
     <table class="table">
@@ -189,6 +208,7 @@
             {{ user.lastName }}
           </td>
           <td
+            *ngIf="this.getCurrentFormStatus() == 'Ended'"
             [ngClass]="{
               approvedStatus:
                 this.participantsStatus[userIndex] == 'Passed form stage',
@@ -202,12 +222,15 @@
           >
             {{ this.participantsStatus[userIndex] }}
           </td>
+          <td
+            class="approvedStatus"
+            *ngIf="this.getCurrentFormStatus() == 'Active'"
+          >
+            Waiting for form to close
+          </td>
           <td class="participantActions">
             <button
-              *ngIf="
-                this.participantsStatus[userIndex] ==
-                'Waiting for form feedback'
-              "
+              *ngIf="this.canGiveFormFeedback(userIndex)"
               class="actionButton approve"
               (click)="
                 giveFormFeedback('pass', this.participants[userIndex].id)
@@ -216,10 +239,7 @@
               Pass
             </button>
             <button
-              *ngIf="
-                this.participantsStatus[userIndex] ==
-                'Waiting for form feedback'
-              "
+              *ngIf="this.canGiveFormFeedback(userIndex)"
               class="actionButton reject"
               (click)="
                 giveFormFeedback('reject', this.participants[userIndex].id)

@@ -341,5 +341,246 @@ namespace PlatformaRecrutari.Web.Controllers
 
             return Ok();
         } 
+    
+        [HttpPost("UpdateForm")]
+        public async Task<IActionResult> UpdateFormAsync([FromBody] FormDto updatedFormDto) {
+            if (updatedFormDto == null)
+                return BadRequest("MissingFormUpdate");
+
+            Form updatedForm = _mapper.Map<Form>(updatedFormDto);
+            this._formManager.updateForm(updatedForm);
+
+            var oldBaseQuestions = _formManager.getFormsBaseQuestion(updatedForm.Id);
+            var oldGridQuestions = _formManager.getFormsGridQuestion(updatedForm.Id);
+
+            List<int> oldBaseQuestionsIds = new();
+            List<int> oldGridQuestionsIds = new();
+
+            foreach (var item in oldBaseQuestions)
+                oldBaseQuestionsIds.Add(item.Id);
+
+            foreach (var item in oldGridQuestions)
+                oldGridQuestionsIds.Add(item.Id);
+
+            foreach (var shortQuestion in updatedFormDto.ShortQuestions)
+            {
+                var baseQuestion = _mapper.Map<BaseQuestion>(shortQuestion);
+                if (shortQuestion.Id == 0)
+                {
+                    baseQuestion.FormId = updatedForm.Id;
+                    await _formManager.addSimpleQuestionToForm(baseQuestion);
+                }
+                else
+                {
+                    oldBaseQuestionsIds.Remove(baseQuestion.Id);
+                    _formManager.updateBaseQuestion(baseQuestion);
+                }
+            }
+
+            foreach (var multipleQuestion in updatedFormDto.MultipleQuestions)
+            {
+                var baseQuestion = _mapper.Map<BaseQuestion>(multipleQuestion);
+                if (baseQuestion.Id == 0)
+                {
+                    baseQuestion.FormId = updatedForm.Id;
+                    var newBaseQuestion = await _formManager.addSimpleQuestionToForm(baseQuestion);
+                    foreach (var option in multipleQuestion.Options)
+                    {
+                        InputsOption newOption = new();
+                        newOption.Id = 0;
+                        newOption.Position = multipleQuestion.Options.IndexOf(option);
+                        newOption.Type = InputTypes.Option;
+                        newOption.Content = option;
+                        newOption.QuestionId = newBaseQuestion.Id;
+                        await _formManager.addOptionsToQuestion(newOption);
+                    }
+                }
+                else
+                {
+                    oldBaseQuestionsIds.Remove(baseQuestion.Id);
+                    _formManager.updateBaseQuestion(baseQuestion);
+                    List<InputsOption> updatedInputs = new();
+                    foreach (var option in multipleQuestion.Options)
+                    {
+                        InputsOption newOption = new();
+                        newOption.Id = 0;
+                        newOption.Position = multipleQuestion.Options.IndexOf(option);
+                        newOption.Type = InputTypes.Option;
+                        newOption.Content = option;
+                        newOption.QuestionId = multipleQuestion.Id;
+                        updatedInputs.Add(newOption);
+                    }
+                    await _formManager.updateQuestionOptionsAsync(baseQuestion.Id, updatedInputs);
+                }
+            }
+
+            foreach (var selectQuestion in updatedFormDto.SelectBoxesQuestions)
+            {
+                var baseQuestion = _mapper.Map<BaseQuestion>(selectQuestion);
+                if (baseQuestion.Id == 0)
+                {
+                    baseQuestion.FormId = updatedForm.Id;
+                    var newBaseQuestion = await _formManager.addSimpleQuestionToForm(baseQuestion);
+                    foreach (var option in selectQuestion.Options)
+                    {
+                        InputsOption newOption = new();
+                        newOption.Id = 0;
+                        newOption.Position = selectQuestion.Options.IndexOf(option);
+                        newOption.Type = InputTypes.Option;
+                        newOption.Content = option;
+                        newOption.QuestionId = newBaseQuestion.Id;
+                        _formManager.addOptionsToQuestion(newOption);
+                    }
+                }
+                else
+                {
+                    oldBaseQuestionsIds.Remove(baseQuestion.Id);
+                    _formManager.updateBaseQuestion(baseQuestion);
+                    List<InputsOption> updatedInputs = new();
+                    foreach (var option in selectQuestion.Options)
+                    {
+                        InputsOption newOption = new();
+                        newOption.Id = 0;
+                        newOption.Position = selectQuestion.Options.IndexOf(option);
+                        newOption.Type = InputTypes.Option;
+                        newOption.Content = option;
+                        newOption.QuestionId = selectQuestion.Id;
+                        updatedInputs.Add(newOption);
+                    }
+                    await _formManager.updateQuestionOptionsAsync(baseQuestion.Id, updatedInputs);
+                }
+            }
+
+            foreach (var gridMultipleQuestion in updatedFormDto.GridMultipleQuestions)
+            {
+                var gridQuestion = _mapper.Map<GridQuestion>(gridMultipleQuestion);
+                if (gridQuestion.Id == 0) 
+                {
+                    gridQuestion.FormId = updatedForm.Id;
+                    var newGridQuestion = await _formManager.addGridQuestionToForm(gridQuestion);
+                    foreach (var row in gridMultipleQuestion.Rows)
+                    {
+                        InputsOption newOption = new();
+                        newOption.Id = 0;
+                        newOption.Position = gridMultipleQuestion.Rows.IndexOf(row);
+                        newOption.Type = InputTypes.Row;
+                        newOption.Content = row;
+                        newOption.QuestionId = newGridQuestion.Id;
+                        await _formManager.addOptionsToQuestion(newOption);
+                    }
+                    foreach (var col in gridMultipleQuestion.Columns)
+                    {
+                        InputsOption newOption = new();
+                        newOption.Id = 0;
+                        newOption.Position = gridMultipleQuestion.Rows.IndexOf(col);
+                        newOption.Type = InputTypes.Column;
+                        newOption.Content = col;
+                        newOption.QuestionId = newGridQuestion.Id;
+                        await _formManager.addOptionsToQuestion(newOption);
+                    }
+
+                }
+                else
+                {
+                    oldGridQuestionsIds.Remove(gridQuestion.Id);
+                    _formManager.updateGridQuestion(gridQuestion);
+                    List<InputsOption> updatedGridRowsColumns = new();
+                    foreach (var row in gridMultipleQuestion.Rows)
+                    {
+                        InputsOption newOption = new();
+                        newOption.Id = 0;
+                        newOption.Position = gridMultipleQuestion.Rows.IndexOf(row);
+                        newOption.Type = InputTypes.Row;
+                        newOption.Content = row;
+                        newOption.QuestionId = gridMultipleQuestion.Id;
+                        updatedGridRowsColumns.Add(newOption);
+                    }
+                    foreach (var col in gridMultipleQuestion.Columns)
+                    {
+                        InputsOption newOption = new();
+                        newOption.Id = 0;
+                        newOption.Position = gridMultipleQuestion.Rows.IndexOf(col);
+                        newOption.Type = InputTypes.Column;
+                        newOption.Content = col;
+                        newOption.QuestionId = gridMultipleQuestion.Id;
+                        updatedGridRowsColumns.Add(newOption);
+                    }
+                    
+                    await this._formManager.updateQuestionOptionsAsync(gridQuestion.Id, updatedGridRowsColumns);
+                }
+            }
+
+            foreach (var gridSelectQuestion in updatedFormDto.GridSelectBoxesQuestions)
+            {
+                var gridQuestion = _mapper.Map<GridQuestion>(gridSelectQuestion);
+                if(gridQuestion.Id == 0)
+                {
+                    gridQuestion.FormId = updatedForm.Id;
+                    var newGridQuestion = await _formManager.addGridQuestionToForm(gridQuestion);
+                    foreach (var row in gridSelectQuestion.Rows)
+                    {
+                        InputsOption newOption = new();
+                        newOption.Id = 0;
+                        newOption.Position = gridSelectQuestion.Rows.IndexOf(row);
+                        newOption.Type = InputTypes.Row;
+                        newOption.Content = row;
+                        newOption.QuestionId = newGridQuestion.Id;
+                        await _formManager.addOptionsToQuestion(newOption); 
+                    }
+                    foreach (var col in gridSelectQuestion.Columns)
+                    {
+                        InputsOption newOption = new();
+                        newOption.Id = 0;
+                        newOption.Position = gridSelectQuestion.Rows.IndexOf(col);
+                        newOption.Type = InputTypes.Column;
+                        newOption.Content = col;
+                        newOption.QuestionId = newGridQuestion.Id;
+                        await _formManager.addOptionsToQuestion(newOption);
+                    }
+                }
+                else
+                {
+                    oldGridQuestionsIds.Remove(gridQuestion.Id);
+                    _formManager.updateGridQuestion(gridQuestion);
+                    List<InputsOption> updatedGridRowsColumns = new();
+                    foreach (var row in gridSelectQuestion.Rows)
+                    {
+                        InputsOption newOption = new();
+                        newOption.Id = 0;
+                        newOption.Position = gridSelectQuestion.Rows.IndexOf(row);
+                        newOption.Type = InputTypes.Row;
+                        newOption.Content = row;
+                        newOption.QuestionId = gridSelectQuestion.Id;
+                        updatedGridRowsColumns.Add(newOption);
+                    }
+                    foreach (var col in gridSelectQuestion.Columns)
+                    {
+                        InputsOption newOption = new();
+                        newOption.Id = 0;
+                        newOption.Position = gridSelectQuestion.Rows.IndexOf(col);
+                        newOption.Type = InputTypes.Column;
+                        newOption.Content = col;
+                        newOption.QuestionId = gridSelectQuestion.Id;
+                        updatedGridRowsColumns.Add(newOption);
+                    }
+
+                    await this._formManager.updateQuestionOptionsAsync(gridQuestion.Id, updatedGridRowsColumns);
+
+                }
+            }
+
+            if(oldBaseQuestionsIds.Count != 0)
+            {
+                foreach (var item in oldBaseQuestionsIds)
+                    _formManager.deleteBaseQuestion(item);
+            }
+            if(oldGridQuestionsIds.Count != 0)
+            {
+                foreach (var item in oldGridQuestionsIds)
+                    _formManager.deleteGridQuestion(item);
+            }
+
+            return Ok();
+        }
     }
 }

@@ -7,6 +7,7 @@
           cols="30"
           rows="1"
           appTextareaAutoresize
+          [disabled]="this.disabled"
           [(ngModel)]="this.question"
           (focusout)="updateQuestionText()"
           placeholder="Type your question here!"
@@ -14,6 +15,7 @@
       </div>
       <div class="col">
         <app-question-type-selector
+          [disabled]="this.disabled"
           [questionType]="this.questionType"
           (updateType)="this.updateQuestionType($event)"
         ></app-question-type-selector>
@@ -45,6 +47,7 @@
           type="button"
           (click)="deleteThis()"
           class="btn btn-outline-danger float-right"
+          [disabled]="this.disabled"
         >
           Delete
         </button>
@@ -56,6 +59,7 @@
         <mat-slide-toggle
           (click)="updateQuestionRequired()"
           [(ngModel)]="this.required"
+          [disabled]="this.disabled"
         ></mat-slide-toggle>
       </div>
     </div>

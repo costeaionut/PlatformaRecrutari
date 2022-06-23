@@ -19,5 +19,11 @@ namespace PlatformaRecrutari.Core.Abstractions
         List<string> getColumnsForGridQuestion(int questionId);
         List<string> getRowsForGridQuestion(int questionId);
         List<string> getOptionsForBaseQuestion(int questionId);
+        void updateBaseQuestion(BaseQuestion updatedQuestion);
+        void updateGridQuestion(GridQuestion updatedGridQuestion);
+        public Task updateQuestionOptionsAsync(int questionId, List<InputsOption> updatedInputs);
+        void updateForm(Form updatedForm);
+        void deleteBaseQuestion(int questionId);
+        void deleteGridQuestion(int questionId);
     }
 }

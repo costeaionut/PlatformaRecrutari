@@ -6,6 +6,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
   styleUrls: ["./question-type-selector.component.css"],
 })
 export class QuestionTypeSelectorComponent implements OnInit {
+  @Input() disabled: boolean;
   @Input() questionType: String;
   @Output() updateType = new EventEmitter<String>();
 
