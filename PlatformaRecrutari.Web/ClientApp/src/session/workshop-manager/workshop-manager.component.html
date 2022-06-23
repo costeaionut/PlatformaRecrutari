@@ -1,0 +1,88 @@
+<div class="container">
+  <div class="row" style="margin-top: 10px">
+    <div class="col">
+      <h4>Workshops</h4>
+    </div>
+    <div class="col" align="right">
+      <button class="btn btn-outline-success" (click)="open(content)">
+        Create new workshop
+      </button>
+    </div>
+  </div>
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">Add workshop details</h4>
+    </div>
+    <div class="modal-body">
+      <div class="container">
+        <div class="row">
+          <div class="col-2" style="padding-top: 10px; padding-right: 0">
+            <label style="margin: 0; margin-right: 5px">Location: </label>
+          </div>
+          <div class="col" style="padding-left: 0">
+            <textarea
+              [(ngModel)]="this.newWorkshopLocation"
+              class="locationTextarea"
+              cols="50"
+              rows="1"
+              appTextareaAutoresize
+            ></textarea>
+          </div>
+        </div>
+        <div class="row align-bottom" style="margin-top: 5px">
+          <div class="col-2" style="padding-top: 10px; padding-right: 0">
+            <span>Date&Time: </span>
+          </div>
+          <div class="col" style="padding-left: 0">
+            <input
+              [disabled]="true"
+              [(ngModel)]="this.disaplyDateOfNewWorkshop"
+            />
+            <input
+              matInput
+              [matDatepicker]="picker"
+              [(ngModel)]="this.newWorkshopDate"
+              style="
+                width: 0%;
+                display: inline;
+                border: 0;
+                height: 0%;
+                color: white;
+              "
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+
+            <input
+              style="display: none"
+              matTimepicker
+              #t="matTimepicker"
+              (timeChange)="this.updateHour($event)"
+            />
+            <mat-icon
+              matSuffix
+              style="cursor: pointer; vertical-align: middle"
+              (click)="t.showDialog()"
+              >access_time</mat-icon
+            >
+            <mat-datepicker
+              (closed)="this.updateDateDisplay()"
+              #picker
+            ></mat-datepicker>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-outline-dark"
+        (click)="saveNewWorkshop()"
+      >
+        Save
+      </button>
+    </div>
+  </ng-template>
+</div>

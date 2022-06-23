@@ -171,6 +171,7 @@ namespace PlatformaRecrutari.Web.Controllers
         }
     
         [HttpPost("PostFormFeedback")]
+        [Authorize(Roles = RoleType.ProjectManager)]
         public IActionResult PostParticipantFormFeedback([FromBody] FormFeedback feedback)
         {
             if (feedback == null)

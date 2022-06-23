@@ -1,0 +1,14 @@
+.locationTextarea{
+    resize: none;
+    overflow: hidden;
+    border: 0;
+    border-bottom: 1px solid grey;
+}
+
+.locationTextarea:focus{
+    outline: none;
+}
+
+::ng-deep .cdk-overlay-container {
+    z-index:2000; 
+}

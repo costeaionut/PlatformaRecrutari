@@ -14,6 +14,7 @@ import {
   MatButtonModule,
   MatRadioModule,
   MatCheckboxModule,
+  MatIconModule,
 } from "@angular/material";
 
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -40,6 +41,15 @@ import { SelectBoxQuestionDisplayComponent } from "./display-form-quesitons/sele
 import { GridMultipleQuestionDisplayComponent } from "./display-form-quesitons/grid-multiple-question-display/grid-multiple-question-display.component";
 import { GridSelectBoxQuestionDisplayComponent } from "./display-form-quesitons/grid-select-box-question-display/grid-select-box-question-display.component";
 import { CandidateApplicationFormComponent } from "./candidate-application-form/candidate-application-form.component";
+import { WorkshopManagerComponent } from "./workshop-manager/workshop-manager.component";
+import { NgbModalWindow } from "@ng-bootstrap/ng-bootstrap/modal/modal-window";
+import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
+import {
+  NgxMatDatetimePickerModule,
+  NgxMatNativeDateModule,
+  NgxMatTimepickerModule,
+} from "@angular-material-components/datetime-picker";
+import { MatTimepickerModule } from "mat-timepicker";
 @NgModule({
   declarations: [
     CreateSessionComponent,
@@ -64,18 +74,23 @@ import { CandidateApplicationFormComponent } from "./candidate-application-form/
     GridMultipleQuestionDisplayComponent,
     GridSelectBoxQuestionDisplayComponent,
     CandidateApplicationFormComponent,
+    WorkshopManagerComponent,
   ],
   imports: [
     FormsModule,
     CommonModule,
+    MatIconModule,
     MatInputModule,
+    NgbModalModule,
     MatRadioModule,
+    MatInputModule,
     MatRippleModule,
     MatCheckboxModule,
     MatFormFieldModule,
-    MatNativeDateModule,
     MatDatepickerModule,
+    MatNativeDateModule,
     ReactiveFormsModule,
+    MatTimepickerModule,
     MatSlideToggleModule,
     BrowserAnimationsModule,
     SweetAlert2Module.forRoot(),
