@@ -9,6 +9,16 @@
     outline: none;
 }
 
+.dateTimeDisplay{
+    color: grey;
+    border: none;
+    border-bottom: 1px solid grey;
+}
+
+.dateTimeDisplay:disabled{
+    background-color: inherit;
+}
+
 ::ng-deep .cdk-overlay-container {
     z-index:2000; 
 }

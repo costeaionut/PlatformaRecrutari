@@ -16,7 +16,7 @@
     <div class="modal-body">
       <div class="container">
         <div class="row">
-          <div class="col-2" style="padding-top: 10px; padding-right: 0">
+          <div class="col-3" style="padding-top: 10px; padding-right: 0">
             <label style="margin: 0; margin-right: 5px">Location: </label>
           </div>
           <div class="col" style="padding-left: 0">
@@ -29,13 +29,14 @@
             ></textarea>
           </div>
         </div>
-        <div class="row align-bottom" style="margin-top: 5px">
-          <div class="col-2" style="padding-top: 10px; padding-right: 0">
+        <div class="row" style="margin-top: 5px">
+          <div class="col-3" style="padding-top: 10px; padding-right: 0">
             <span>Date&Time: </span>
           </div>
           <div class="col" style="padding-left: 0">
             <input
               [disabled]="true"
+              class="dateTimeDisplay"
               [(ngModel)]="this.disaplyDateOfNewWorkshop"
             />
             <input
@@ -52,26 +53,109 @@
             />
             <mat-datepicker-toggle
               matSuffix
+              style="color: black"
               [for]="picker"
             ></mat-datepicker-toggle>
 
             <input
               style="display: none"
               matTimepicker
+              mode="24h"
               #t="matTimepicker"
               (timeChange)="this.updateHour($event)"
             />
             <mat-icon
               matSuffix
+              *ngIf="this.newWorkshopDate"
               style="cursor: pointer; vertical-align: middle"
               (click)="t.showDialog()"
               >access_time</mat-icon
             >
+
+            <mat-icon
+              matSuffix
+              *ngIf="!this.newWorkshopDate"
+              style="vertical-align: middle; color: grey; cursor: default"
+              >access_time</mat-icon
+            >
+
             <mat-datepicker
               (closed)="this.updateDateDisplay()"
               #picker
             ></mat-datepicker>
           </div>
+        </div>
+        <div class="row" style="margin-top: 5px">
+          <div class="col-3" style="padding-top: 10px; padding-right: 0">
+            <span>Departments: </span>
+          </div>
+          <div
+            class="col"
+            style="padding-left: 0; padding-top: 10px"
+            *ngFor="let option of this.departments"
+          >
+            <mat-checkbox
+              color="primary"
+              (change)="this.updateDepartments()"
+              [(ngModel)]="this.departmentOptions[option]"
+              >{{ option }}</mat-checkbox
+            >
+          </div>
+        </div>
+        <div class="row" style="margin-top: 5px">
+          <div class="col-3" style="padding-top: 15px; padding-right: 0">
+            <span>No. Participants: </span>
+          </div>
+          <div class="col" style="padding-left: 0; padding-top: 10px">
+            <select
+              [(ngModel)]="this.newWorkshopNoParticipants"
+              class="form-control"
+              style="width: 20%; height: 90%"
+            >
+              <option *ngFor="let num of this.noParticipantsList">
+                {{ num }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="row" style="margin-top: 5px">
+          <div class="col-3" style="padding-top: 15px; padding-right: 0">
+            <span>No. Volunteers: </span>
+          </div>
+          <div class="col" style="padding-left: 0; padding-top: 10px">
+            <select
+              [(ngModel)]="this.newWorkshopNoVolunteers"
+              class="form-control"
+              style="width: 20%; height: 90%"
+            >
+              <option *ngFor="let num of [2, 3, 4, 5, 6]">
+                {{ num }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="row" style="margin-top: 5px">
+          <div class="col-3" style="padding-top: 15px; padding-right: 0">
+            <span>No. Board Members: </span>
+          </div>
+          <div class="col" style="padding-left: 0; padding-top: 10px">
+            <select
+              [(ngModel)]="this.newWorkshopNoCD"
+              class="form-control"
+              style="width: 20%; height: 90%"
+            >
+              <option *ngFor="let num of [1, 2, 3, 4]">
+                {{ num }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <span
+            *ngFor="let error of this.newWorkshopFormErrors"
+            style="display: block; width: 100%; color: red; margin-top: 5px"
+            >{{ error }}</span
+          >
         </div>
       </div>
     </div>

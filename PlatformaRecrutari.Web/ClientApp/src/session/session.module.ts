@@ -44,11 +44,7 @@ import { CandidateApplicationFormComponent } from "./candidate-application-form/
 import { WorkshopManagerComponent } from "./workshop-manager/workshop-manager.component";
 import { NgbModalWindow } from "@ng-bootstrap/ng-bootstrap/modal/modal-window";
 import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
-import {
-  NgxMatDatetimePickerModule,
-  NgxMatNativeDateModule,
-  NgxMatTimepickerModule,
-} from "@angular-material-components/datetime-picker";
+
 import { MatTimepickerModule } from "mat-timepicker";
 @NgModule({
   declarations: [
