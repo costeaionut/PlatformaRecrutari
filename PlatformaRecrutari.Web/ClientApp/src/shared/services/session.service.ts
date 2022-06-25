@@ -5,6 +5,8 @@ import { CreateSessionDto } from "../dto/session/create-session-dto";
 import { SessionDto } from "../dto/session/get-session-dto";
 import { FormInfo } from "../interfaces/form/formInfo";
 import { UserInfo } from "../interfaces/user/userInfo";
+import { WorkshopInfo } from "../interfaces/workshop/workshop-info";
+import { WorkshopSchedule } from "../interfaces/workshop/workshop-schedule";
 import { ApiCallPaths } from "./../paths/apiCallPaths";
 
 @Injectable({
@@ -70,6 +72,36 @@ export class SessionService {
     return this.http.post(
       this.baseUrl + ApiCallPaths.UpdateFormInfo,
       updatedFormInfo
+    );
+  }
+
+  public postWorkshop(newWorkshop: WorkshopInfo) {
+    return this.http.post<WorkshopInfo>(
+      this.baseUrl + ApiCallPaths.postWorkshop,
+      newWorkshop
+    );
+  }
+
+  public getSessionWorkshops(sessionId: number) {
+    return this.http.get<Array<WorkshopInfo>>(
+      this.baseUrl + ApiCallPaths.getWorkshopsBySessionId + sessionId
+    );
+  }
+
+  public deleteWorkshop(workshop: WorkshopInfo) {
+    return this.http.post(this.baseUrl + ApiCallPaths.deleteWorkshop, workshop);
+  }
+
+  public getUsersForSchedule(workshop: WorkshopInfo) {
+    return this.http.get<Array<UserInfo>>(
+      this.baseUrl + ApiCallPaths.getUsersEligibleForSchedule + workshop.id
+    );
+  }
+
+  public postWorkshopSchedule(schedule: WorkshopSchedule) {
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.postWorkshopSchedule,
+      schedule
     );
   }
 }

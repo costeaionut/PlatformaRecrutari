@@ -22,7 +22,5 @@ namespace PlatformaRecrutari.Dto.Sessions
         [Required(ErrorMessage = "Session's status is required.")]
         public bool IsOpen { get; set; }
         public FormDto Form { get; set; }
-        public string Workshop { get; set; }
-        public string Interview { get; set; }
     }
 }

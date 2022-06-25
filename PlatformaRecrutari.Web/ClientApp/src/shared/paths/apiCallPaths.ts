@@ -15,6 +15,13 @@ export enum ApiCallPaths {
   deleteSession = "api/Session/DeleteSession/",
   UpdateFormInfo = "api/Session/UpdateForm/",
 
+  postWorkshop = "api/Session/PostWorkshop",
+  getWorkshopsBySessionId = "api/Session/Workshops/",
+  getWorkshopById = "api/Session/Workshop/",
+  deleteWorkshop = "api/Session/Workshop/Delete/",
+  getUsersEligibleForSchedule = "api/Session/Workshop/ParticipantsToBeScheduled/",
+  postWorkshopSchedule = "api/Session/Workshop/Schedule",
+
   addFormAnswrs = "api/Participants/AddFormResponse/",
   getSessionParticipants = "api/Participants/GetSessionsParticipants/",
   getParticipantAnswer = "api/Participants/FindParticipantAnswer/",

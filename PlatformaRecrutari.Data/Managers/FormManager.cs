@@ -1,7 +1,9 @@
 ﻿using PlatformaRecrutari.Core.Abstractions;
+using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FormQuestions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Inputed_Options;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -163,6 +165,17 @@ namespace PlatformaRecrutari.Data.Managers
             var questionToBeDeleted = this._context.GridQuestions.FirstOrDefault(gq => gq.Id == questionId);
             this._context.Remove(questionToBeDeleted);
             this._context.SaveChanges();
+        }
+
+        public List<User> getUsersWhoPassedForm(int formId)
+        {
+            var ids = _context.FormFeedbacks
+                .Where(ff => ff.FormId == formId && ff.Status == StatusType.PassedForm)
+                .Select(ff => ff.CandidateId)
+                .ToList();
+            List<User> formPassedUsers = _context.Users.Where(u => ids.Contains(u.Id)).ToList();
+
+            return formPassedUsers;
         }
     }
 }

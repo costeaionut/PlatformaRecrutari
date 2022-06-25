@@ -1,8 +1,9 @@
 export interface WorkshopInfo {
   id: number;
-  departments: string;
+  sessionId: number;
   workshopDate: Date;
-  workshopLocation: string;
+  departments: string;
+  location: string;
   numberOfParticipants: number;
   numberOfBoardMembers: number;
   numberOfVolunteers: number;

@@ -10,6 +10,7 @@ using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FormQuestions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Inputed_Options;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops;
 
 namespace PlatformaRecrutari.Data
 {
@@ -24,13 +25,14 @@ namespace PlatformaRecrutari.Data
         public DbSet<Role> Roles { get; set; }
         
         public DbSet<Form> Forms { get; set; }
+        public DbSet<Workshop> Workshops { get; set; }
         public DbSet<FormAnswers> FormAnswers { get; set; }
         public DbSet<FormFeedback> FormFeedbacks { get; set; }
         public DbSet<InputsOption> InputsOptions { get; set; }
         public DbSet<GridQuestion> GridQuestions { get; set; }
         public DbSet<BaseQuestion> SimpleQuestions { get; set; }
+        public DbSet<WorkshopSchedule> WorkshopSchedules { get; set; }
         public DbSet<RecruitmentSession> RecruitmentSessions { get; set; }
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -100,6 +102,13 @@ namespace PlatformaRecrutari.Data
                 .Property(ff=> ff.Status)
                 .IsRequired(true);
 
+            modelBuilder.Entity<Workshop>()
+                .HasOne<RecruitmentSession>()
+                .WithMany()
+                .HasForeignKey(w => w.SessionId);
+
+            modelBuilder.Entity<WorkshopSchedule>()
+                .HasKey(ws => new { ws.ParticipantId, ws.WorkshopId});
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
+﻿using PlatformaRecrutari.Core.BusinessObjects;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FormQuestions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Inputed_Options;
 using System.Collections.Generic;
@@ -25,5 +26,6 @@ namespace PlatformaRecrutari.Core.Abstractions
         void updateForm(Form updatedForm);
         void deleteBaseQuestion(int questionId);
         void deleteGridQuestion(int questionId);
+        List<User> getUsersWhoPassedForm(int formId);
     }
 }

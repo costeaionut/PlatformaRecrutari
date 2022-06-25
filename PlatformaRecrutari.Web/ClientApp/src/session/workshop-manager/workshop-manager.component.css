@@ -19,6 +19,58 @@
     background-color: inherit;
 }
 
+.tableHeader td {
+    border-top: none;
+}
+
 ::ng-deep .cdk-overlay-container {
     z-index:2000; 
+}
+
+.active{
+    color:green;
+}
+.finished{
+    color:red;
+}
+.upcoming{
+    color:orange;
+}
+
+.actionButton{
+    border: none;
+    background-color: inherit;
+    width: auto;
+    height: auto;
+}
+
+.deleteButton{
+    margin-left: 5px;
+    color: rgba(255, 0, 0, 0.5)
+}
+
+.deleteButton:hover{
+    color:rgba(255, 0, 0, 1)
+}
+
+.editButton{
+    color: rgba(65, 105, 225, 0.5);
+}
+
+.editButton:hover{
+    color: royalblue;
+}
+
+.scheduleButton{
+    color: rgba(65, 105, 225, 0.5);
+}
+
+.scheduleButton:hover{
+    color: royalblue;
+}
+
+.searchbar:active,
+.searchbar:focus{
+    outline: none;
+    box-shadow: none;
 }

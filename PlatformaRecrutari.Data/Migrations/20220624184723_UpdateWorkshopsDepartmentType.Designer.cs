@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlatformaRecrutari.Data;
 
 namespace PlatformaRecrutari.Data.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20220624184723_UpdateWorkshopsDepartmentType")]
+    partial class UpdateWorkshopsDepartmentType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,22 +219,6 @@ namespace PlatformaRecrutari.Data.Migrations
                     b.HasIndex("SessionId");
 
                     b.ToTable("Workshops");
-                });
-
-            modelBuilder.Entity("PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops.WorkshopSchedule", b =>
-                {
-                    b.Property<string>("ParticipantId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("WorkshopId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("VolunteerId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ParticipantId", "WorkshopId");
-
-                    b.ToTable("WorkshopSchedules");
                 });
 
             modelBuilder.Entity("PlatformaRecrutari.Core.BusinessObjects.Role", b =>

@@ -13,24 +13,29 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using PlatformaRecrutari.Dto.Sessions.FormQuesitons;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops;
 
 namespace PlatformaRecrutari.Web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Candidate, ProjectManager")]
+    [Authorize]
     public class SessionController : ControllerBase
     {
 
         private readonly IMapper _mapper;
         private readonly IFormManager _formManager;
         private readonly ISessionManager _sessionManager;
+        private readonly IWorkshopManager _workshopManager;
 
         public SessionController(
-            ISessionManager sessionsManager,
             IMapper mapper,
-            IFormManager formManager)
+            IFormManager formManager,
+            ISessionManager sessionsManager,
+            IWorkshopManager workshopManager
+        )
         {
+            _workshopManager = workshopManager;
             _sessionManager = sessionsManager;
             _formManager = formManager;
             _mapper = mapper;
@@ -343,6 +348,7 @@ namespace PlatformaRecrutari.Web.Controllers
         } 
     
         [HttpPost("UpdateForm")]
+        [Authorize(Roles = RoleType.ProjectManager)]
         public async Task<IActionResult> UpdateFormAsync([FromBody] FormDto updatedFormDto) {
             if (updatedFormDto == null)
                 return BadRequest("MissingFormUpdate");
@@ -581,6 +587,72 @@ namespace PlatformaRecrutari.Web.Controllers
             }
 
             return Ok();
+        }
+   
+        [HttpPost("PostWorkshop")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public ActionResult<Workshop> PostNewWorkshop([FromBody] Workshop newWorkshop)
+        {
+            if (newWorkshop == null)
+                return BadRequest("MissingBodyWorkshop");
+
+            if (newWorkshop.WorkshopDate < new DateTime())
+                return BadRequest("WrongDateTime");
+
+            if (newWorkshop.Id != 0)
+                return _workshopManager.updateWorkshop(newWorkshop);
+
+            var res = _workshopManager.createWorkshop(newWorkshop);
+            if (res == null) 
+                return StatusCode(500, "ErrorCreatingWorkshop");
+
+            return res;
+        }
+
+        [HttpGet("Workshops/{sessionId}")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public ActionResult<List<Workshop>> GetWorkshopsBySessionId(int sessionId) 
+            => this._workshopManager.getWorkshopRangeBySessionId(sessionId);
+
+
+        [HttpGet("Workshop/{workshopId}")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public ActionResult<Workshop> GetWorkshopById(int workshopId) =>
+            this._workshopManager.getWorkshopById(workshopId);
+    
+        [HttpPost("Workshop/Delete")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public IActionResult DeleteWorkshop([FromBody] Workshop workshopToBeDeleted) {
+            if (workshopToBeDeleted == null)
+                return BadRequest("MissingBodyWorkshop");
+
+            this._workshopManager.deleteWorkshop(workshopToBeDeleted);
+
+            return Ok();
+        }
+    
+        [HttpGet("Workshop/ParticipantsToBeScheduled/{workshopId}")]
+        public List<User> GetParticipantsWhoCanBeScheduled(int workshopId)
+        {
+
+            var workshop = this._workshopManager.getWorkshopById(workshopId);
+            var session = this._sessionManager.GetSessionById(workshop.SessionId);
+            var form = this._formManager.getFormBySessionId(session.Id);
+
+            var users = this._formManager.getUsersWhoPassedForm(form.Id);
+
+            var eligibleUsers = this._workshopManager.getUsersEligibleForSchedule(users, workshop);
+
+            return eligibleUsers;
+        }
+    
+        [HttpPost("Workshop/Schedule")]
+        public ActionResult<WorkshopSchedule> PostNewSchedule([FromBody] WorkshopSchedule newSchedule)
+        {
+            if (newSchedule == null)
+                return BadRequest("MissingBodySchedule");
+
+            return this._workshopManager.createWorkshopSchedule(newSchedule);
         }
     }
 }

@@ -1,4 +1,4 @@
-<div class="container">
+<div *ngIf="this.workshops && this.currentUser" class="container">
   <div class="row" style="margin-top: 10px">
     <div class="col">
       <h4>Workshops</h4>
@@ -9,6 +9,78 @@
       </button>
     </div>
   </div>
+
+  <div *ngIf="this.workshops.length == 0" class="row">
+    <div class="col">
+      <h5>There are no workshops yet</h5>
+    </div>
+  </div>
+
+  <div *ngIf="this.workshops.length != 0" class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr class="tableHeader">
+          <td scope="col">#</td>
+          <td scope="col">Departments</td>
+          <td style="padding-right: 0" scope="col">Date</td>
+          <td style="padding-left: 0" scope="col">Status</td>
+          <td align="right" scope="col">Take an action</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let workshop of this.workshops; index as workshopIndex">
+          <td style="width: 10px">{{ workshopIndex + 1 }}</td>
+          <td>{{ this.parseDepartments(workshop) }}</td>
+          <td>{{ this.parseDateForDisplay(workshop) }}</td>
+          <td
+            [ngClass]="{
+              active: this.parseWorkshopStatus(workshop) == 'Active now',
+              finished: this.parseWorkshopStatus(workshop) == 'Finished',
+              upcoming: this.parseWorkshopStatus(workshop) == 'Upcoming'
+            }"
+            style="padding-left: 0"
+          >
+            {{ this.parseWorkshopStatus(workshop) }}
+          </td>
+          <td align="right">
+            <button
+              type="button"
+              style="margin-left: 10px"
+              class="actionButton scheduleButton"
+              (click)="this.openSchedule(schedule, workshop)"
+              *ngIf="this.currentUser.role != 'Participant'"
+            >
+              Schedule
+            </button>
+            <button
+              type="button"
+              (click)="editWorkshop(content, workshop)"
+              class="actionButton editButton"
+              *ngIf="
+                this.parseWorkshopStatus(workshop) === 'Upcoming' &&
+                this.currentUser.role == 'ProjectManager'
+              "
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              style="margin-left: 10px"
+              class="actionButton deleteButton"
+              (click)="this.deleteWorkshop(workshop)"
+              *ngIf="
+                this.parseWorkshopStatus(workshop) === 'Upcoming' &&
+                this.currentUser.role == 'ProjectManager'
+              "
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
   <ng-template #content let-modal>
     <div class="modal-header">
       <h4 class="modal-title">Add workshop details</h4>
@@ -166,6 +238,87 @@
         (click)="saveNewWorkshop()"
       >
         Save
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template #schedule let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">Workshop Scheduler</h4>
+    </div>
+    <div class="modal-body">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <b>Date&Time:</b> {{ this.scheduleDate.toLocaleDateString() }},
+            {{ this.scheduleDate.getHours().toString() }}:{{
+              this.scheduleDate.getMinutes().toString()
+            }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col"><b>Location:</b> {{ this.scheduleLocation }}</div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <b>Departments:</b> {{ this.scheduleDepartments }}
+          </div>
+        </div>
+        <div class="row">
+          <div style="margin-top: 10px" class="col">
+            <b>Select User: </b>
+            <input
+              type="text"
+              class="form-control searchbar"
+              placeholder="Participant Name"
+              aria-label="Username"
+              aria-describedby="addon-wrapping"
+              (input)="updateFilteredList()"
+              [(ngModel)]="this.searchedUserName"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <select
+              size="6"
+              style="
+                width: 100%;
+                padding: 10px;
+                border-radius: 5px;
+                border-color: #dadee3;
+                outline: none;
+              "
+              class="form-select"
+              aria-label="size 6 select example"
+              [(ngModel)]="this.selectedParticipant"
+            >
+              <option
+                value="{{ user.id }}"
+                (click)="this.updateSelected(user)"
+                *ngFor="let user of this.filteredParticipantsToBeScheduled"
+              >
+                {{ user.firstName }} {{ user.lastName }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div *ngIf="this.scheduleErrors.length != 0" class="row">
+          <div class="col">
+            <em style="color: red" *ngFor="let error of this.scheduleErrors">{{
+              error
+            }}</em>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-outline-dark"
+        (click)="this.newSchedule()"
+      >
+        Schedule
       </button>
     </div>
   </ng-template>

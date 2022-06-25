@@ -254,6 +254,8 @@
   </div>
 
   <div class="container" *ngIf="this.whatToDisplay == 'workshops'">
-    <app-workshop-manager></app-workshop-manager>
+    <app-workshop-manager
+      [session]="this.currentSession"
+    ></app-workshop-manager>
   </div>
 </div>
