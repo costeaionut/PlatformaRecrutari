@@ -51,7 +51,7 @@
     </div>
     <div class="row">
       <div *ngIf="!this.editingSession" class="col">
-        Session is active from:
+        <em>Session</em> is active from:
         <i>{{ parseDate(this.currentSession.startDate) }}</i> -
         <i>{{ parseDate(this.currentSession.endDate) }}</i>
       </div>
@@ -97,7 +97,7 @@
     <div class="row">
       <div class="col">
         <p>
-          Status:
+          <em>Session's</em> status:
           <span
             [ngClass]="{
               active: getStatus() === 'Active',
@@ -105,6 +105,28 @@
               closed: getStatus() === 'Finished'
             }"
             >{{ getStatus() }}</span
+          >
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div *ngIf="!this.editingSession" class="col">
+        <em>Form</em> is active from:
+        <i>{{ parseDate(this.currentForm.startDate) }}</i> -
+        <i>{{ parseDate(this.currentForm.endDate) }}</i>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <p>
+          <em>Form's</em> status:
+          <span
+            [ngClass]="{
+              active: getCurrentFormStatus() === 'Active',
+              upcoming: getCurrentFormStatus() === 'NotStarted',
+              closed: getCurrentFormStatus() === 'Ended'
+            }"
+            >{{ getCurrentFormStatus() }}</span
           >
         </p>
       </div>
@@ -165,7 +187,7 @@
   <div class="container" *ngIf="this.whatToDisplay == 'form'">
     <div style="text-align: end; margin-top: 10px">
       <button
-        *ngIf="!this.editingForm"
+        *ngIf="!this.editingForm && this.currentUser.role == 'ProjectManagers'"
         type="button"
         class="btn btn-primary"
         (click)="this.editForm()"
@@ -211,12 +233,17 @@
             *ngIf="this.getCurrentFormStatus() == 'Ended'"
             [ngClass]="{
               approvedStatus:
-                this.participantsStatus[userIndex] == 'Passed form stage',
+                this.participantsStatus[userIndex] == 'Passed form stage' ||
+                this.participantsStatus[userIndex] == 'Scheduled for workshop',
               rejectedStatus:
                 this.participantsStatus[userIndex] == 'Rejected at form stage',
               waitingStatus:
                 this.participantsStatus[userIndex] ==
-                'Waiting for form feedback'
+                  'Waiting for form feedback' ||
+                this.participantsStatus[userIndex] ==
+                  'Not scheduled for workshop' ||
+                this.participantsStatus[userIndex] ==
+                  'Waiting for workshop feedback'
             }"
             (click)="goToUserProfile(userIndex)"
           >
@@ -256,6 +283,7 @@
   <div class="container" *ngIf="this.whatToDisplay == 'workshops'">
     <app-workshop-manager
       [session]="this.currentSession"
+      [form]="this.currentForm"
     ></app-workshop-manager>
   </div>
 </div>

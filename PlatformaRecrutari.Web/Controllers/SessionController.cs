@@ -290,7 +290,6 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpGet("RecruitmentSessions")]
-        [Authorize(Roles = RoleType.ProjectManager)]
         public ActionResult<List<RecruitmentSessionDto>> GetAllSessions()
         {
             return Ok(this._sessionManager.GetAllSessions());
@@ -317,7 +316,7 @@ namespace PlatformaRecrutari.Web.Controllers
             if (endDate < DateTime.Now)
                 return BadRequest($"ClosedForm||{sessionsForm.EndDate}");
 
-            return Ok(sessionsForm);
+            return sessionsForm;
         }
 
         [HttpGet("ActiveSession")]
@@ -327,7 +326,6 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpGet("{id:int}")]
-        [Authorize(Roles = RoleType.ProjectManager)]
         public ActionResult<RecruitmentSessionDto> getSessionById(int id) =>
             this._mapper.Map<RecruitmentSessionDto>(this._sessionManager.GetSessionById(id));
 
@@ -610,13 +608,11 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpGet("Workshops/{sessionId}")]
-        [Authorize(Roles = RoleType.ProjectManager)]
         public ActionResult<List<Workshop>> GetWorkshopsBySessionId(int sessionId) 
             => this._workshopManager.getWorkshopRangeBySessionId(sessionId);
 
 
         [HttpGet("Workshop/{workshopId}")]
-        [Authorize(Roles = RoleType.ProjectManager)]
         public ActionResult<Workshop> GetWorkshopById(int workshopId) =>
             this._workshopManager.getWorkshopById(workshopId);
     
@@ -641,7 +637,7 @@ namespace PlatformaRecrutari.Web.Controllers
 
             var users = this._formManager.getUsersWhoPassedForm(form.Id);
 
-            var eligibleUsers = this._workshopManager.getUsersEligibleForSchedule(users, workshop);
+            var eligibleUsers = this._workshopManager.getUsersEligibleForSchedule(users, session);
 
             return eligibleUsers;
         }
@@ -652,7 +648,52 @@ namespace PlatformaRecrutari.Web.Controllers
             if (newSchedule == null)
                 return BadRequest("MissingBodySchedule");
 
-            return this._workshopManager.createWorkshopSchedule(newSchedule);
+            var activeSession = this._sessionManager.GetActiveSession();
+            var currentForm = this._formManager.getFormBySessionId(activeSession.Id);
+
+            if (currentForm.EndDate < DateTime.Now)
+                return this._workshopManager.createWorkshopSchedule(newSchedule);
+
+            return BadRequest("WaitForFormToClose");
         }
+    
+        [HttpGet("Workshop/Scheduled/Participants/{workshopId}")]
+        public ActionResult<List<User>> GetScheduledParticipants(int workshopId)
+            => this._workshopManager.getWorkshopParticipants(this._workshopManager.getWorkshopById(workshopId));
+
+        [HttpGet("Workshop/Scheduled/Volunteers/{workshopId}")]
+        public ActionResult<List<User>> GetScheduledVolunteers(int workshopId)
+            => this._workshopManager.getWorkshopVolunteers(this._workshopManager.getWorkshopById(workshopId));
+
+        [HttpGet("Workshop/Scheduled/CDDD/{workshopId}")]
+        public ActionResult<List<User>> GetScheduledCDDD(int workshopId)
+            => this._workshopManager.getWorkshopScheduledCDDD(this._workshopManager.getWorkshopById(workshopId));
+
+        [HttpGet("Workshop/IsScheduled/{userId}/{sessionId}")]
+        public ActionResult<bool> IsParticipantScheduled(int sessionId, string userId)
+            => this._workshopManager.isParticipantScheduled(sessionId, userId);
+
+        [HttpGet("Workshop/Status/{userId}/{sessionId}")]
+        public ActionResult<string> GetWorkshopStatusFromUserIdAndSessionId(string userId, int sessionId)
+            => this._workshopManager.getWorkshopStatus(sessionId, userId);
+    
+        [HttpPost("Workshop/Scheduled/WhoScheduled/{sessionId}")]
+        public ActionResult<List<User>> GetWhoScheduled([FromBody] List<User> users, int sessionId)
+        {
+            if (users == null)
+                return BadRequest("MissingBodyUsers");
+
+            var workshops = _workshopManager.getWorkshopRangeBySessionId(sessionId);
+
+            return _workshopManager.getVolunteerWhoScheduledParticipants(workshops, users);
+        }
+
+        [HttpPost("Workshop/Schedule/DeleteSchedule/{participantId}/{workshopId}")]
+        public IActionResult DeleteScheduledUser(string participantId, int workshopId)
+        {
+            this._workshopManager.deleteParticipantScheduleSlot(participantId, workshopId);
+            return Ok();
+        }
+
     }
 }

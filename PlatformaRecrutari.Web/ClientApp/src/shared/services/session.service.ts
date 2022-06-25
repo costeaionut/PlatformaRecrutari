@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { FormDto } from "../dto/form-dto";
 import { CreateSessionDto } from "../dto/session/create-session-dto";
@@ -102,6 +102,63 @@ export class SessionService {
     return this.http.post(
       this.baseUrl + ApiCallPaths.postWorkshopSchedule,
       schedule
+    );
+  }
+
+  public getWorkshopParticipants(workshopId: number) {
+    return this.http.get<UserInfo[]>(
+      this.baseUrl + ApiCallPaths.getWorkshopParticipantsByWSId + workshopId
+    );
+  }
+
+  public getWorkshopVolunteers(workshopId: number) {
+    return this.http.get<UserInfo[]>(
+      this.baseUrl + ApiCallPaths.getWorkshopVolunteersByWSId + workshopId
+    );
+  }
+
+  public getWorkshopCDDD(workshopId: number) {
+    return this.http.get<UserInfo[]>(
+      this.baseUrl + ApiCallPaths.getWorkshopCDDDByWSId + workshopId
+    );
+  }
+
+  public isParticipantScheduledForWS(sessionId: number, userId: string) {
+    return this.http.get<boolean>(
+      this.baseUrl +
+        ApiCallPaths.isParticipantScheduled +
+        `${userId}/${sessionId}`
+    );
+  }
+
+  public getWorkshopStatusFromParticipantAndSession(
+    sessionId: number,
+    participantId: string
+  ) {
+    return this.http.get(
+      this.baseUrl +
+        ApiCallPaths.getWorkshopStatusSessionIdParticipantId +
+        `${participantId}/${sessionId}`,
+      { responseType: "text" }
+    );
+  }
+
+  public getVolunteerWhoScheduledRange(
+    participants: UserInfo[],
+    sessionId: number
+  ) {
+    return this.http.post<Array<UserInfo>>(
+      this.baseUrl + ApiCallPaths.getVolunteerWhoScheduledRange + sessionId,
+      participants
+    );
+  }
+
+  public deleteScheduleSlot(participantId: string, workshopId: number) {
+    return this.http.post(
+      this.baseUrl +
+        ApiCallPaths.deleteScheduleSlot +
+        `${participantId}/${workshopId}`,
+      {}
     );
   }
 }

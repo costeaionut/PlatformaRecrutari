@@ -1,76 +1,124 @@
-.locationTextarea{
-    resize: none;
-    overflow: hidden;
-    border: 0;
-    border-bottom: 1px solid grey;
+.locationTextarea {
+  resize: none;
+  overflow: hidden;
+  border: 0;
+  border-bottom: 1px solid grey;
 }
 
-.locationTextarea:focus{
-    outline: none;
+.locationTextarea:focus {
+  outline: none;
 }
 
-.dateTimeDisplay{
-    color: grey;
-    border: none;
-    border-bottom: 1px solid grey;
+.dateTimeDisplay {
+  color: grey;
+  border: none;
+  border-bottom: 1px solid grey;
 }
 
-.dateTimeDisplay:disabled{
-    background-color: inherit;
+.dateTimeDisplay:disabled {
+  background-color: inherit;
 }
 
 .tableHeader td {
-    border-top: none;
+  border-top: none;
 }
 
 ::ng-deep .cdk-overlay-container {
-    z-index:2000; 
+  z-index: 2000;
 }
 
-.active{
-    color:green;
+.active {
+  color: green;
 }
-.finished{
-    color:red;
+.finished {
+  color: red;
 }
-.upcoming{
-    color:orange;
-}
-
-.actionButton{
-    border: none;
-    background-color: inherit;
-    width: auto;
-    height: auto;
+.upcoming {
+  color: orange;
 }
 
-.deleteButton{
-    margin-left: 5px;
-    color: rgba(255, 0, 0, 0.5)
+.actionButton {
+  border: none;
+  background-color: inherit;
+  width: auto;
+  height: auto;
 }
 
-.deleteButton:hover{
-    color:rgba(255, 0, 0, 1)
+.deleteButton {
+  margin-left: 5px;
+  color: rgba(255, 0, 0, 0.5);
 }
 
-.editButton{
-    color: rgba(65, 105, 225, 0.5);
+.deleteButton:hover {
+  color: rgba(255, 0, 0, 1);
 }
 
-.editButton:hover{
-    color: royalblue;
+.editButton {
+  color: rgba(65, 105, 225, 0.5);
 }
 
-.scheduleButton{
-    color: rgba(65, 105, 225, 0.5);
+.editButton:hover {
+  color: royalblue;
 }
 
-.scheduleButton:hover{
-    color: royalblue;
+.scheduleButton {
+  color: rgba(65, 105, 225, 0.5);
+}
+
+.scheduleButton:hover {
+  color: royalblue;
 }
 
 .searchbar:active,
-.searchbar:focus{
-    outline: none;
-    box-shadow: none;
+.searchbar:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.displayWorkshopInfo {
+    transition-property: background-color;
+    transition-duration: 0.5s;
+}
+
+.displayWorkshopInfo:hover{
+    border-radius: 5px;
+    background-color: rgba(128, 128, 128, 0.1);
+    cursor:pointer;
+}
+
+.userAction:hover{
+    cursor: default;
+}
+
+.changeWsInfoDisplayWrapper{
+  border-bottom: 1px solid grey;
+}
+
+.selected{
+  border-bottom: 2px solid rgba(65, 105, 225, 1);
+}
+
+.changeWsInfoDisplay{
+  width: 100%;
+  border: none;
+  background-color: inherit;
+  padding-top: 10px;
+
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+
+  transition-property: background-color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in;
+
+}
+
+.changeWsInfoDisplay:hover{
+  background-color: rgba(228, 228, 228, 0.25);
+}
+
+.removeParticipant{
+  border: none;
+  background-color: inherit;
+  color:red
 }

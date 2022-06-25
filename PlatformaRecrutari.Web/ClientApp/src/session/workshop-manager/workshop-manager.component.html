@@ -4,7 +4,11 @@
       <h4>Workshops</h4>
     </div>
     <div class="col" align="right">
-      <button class="btn btn-outline-success" (click)="open(content)">
+      <button
+        *ngIf="this.currentUser.role == 'ProjectManager'"
+        class="btn btn-outline-success"
+        (click)="open(content)"
+      >
         Create new workshop
       </button>
     </div>
@@ -28,11 +32,21 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let workshop of this.workshops; index as workshopIndex">
-          <td style="width: 10px">{{ workshopIndex + 1 }}</td>
-          <td>{{ this.parseDepartments(workshop) }}</td>
-          <td>{{ this.parseDateForDisplay(workshop) }}</td>
+        <tr
+          class="displayWorkshopInfo"
+          *ngFor="let workshop of this.workshops; index as workshopIndex"
+        >
+          <td (click)="openWsInfo(workshopInfo, workshop)" style="width: 10px">
+            {{ workshopIndex + 1 }}
+          </td>
+          <td (click)="openWsInfo(workshopInfo, workshop)">
+            {{ this.parseDepartments(workshop) }}
+          </td>
+          <td (click)="openWsInfo(workshopInfo, workshop)">
+            {{ this.parseDateForDisplay(workshop) }}
+          </td>
           <td
+            (click)="openWsInfo(workshopInfo, workshop)"
             [ngClass]="{
               active: this.parseWorkshopStatus(workshop) == 'Active now',
               finished: this.parseWorkshopStatus(workshop) == 'Finished',
@@ -42,13 +56,13 @@
           >
             {{ this.parseWorkshopStatus(workshop) }}
           </td>
-          <td align="right">
+          <td class="userAction" align="right">
             <button
               type="button"
               style="margin-left: 10px"
               class="actionButton scheduleButton"
               (click)="this.openSchedule(schedule, workshop)"
-              *ngIf="this.currentUser.role != 'Participant'"
+              *ngIf="this.canSchedule()"
             >
               Schedule
             </button>
@@ -316,9 +330,183 @@
       <button
         type="button"
         class="btn btn-outline-dark"
-        (click)="this.newSchedule()"
+        (click)="this.newParticipantSchedule()"
       >
         Schedule
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template #workshopInfo let-modal>
+    <div class="modal-header">
+      <div class="modal-title">
+        <h4>Workshop Info</h4>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col">
+          <b>Date&Time:</b> {{ this.wsInfoDate.toLocaleDateString() }},
+          {{ this.wsInfoDate.getHours().toString() }}:{{
+            this.wsInfoDate.getMinutes().toString()
+          }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col"><b>Location:</b> {{ this.wsInfoLocation }}</div>
+      </div>
+      <div class="row">
+        <div class="col"><b>Departments:</b> {{ this.wsInfoDepartments }}</div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <b>Remaining slot for participants:</b>
+          {{ this.wsInfoNoParticipants - this.wsInfoParticipants.length }}
+        </div>
+      </div>
+      <div class="row changeWsInfoDisplayWrapper">
+        <div
+          class="col"
+          align="center"
+          style="padding: 0"
+          (click)="this.changeWsInfoDisplay('participants')"
+          [ngClass]="{ selected: this.wsInfoDisplay == 'participants' }"
+        >
+          <button class="changeWsInfoDisplay">Participants</button>
+        </div>
+        <div
+          class="col"
+          align="center"
+          style="padding: 0"
+          (click)="this.changeWsInfoDisplay('volunteers')"
+          [ngClass]="{ selected: this.wsInfoDisplay == 'volunteers' }"
+        >
+          <button class="changeWsInfoDisplay">Volunteers</button>
+        </div>
+        <div
+          class="col"
+          align="center"
+          style="padding: 0"
+          (click)="this.changeWsInfoDisplay('cddd')"
+          [ngClass]="{ selected: this.wsInfoDisplay == 'cddd' }"
+        >
+          <button class="changeWsInfoDisplay">Directors&Board</button>
+        </div>
+      </div>
+
+      <div *ngIf="this.wsInfoDisplay == 'participants'" class="row">
+        <div
+          *ngIf="this.wsInfoParticipants.length != 0"
+          class="col table-responsive"
+        >
+          <table class="table">
+            <thead>
+              <tr>
+                <td scope="col"><b>#</b></td>
+                <td scope="col"><b>Participant's Info</b></td>
+                <td scope="col"><b>Status</b></td>
+                <td scope="col"><b>Actions</b></td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let participant of this.wsInfoParticipants;
+                  index as participantIndex
+                "
+              >
+                <td>{{ participantIndex + 1 }}.</td>
+                <td>{{ participant.firstName }} {{ participant.lastName }}</td>
+                <td>Workshop not finished</td>
+                <td style="padding-left: 5px">
+                  <button
+                    *ngIf="canRemoveParticipantFromWS(participantIndex)"
+                    (click)="
+                      deleteScheduledParticipant(
+                        participant.id,
+                        this.wsInfoOpened.id
+                      )
+                    "
+                    class="removeParticipant"
+                  >
+                    Remove from worshop
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="this.wsInfoParticipants.length == 0" class="col">
+          <h4>There are no scheduled participants yet!</h4>
+        </div>
+      </div>
+      <div *ngIf="this.wsInfoDisplay == 'volunteers'" class="row">
+        <div class="col" *ngIf="this.wsInfoVolunteers.length == 0">
+          <h4>There are no scheduled volunteers yet!</h4>
+        </div>
+        <div
+          class="col table-responsive"
+          *ngIf="this.wsInfoVolunteers.length != 0"
+        >
+          <table class="table">
+            <thead>
+              <tr>
+                <td><b>#</b></td>
+                <td><b>Volunteer info</b></td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let volunteer of this.wsInfoVolunteers;
+                  index as volIndex
+                "
+              >
+                <td style="width: 5px">{{ volIndex + 1 }}.</td>
+                <td>{{ volunteer.firstName }} {{ volunteer.lastName }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div *ngIf="this.wsInfoDisplay == 'cddd'" class="row">
+        <div class="col" *ngIf="this.wsInfoCddd.length == 0">
+          <h4>There are no scheduled directors or board members yet!</h4>
+        </div>
+        <div class="col" *ngIf="this.wsInfoCddd.length != 0">
+          <table class="table">
+            <thead>
+              <tr>
+                <td><b>#</b></td>
+                <td><b>Member info</b></td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let cddd of this.wsInfoCddd; index as cdddIndex">
+                <td style="width: 5px">{{ cdddIndex + 1 }}.</td>
+                <td>
+                  {{ cddd.firstName }} {{ cddd.lastName }} | {{ cddd.role }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button
+        class="btn btn-outline-primary"
+        (click)="this.assignMyself()"
+        *ngIf="canParticipateAsVolunteerOrCDDD() === 'canApply'"
+      >
+        Schedule myself for this workshop
+      </button>
+      <button
+        class="btn btn-outline-danger"
+        (click)="removeMyselfFromWs()"
+        *ngIf="canParticipateAsVolunteerOrCDDD() === 'canRemove'"
+      >
+        Remove myself from this workshop
       </button>
     </div>
   </ng-template>

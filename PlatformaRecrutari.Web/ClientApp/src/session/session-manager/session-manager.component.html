@@ -23,7 +23,11 @@
         Previous Sessions
       </button>
     </div>
-    <div class="col" align="center">
+    <div
+      *ngIf="this.currentUser.role == 'ProjectManager'"
+      class="col"
+      align="center"
+    >
       <button class="sessionTypeButton" (click)="goToCreateSessionPage()">
         Create Sessions
       </button>

@@ -23,6 +23,7 @@ import { CandidateApplicationFormComponent } from "src/session/candidate-applica
 import { CandidateRoleGuard } from "src/shared/guards/candidate-role.guard";
 import { UserProfileComponent } from "src/auth/user-profile/user-profile.component";
 import { AuthenticatedGuard } from "src/shared/guards/authenticated.guard";
+import { NotParticipantGuard } from "src/shared/guards/not-participant.guard";
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -59,7 +60,7 @@ export function tokenGetter() {
       {
         path: "sessions",
         component: SessionManagerComponent,
-        canActivate: [PmRoleGuard],
+        canActivate: [NotParticipantGuard],
       },
       {
         path: "create-session",
@@ -69,7 +70,7 @@ export function tokenGetter() {
       {
         path: "session/:id",
         component: DisplaySessionsComponent,
-        canActivate: [PmRoleGuard],
+        canActivate: [NotParticipantGuard],
       },
       {
         path: "apply",

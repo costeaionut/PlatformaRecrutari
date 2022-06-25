@@ -11,5 +11,6 @@ namespace PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops
         public int WorkshopId { get; set; }
         public string ParticipantId { get; set; }
         public string VolunteerId { get; set; }
+        public string Type { get; set; }
     }
 }

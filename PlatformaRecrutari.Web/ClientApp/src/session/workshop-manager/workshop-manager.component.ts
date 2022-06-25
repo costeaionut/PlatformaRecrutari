@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { of } from "rxjs";
+import { FormInfo } from "src/shared/interfaces/form/formInfo";
 import { UserInfo } from "src/shared/interfaces/user/userInfo";
 import { WorkshopInfo } from "src/shared/interfaces/workshop/workshop-info";
 import { WorkshopSchedule } from "src/shared/interfaces/workshop/workshop-schedule";
@@ -14,6 +16,7 @@ import Swal from "sweetalert2";
 })
 export class WorkshopManagerComponent implements OnInit {
   @Input() session: SessionInfo;
+  @Input() form: FormInfo;
   workshops: WorkshopInfo[];
   currentUser: UserInfo;
 
@@ -244,6 +247,15 @@ export class WorkshopManagerComponent implements OnInit {
   participantsToBeScheduled: Array<UserInfo>;
   filteredParticipantsToBeScheduled: Array<UserInfo>;
 
+  canSchedule(): boolean {
+    if (
+      this.currentUser.role != "Participant" &&
+      new Date(this.form.endDate) < new Date()
+    )
+      return true;
+    return false;
+  }
+
   async openSchedule(content, workshop: WorkshopInfo) {
     this.scheduleErrors = [];
     this.scheduleDepartments = "";
@@ -285,7 +297,7 @@ export class WorkshopManagerComponent implements OnInit {
     this.updateFilteredList();
   }
 
-  newSchedule() {
+  newParticipantSchedule() {
     this.scheduleErrors = [];
 
     if (this.selectedParticipant == undefined)
@@ -297,6 +309,7 @@ export class WorkshopManagerComponent implements OnInit {
       participantId: this.selectedParticipant.id,
       workshopId: this.openedWorkshopSchedule.id,
       volunteerId: this.currentUser.id,
+      type: "Participant",
     };
 
     Swal.fire({
@@ -327,6 +340,341 @@ export class WorkshopManagerComponent implements OnInit {
             });
           }
         );
+    });
+  }
+
+  wsInfoDate: Date;
+  wsInfoDisplay: string;
+  wsInfoLocation: string;
+  wsInfoDepartments: string;
+  wsInfoNoVolunteers: number;
+  wsInfoOpened: WorkshopInfo;
+  wsInfoNoParticipants: number;
+
+  //An array containing the person's who scheduled the users
+  wsInfoParticipantsSchedulerVolunteer: Array<UserInfo>;
+  wsInfoParticipants: Array<UserInfo>;
+  wsInfoVolunteers: Array<UserInfo>;
+  wsInfoCddd: Array<UserInfo>;
+  wsInfoCd: Array<UserInfo>;
+  wsInfoDd: Array<UserInfo>;
+
+  async openWsInfo(wsInfo, workshop: WorkshopInfo) {
+    this.wsInfoOpened = workshop;
+    this.wsInfoDisplay = "participants";
+    this.wsInfoLocation = workshop.location;
+    this.wsInfoDate = new Date(workshop.workshopDate);
+    this.wsInfoDepartments = workshop.departments.split(";;").join(", ");
+
+    this.wsInfoNoVolunteers = workshop.numberOfVolunteers;
+    this.wsInfoNoParticipants = workshop.numberOfParticipants;
+
+    var promiseParticipants = this.sessionService
+      .getWorkshopParticipants(workshop.id)
+      .toPromise();
+
+    var promiseVolunteers = this.sessionService
+      .getWorkshopVolunteers(workshop.id)
+      .toPromise();
+
+    var promiseCDDD = this.sessionService
+      .getWorkshopCDDD(workshop.id)
+      .toPromise();
+
+    this.wsInfoParticipants = await promiseParticipants;
+    this.wsInfoParticipantsSchedulerVolunteer = await this.sessionService
+      .getVolunteerWhoScheduledRange(this.wsInfoParticipants, this.session.id)
+      .toPromise();
+    this.wsInfoVolunteers = await promiseVolunteers;
+    this.wsInfoCddd = await promiseCDDD;
+    this.wsInfoCddd.forEach((cddd) => {
+      if (cddd.role == "BoardMember") this.wsInfoCd.push(cddd);
+      if (cddd.role == "DepartmentDirector") this.wsInfoDd.push(cddd);
+    });
+
+    this.modalService.open(wsInfo, { centered: true, size: "lg" });
+  }
+
+  deleteScheduledParticipant(participantId: string, workshopId: number) {
+    Swal.fire({
+      title: "Are you sure you want to remove the user from this workshop?",
+      icon: "question",
+      showCancelButton: true,
+      showConfirmButton: true,
+      cancelButtonColor: "red",
+      confirmButtonColor: "green",
+      cancelButtonText: "No",
+      confirmButtonText: "Yes",
+    }).then((res) => {
+      if (res.value)
+        this.sessionService
+          .deleteScheduleSlot(participantId, workshopId)
+          .subscribe(
+            async (_res) => {
+              Swal.fire({
+                title: "User removed from workshop",
+                icon: "success",
+                timer: 1500,
+              });
+              this.wsInfoParticipants = await this.sessionService
+                .getWorkshopParticipants(this.wsInfoOpened.id)
+                .toPromise();
+
+              this.wsInfoParticipantsSchedulerVolunteer =
+                await this.sessionService
+                  .getVolunteerWhoScheduledRange(
+                    this.wsInfoParticipants,
+                    this.session.id
+                  )
+                  .toPromise();
+            },
+            (err) => {
+              Swal.fire({
+                title:
+                  "There was an issue removing the user...\nPlease try again later",
+                icon: "error",
+                timer: 1500,
+              });
+            }
+          );
+    });
+  }
+
+  changeWsInfoDisplay(newDisplay: string) {
+    this.wsInfoDisplay = newDisplay;
+  }
+
+  canRemoveParticipantFromWS(participantIndex: number) {
+    if (
+      (this.wsInfoParticipantsSchedulerVolunteer[participantIndex].id ==
+        this.currentUser.id ||
+        this.currentUser.role == "ProjectManager") &&
+      this.wsInfoDate < new Date()
+    ) {
+    }
+  }
+
+  canParticipateAsVolunteerOrCDDD() {
+    if (this.wsInfoDate < new Date()) return "cantApply";
+    switch (this.currentUser.role) {
+      case "Volunteer":
+        let foundVol = false;
+        this.wsInfoVolunteers.forEach((vol) => {
+          if (vol.id == this.currentUser.id) foundVol = true;
+        });
+        if (foundVol) return "canRemove";
+        else return "canApply";
+      case "BoardMember":
+        let foundCD = false;
+        this.wsInfoCd.forEach((cd) => {
+          if (cd.id == this.currentUser.id) foundCD = true;
+        });
+        if (foundCD) return "canRemove";
+        else return "canApply";
+      case "DepartmentDirector":
+        let foundDD = false;
+        this.wsInfoDd.forEach((dd) => {
+          if (dd.id == this.currentUser.id) foundDD = true;
+        });
+        if (foundDD) return "canRemove";
+        return "canApply";
+      default:
+        return "cantApply";
+    }
+  }
+
+  async assignMyself() {
+    switch (this.currentUser.role) {
+      case "Volunteer":
+        if (this.wsInfoNoVolunteers - this.wsInfoVolunteers.length == 0)
+          Swal.fire({
+            title: "Sorry there are no more volunteers slot available",
+            icon: "info",
+            showConfirmButton: false,
+            timer: 2000,
+          });
+        else {
+          Swal.fire({
+            title: "Are you sure you want to participate as a volunteer?",
+            icon: "question",
+            showCancelButton: true,
+            showConfirmButton: true,
+            cancelButtonColor: "red",
+            confirmButtonColor: "green",
+            cancelButtonText: "No",
+            confirmButtonText: "Yes",
+          }).then((res) => {
+            if (res.value) {
+              let newSchedule: WorkshopSchedule = {
+                participantId: this.currentUser.id,
+                workshopId: this.wsInfoOpened.id,
+                volunteerId: this.currentUser.id,
+                type: "Volunteer",
+              };
+              this.sessionService.postWorkshopSchedule(newSchedule).subscribe(
+                (res) => {
+                  Swal.fire({
+                    title: "Your participation was saved!",
+                    icon: "success",
+                    timer: 1500,
+                    showConfirmButton: false,
+                  }).then((_) => {
+                    this.modalService.dismissAll();
+                  });
+                },
+                (_err) => {
+                  Swal.fire({
+                    title:
+                      "Sorry something went wrong...\nPlease try again later",
+                    icon: "error",
+                    timer: 2000,
+                  });
+                }
+              );
+            }
+          });
+        }
+        break;
+
+      case "BoardMember":
+        if (this.wsInfoOpened.numberOfBoardMembers - this.wsInfoCd.length == 0)
+          Swal.fire({
+            title: "Sorry there are no more board members slot available",
+            icon: "info",
+            showConfirmButton: false,
+            timer: 2000,
+          });
+        else {
+          Swal.fire({
+            title: "Are you sure you want to participate to the workshop?",
+            icon: "question",
+            showCancelButton: true,
+            showConfirmButton: true,
+            cancelButtonColor: "red",
+            confirmButtonColor: "green",
+            cancelButtonText: "No",
+            confirmButtonText: "Yes",
+          }).then((res) => {
+            if (res.value) {
+              let newSchedule: WorkshopSchedule = {
+                participantId: this.currentUser.id,
+                workshopId: this.wsInfoOpened.id,
+                volunteerId: this.currentUser.id,
+                type: "CD",
+              };
+              this.sessionService.postWorkshopSchedule(newSchedule).subscribe(
+                (res) => {
+                  Swal.fire({
+                    title: "Your participation was saved!",
+                    icon: "success",
+                    timer: 1500,
+                    showConfirmButton: false,
+                  }).then((_) => {
+                    this.modalService.dismissAll();
+                  });
+                },
+                (_err) => {
+                  Swal.fire({
+                    title:
+                      "Sorry something went wrong...\nPlease try again later",
+                    icon: "error",
+                    timer: 2000,
+                  });
+                }
+              );
+            }
+          });
+        }
+        break;
+
+      case "DepartmentDirector":
+        if (this.wsInfoOpened.numberOfDirectors - this.wsInfoDd.length == 0)
+          Swal.fire({
+            title: "Sorry there are no more available slots",
+            icon: "info",
+            showConfirmButton: false,
+            timer: 2000,
+          });
+        else {
+          Swal.fire({
+            title: "Are you sure you want to participate?",
+            icon: "question",
+            showCancelButton: true,
+            showConfirmButton: true,
+            cancelButtonColor: "red",
+            confirmButtonColor: "green",
+            cancelButtonText: "No",
+            confirmButtonText: "Yes",
+          }).then((res) => {
+            if (res.value) {
+              let newSchedule: WorkshopSchedule = {
+                participantId: this.currentUser.id,
+                workshopId: this.wsInfoOpened.id,
+                volunteerId: this.currentUser.id,
+                type: "DD",
+              };
+              this.sessionService.postWorkshopSchedule(newSchedule).subscribe(
+                (res) => {
+                  Swal.fire({
+                    title: "Your participation was saved!",
+                    icon: "success",
+                    timer: 1500,
+                    showConfirmButton: false,
+                  }).then((_) => {
+                    this.modalService.dismissAll();
+                  });
+                },
+                (_err) => {
+                  Swal.fire({
+                    title:
+                      "Sorry something went wrong...\nPlease try again later",
+                    icon: "error",
+                    timer: 2000,
+                  });
+                }
+              );
+            }
+          });
+        }
+        break;
+    }
+  }
+
+  async removeMyselfFromWs() {
+    Swal.fire({
+      title: "Are you sure you don't want to participate anymore?",
+      icon: "question",
+      showCancelButton: true,
+      showConfirmButton: true,
+      cancelButtonColor: "red",
+      confirmButtonColor: "green",
+      cancelButtonText: "No",
+      confirmButtonText: "Yes",
+    }).then((res) => {
+      if (res.value)
+        this.sessionService
+          .deleteScheduleSlot(this.currentUser.id, this.wsInfoOpened.id)
+          .subscribe(
+            (_) => {
+              Swal.fire({
+                title: "You are no longer participating!",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1500,
+              }).then((_) => {
+                this.modalService.dismissAll();
+              });
+            },
+            (_err) => {
+              Swal.fire({
+                title:
+                  "Sorry there was an error with your request...\nPlease try again later",
+                icon: "error",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            }
+          );
     });
   }
 }
