@@ -1,0 +1,500 @@
+<div *ngIf="this.currentUser && this.interviewsDates" class="container">
+  <div class="row" style="margin-top: 10px">
+    <div class="col">
+      <h4>Interviews</h4>
+    </div>
+    <div class="col" align="right">
+      <button
+        *ngIf="
+          this.currentUser.role == 'ProjectManager' &&
+          this.currentUser.id == this.session.creatorId
+        "
+        class="btn btn-outline-success"
+        (click)="this.openCreateInterviewModal(interviewCreationModal)"
+      >
+        Create new interview
+      </button>
+    </div>
+  </div>
+  <div class="row" style="margin-top: 20px">
+    <div class="col" style="margin-top: 5px" align="left">
+      <button
+        (click)="changePage(-1)"
+        *ngIf="this.selectedDateIndex != 0"
+        class="changePageButton"
+      >
+        Previous period
+      </button>
+    </div>
+    <div class="col" align="center">
+      <input
+        [(ngModel)]="this.selectedDateString"
+        disabled
+        type="text"
+        class="currentDateDisplay"
+      />
+    </div>
+    <div class="col" style="margin-top: 5px" align="right">
+      <button
+        *ngIf="this.selectedDateIndex + 1 != this.interviewsDates.length"
+        (click)="changePage(1)"
+        class="changePageButton"
+      >
+        Next period
+      </button>
+    </div>
+  </div>
+  <div class="row table-responsive" style="margin-top: 20px">
+    <div class="container table">
+      <div class="row">
+        <div class="col-1"><b>#</b></div>
+        <div class="col"><b>Date&Time</b></div>
+        <div class="col"><b>Duration</b></div>
+        <div class="col"><b>Break</b></div>
+        <div class="col-2" align="right"><b>Actions</b></div>
+      </div>
+      <div
+        *ngFor="
+          let interview of this.interviews.get(this.selectedDate);
+          index as interviewIndex
+        "
+        class="row interviewRow"
+      >
+        <div
+          (click)="this.openInterviewInfoModal(displayInterviewInfo, interview)"
+          class="col-1 interviewCol"
+        >
+          {{ interviewIndex + 1 }}
+        </div>
+        <div
+          (click)="this.openInterviewInfoModal(displayInterviewInfo, interview)"
+          class="col interviewCol"
+        >
+          {{ interview.interviewDateTime.toLocaleString() }}
+        </div>
+        <div
+          (click)="this.openInterviewInfoModal(displayInterviewInfo, interview)"
+          class="col interviewCol"
+        >
+          {{ interview.duration }} mins
+        </div>
+        <div
+          (click)="this.openInterviewInfoModal(displayInterviewInfo, interview)"
+          class="col interviewCol"
+        >
+          {{ interview.break }} mins
+        </div>
+        <div
+          style="cursor: default; padding: 0"
+          class="col-2"
+          align="right"
+        ></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #interviewCreationModal let-modal>
+  <div class="modal-header">
+    <div class="modal-title">
+      <h4>Add interview details:</h4>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="continer">
+      <div class="row changeDisplayWrapper" style="margin-top: 5px">
+        <div class="col changeDisplayCol" align="center">
+          <button
+            [ngClass]="{ active: this.whatToDisplayCreate == 'Single' }"
+            (click)="this.changeDisplayCreate('Single')"
+            class="changeDisplayButton"
+          >
+            Single interview
+          </button>
+        </div>
+        <div class="col changeDisplayCol" align="center">
+          <button
+            [ngClass]="{ active: this.whatToDisplayCreate == 'Multiple' }"
+            (click)="this.changeDisplayCreate('Multiple')"
+            class="changeDisplayButton"
+          >
+            Multiple interviews
+          </button>
+        </div>
+      </div>
+      <div *ngIf="this.whatToDisplayCreate == 'Single'" class="row">
+        <div class="container">
+          <div class="row">
+            <div class="col-3" style="padding-top: 10px; padding-right: 0">
+              <span>Interview Date&Time:</span>
+            </div>
+            <div class="col" style="padding-left: 0">
+              <input
+                [disabled]="true"
+                class="dateTimeDisplay"
+                [(ngModel)]="this.displayInterviewDateTime"
+              />
+              <input
+                matInput
+                [matDatepicker]="picker"
+                [(ngModel)]="this.newInterviewDate"
+                style="
+                  width: 0%;
+                  display: inline;
+                  border: 0;
+                  height: 0%;
+                  color: white;
+                "
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                style="color: black"
+                [for]="picker"
+              ></mat-datepicker-toggle>
+
+              <input
+                style="display: none"
+                matTimepicker
+                mode="24h"
+                #t="matTimepicker"
+                (timeChange)="this.updateHour($event)"
+              />
+              <mat-icon
+                matSuffix
+                *ngIf="this.newInterviewDate"
+                style="cursor: pointer; vertical-align: middle"
+                (click)="t.showDialog()"
+                >access_time</mat-icon
+              >
+
+              <mat-icon
+                matSuffix
+                *ngIf="!this.newInterviewDate"
+                style="vertical-align: middle; color: grey; cursor: default"
+                >access_time</mat-icon
+              >
+
+              <mat-datepicker
+                (closed)="this.updateDateDisplay()"
+                #picker
+              ></mat-datepicker>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 5px">
+            <div class="col-3" style="padding-top: 15px; padding-right: 0">
+              <span>Interview duration: </span>
+            </div>
+            <div class="col" style="padding-left: 0; padding-top: 10px">
+              <select
+                [(ngModel)]="this.newInterviewDuration"
+                class="form-control"
+                style="width: 20%; height: 90%"
+              >
+                <option
+                  *ngFor="let num of [15, 20, 25, 30, 40, 45, 50, 55, 60]"
+                >
+                  {{ num }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 5px">
+            <div class="col-3" style="padding-top: 15px; padding-right: 0">
+              <span>Break duration: </span>
+            </div>
+            <div class="col" style="padding-left: 0; padding-top: 10px">
+              <select
+                [(ngModel)]="this.newInterviewBreakDuration"
+                class="form-control"
+                style="width: 20%; height: 90%"
+              >
+                <option *ngFor="let num of [10, 15, 20, 25, 30]">
+                  {{ num }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 10px">
+            <div class="col" style="width: 100%">
+              <em
+                style="color: red"
+                *ngFor="let err of this.newSingleIntreviewErrors"
+                >{{ err }}</em
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="this.whatToDisplayCreate == 'Multiple'" class="row">
+        <div class="container">
+          <div class="row">
+            <div class="col-3" style="padding-top: 10px; padding-right: 0">
+              <span>Start Date&Time:</span>
+            </div>
+            <div class="col" style="padding-left: 0">
+              <input
+                [disabled]="true"
+                class="dateTimeDisplay"
+                [(ngModel)]="this.displyMultipleInterviewStartDate"
+              />
+              <input
+                matInput
+                [matDatepicker]="interviewStart"
+                [(ngModel)]="this.multipleInterviewStartDate"
+                style="
+                  width: 0%;
+                  display: inline;
+                  border: 0;
+                  height: 0%;
+                  color: white;
+                "
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                style="color: black"
+                [for]="interviewStart"
+              ></mat-datepicker-toggle>
+
+              <input
+                style="display: none"
+                matTimepicker
+                mode="24h"
+                #start="matTimepicker"
+                (timeChange)="this.updateStartHour($event)"
+              />
+              <mat-icon
+                matSuffix
+                *ngIf="this.multipleInterviewStartDate"
+                style="cursor: pointer; vertical-align: middle"
+                (click)="start.showDialog()"
+                >access_time</mat-icon
+              >
+
+              <mat-icon
+                matSuffix
+                *ngIf="!this.multipleInterviewStartDate"
+                style="vertical-align: middle; color: grey; cursor: default"
+                >access_time</mat-icon
+              >
+
+              <mat-datepicker
+                (closed)="this.updateStartDateDisplay()"
+                #interviewStart
+              ></mat-datepicker>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-3" style="padding-top: 10px; padding-right: 0">
+              <span>End Date&Time:</span>
+            </div>
+            <div class="col" style="padding-left: 0">
+              <input
+                [disabled]="true"
+                class="dateTimeDisplay"
+                [(ngModel)]="this.displyMultipleInterviewEndDate"
+              />
+              <input
+                matInput
+                [matDatepicker]="interviewEnd"
+                [(ngModel)]="this.multipleInterviewEndDate"
+                style="
+                  width: 0%;
+                  display: inline;
+                  border: 0;
+                  height: 0%;
+                  color: white;
+                "
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                style="color: black"
+                [for]="interviewEnd"
+              ></mat-datepicker-toggle>
+
+              <input
+                style="display: none"
+                matTimepicker
+                mode="24h"
+                #end="matTimepicker"
+                (timeChange)="this.updateEndHour($event)"
+              />
+              <mat-icon
+                matSuffix
+                *ngIf="this.multipleInterviewEndDate"
+                style="cursor: pointer; vertical-align: middle"
+                (click)="end.showDialog()"
+                >access_time</mat-icon
+              >
+
+              <mat-icon
+                matSuffix
+                *ngIf="!this.multipleInterviewEndDate"
+                style="vertical-align: middle; color: grey; cursor: default"
+                >access_time</mat-icon
+              >
+
+              <mat-datepicker
+                (closed)="this.updateEndDateDisplay()"
+                #interviewEnd
+              ></mat-datepicker>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 5px">
+            <div class="col-3" style="padding-top: 15px; padding-right: 0">
+              <span>Interviews duration: </span>
+            </div>
+            <div class="col" style="padding-left: 0; padding-top: 10px">
+              <select
+                [(ngModel)]="this.multipleInterviewDuration"
+                class="form-control"
+                style="width: 20%; height: 90%"
+              >
+                <option
+                  *ngFor="let num of [15, 20, 25, 30, 40, 45, 50, 55, 60]"
+                >
+                  {{ num }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 5px">
+            <div class="col-3" style="padding-top: 15px; padding-right: 0">
+              <span>Time between interviews: </span>
+            </div>
+            <div class="col" style="padding-left: 0; padding-top: 10px">
+              <select
+                [(ngModel)]="this.multipleInterviewBreakDuration"
+                class="form-control"
+                style="width: 20%; height: 90%"
+              >
+                <option *ngFor="let num of [10, 15, 20, 25, 30]">
+                  {{ num }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 10px">
+            <div class="col" style="width: 100%">
+              <em
+                style="color: red"
+                *ngFor="let err of this.multipleInterviewErrors"
+                >{{ err }}</em
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      *ngIf="this.whatToDisplayCreate == 'Single'"
+      (click)="this.createNewSingleInterview(modal)"
+      class="btn btn-outline-primary"
+    >
+      Create interviews
+    </button>
+    <button
+      *ngIf="this.whatToDisplayCreate == 'Multiple'"
+      (click)="this.generateMultipleInterviews(multipleInterviewsReviewModal)"
+      class="btn btn-outline-primary"
+    >
+      Generate interviews
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #multipleInterviewsReviewModal let-modal>
+  <div class="modal-header">
+    <div class="modal-title">
+      <h4>Review generated interviews</h4>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="container">
+      <div class="row">
+        <div class="col-1"><b>#</b></div>
+        <div class="col"><b>Date&Time</b></div>
+        <div class="col"><b>Duration</b></div>
+        <div class="col"><b>Break</b></div>
+      </div>
+      <div
+        *ngFor="
+          let interview of this.generatedMultiplInterviews;
+          index as interviewIndex
+        "
+        class="row"
+        style="
+          border-top: 1px solid rgba(128, 128, 128, 0.4);
+          padding-top: 10px;
+          padding-bottom: 10px;
+        "
+      >
+        <div class="col-1">{{ interviewIndex + 1 }}</div>
+        <div class="col">
+          {{ interview.interviewDateTime.toLocaleString() }}
+        </div>
+        <div class="col">{{ interview.duration }} mins</div>
+        <div class="col">{{ interview.break }} mins</div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button (click)="modal.close()" class="btn btn-outline-danger">
+      Close
+    </button>
+    <button
+      (click)="this.createMultipleInterviews()"
+      class="btn btn-outline-primary"
+    >
+      Create
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #displayInterviewInfo let-modal>
+  <div class="modal-header">
+    <div class="modal-title">
+      <h4>Interview Info</h4>
+    </div>
+  </div>
+  <div class="modal-body container">
+    <div class="row">
+      <div class="col">
+        <b>Interview Date&Time: </b
+        >{{ this.displayInterview.interviewDateTime.toLocaleString() }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <b>Interview duration: </b>{{ this.displayInterview.duration }} mins
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <b>Break: </b>{{ this.displayInterview.break }} mins
+      </div>
+    </div>
+    <div class="row">
+      <div class="col"><b> Department Director</b>: -</div>
+    </div>
+    <div class="row">
+      <div class="col"><b> Board Member</b>: -</div>
+    </div>
+    <div class="row">
+      <div class="col"><b> HR Volunteer</b>: -</div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      *ngIf="
+        this.currentUser.id == this.session.creatorId &&
+        this.currentUser.role == 'ProjectManager'
+      "
+      (click)="this.deleteOpenedInterview()"
+      class="btn btn-outline-danger"
+    >
+      Delete
+    </button>
+  </div>
+</ng-template>

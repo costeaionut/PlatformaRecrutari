@@ -291,4 +291,12 @@
       [form]="this.currentForm"
     ></app-workshop-manager>
   </div>
+
+  <div class="container" *ngIf="this.whatToDisplay == 'interviews'">
+    <app-interviews-manager
+      [currentUser]="this.currentUser"
+      [session]="this.currentSession"
+    >
+    </app-interviews-manager>
+  </div>
 </div>

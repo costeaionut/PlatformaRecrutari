@@ -46,6 +46,7 @@ import { NgbModalWindow } from "@ng-bootstrap/ng-bootstrap/modal/modal-window";
 import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 
 import { MatTimepickerModule } from "mat-timepicker";
+import { InterviewsManagerComponent } from './interviews-manager/interviews-manager.component';
 @NgModule({
   declarations: [
     CreateSessionComponent,
@@ -71,6 +72,7 @@ import { MatTimepickerModule } from "mat-timepicker";
     GridSelectBoxQuestionDisplayComponent,
     CandidateApplicationFormComponent,
     WorkshopManagerComponent,
+    InterviewsManagerComponent,
   ],
   imports: [
     FormsModule,

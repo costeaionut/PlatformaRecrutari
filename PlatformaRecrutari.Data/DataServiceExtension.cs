@@ -28,6 +28,7 @@ namespace PlatformaRecrutari.Data
             service.AddScoped<IFormManager, FormManager>();
             service.AddScoped<ISessionManager, SessionsManager>();
             service.AddScoped<IWorkshopManager, WorkshopManager>();
+            service.AddScoped<IInterviewManager, InterviewManager>();
             service.AddScoped<IParticipantsManager, ParticiapantsManager>();
 
             return service;

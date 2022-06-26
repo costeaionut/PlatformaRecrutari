@@ -1,9 +1,11 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { FormDto } from "../dto/form-dto";
+import { InterviewDto } from "../dto/interview/interviewDto";
 import { CreateSessionDto } from "../dto/session/create-session-dto";
 import { SessionDto } from "../dto/session/get-session-dto";
 import { FormInfo } from "../interfaces/form/formInfo";
+import { InterviewInfo } from "../interfaces/interview/interview-info";
 import { UserInfo } from "../interfaces/user/userInfo";
 import { WorkshopFeedback } from "../interfaces/workshop/workshop-feedback";
 import { WorkshopInfo } from "../interfaces/workshop/workshop-info";
@@ -200,6 +202,41 @@ export class SessionService {
     return this.http.post(
       this.baseUrl + ApiCallPaths.editWorkshopFeedback,
       workshopFeedback
+    );
+  }
+
+  public postInterview(interview: InterviewInfo) {
+    return this.http.post(this.baseUrl + ApiCallPaths.postInterview, interview);
+  }
+  public postInterviewRange(interviews: InterviewInfo[]) {
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.postInterviewRange,
+      interviews
+    );
+  }
+
+  public getInterviewById(interviewId: number) {
+    return this.http.get<InterviewDto>(
+      this.baseUrl + ApiCallPaths.getInterviewById + interviewId
+    );
+  }
+  public getInterviewsBySessionId(sessionId: number) {
+    return this.http.get<InterviewDto[]>(
+      this.baseUrl + ApiCallPaths.getInterviewBySessionId + sessionId
+    );
+  }
+
+  public deleteInterview(interview: InterviewInfo) {
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.deleteInterview,
+      interview
+    );
+  }
+
+  public updateInterview(interview: InterviewInfo) {
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.deleteInterview,
+      interview
     );
   }
 }

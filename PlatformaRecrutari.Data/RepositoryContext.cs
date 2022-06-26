@@ -11,6 +11,7 @@ using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FormQuestions
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Inputed_Options;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Interviews;
 
 namespace PlatformaRecrutari.Data
 {
@@ -24,17 +25,22 @@ namespace PlatformaRecrutari.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         
+        public DbSet<RecruitmentSession> RecruitmentSessions { get; set; }
+        
         public DbSet<Form> Forms { get; set; }
-        public DbSet<Workshop> Workshops { get; set; }
         public DbSet<FormAnswers> FormAnswers { get; set; }
+        public DbSet<GridQuestion> GridQuestions { get; set; }
         public DbSet<FormFeedback> FormFeedbacks { get; set; }
         public DbSet<InputsOption> InputsOptions { get; set; }
-        public DbSet<GridQuestion> GridQuestions { get; set; }
         public DbSet<BaseQuestion> SimpleQuestions { get; set; }
+        
+
+        public DbSet<Workshop> Workshops { get; set; }
         public DbSet<WorkshopFeedback> WorkshopFeedbacks { get; set; }
         public DbSet<WorkshopSchedule> WorkshopSchedules { get; set; }
-        public DbSet<RecruitmentSession> RecruitmentSessions { get; set; }
 
+        public DbSet<Interview> Interviews { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -118,6 +124,11 @@ namespace PlatformaRecrutari.Data
                 .HasOne<Workshop>()
                 .WithMany()
                 .HasForeignKey(wf => wf.WorkshopId);
+
+            modelBuilder.Entity<Interview>()
+                .HasOne<RecruitmentSession>()
+                .WithMany()
+                .HasForeignKey(i => i.SessionId);
         }
     }
 }

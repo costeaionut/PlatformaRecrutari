@@ -41,4 +41,11 @@ export enum ApiCallPaths {
   deleteWorkshopFeedback = "api/Session/Workshop/Feedback/Delete/",
   getWorkshopFeedbackBySessionId = "api/Session/Workshop/FeedbackBySession/",
   editWorkshopFeedback = "api/Session/Workshop/Feedback/Edit/",
+
+  postInterview = "api/Session/Interview/Create",
+  postInterviewRange = "api/Session/Interview/CreateRange",
+  getInterviewById = "api/Session/Interview/",
+  getInterviewBySessionId = "api/Session/Interviews/",
+  deleteInterview = "api/Session/Interview/Delete/",
+  editInterview = "api/Session/Interview/Update/",
 }

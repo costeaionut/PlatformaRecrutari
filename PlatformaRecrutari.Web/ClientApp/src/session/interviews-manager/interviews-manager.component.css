@@ -1,0 +1,80 @@
+.changeDisplayWrapper{
+    border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+}
+
+.changeDisplayCol{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.changeDisplayButton{
+    width: 100%;
+    border: none;
+    background-color: inherit;
+}
+
+.active{
+    border-top-left-radius: 5px;
+    border-top-right-radius : 5px;
+    border-bottom: 2px solid royalBlue;
+}
+
+.dateTimeDisplay {
+    color: grey;
+    border: none;
+    border-bottom: 1px solid grey;
+}
+  
+.dateTimeDisplay:disabled {
+    background-color: inherit;
+}
+
+::ng-deep .cdk-overlay-container {
+    z-index: 2000;
+  }
+
+.currentDateDisplay{
+    border: 0;
+    font-size: large;
+    text-align: center; 
+    vertical-align: bottom;
+    background-color: inherit;
+    padding-top: 5px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+}
+
+.changePageButton{
+    border: 0;
+    background-color: inherit;
+    color: royalblue;
+}
+
+.changePageButton:hover{
+    text-decoration: underline;
+}
+
+.deleteButton{
+    border: 0;
+    background-color: inherit;
+    color:rgba(255, 0, 0, 0.5);
+}
+
+.deleteButton:hover{
+    color:red
+}
+
+.interviewRow{
+    border-top: 1px solid rgba(128, 128, 128, 0.4);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    transition-property: background-color;
+    transition-duration: 0.5s;
+}
+
+.interviewRow:hover{
+    background-color: rgba(128, 128, 128, 0.2);
+}
+
+.interviewCol:hover{
+    cursor: pointer;
+}

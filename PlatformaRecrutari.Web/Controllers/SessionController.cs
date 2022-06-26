@@ -15,6 +15,8 @@ using System;
 using PlatformaRecrutari.Dto.Sessions.FormQuesitons;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Interviews;
+using PlatformaRecrutari.Dto.Sessions.Interviews;
 
 namespace PlatformaRecrutari.Web.Controllers
 {
@@ -30,6 +32,7 @@ namespace PlatformaRecrutari.Web.Controllers
         private readonly UserManager<User> _userManager;
         private readonly ISessionManager _sessionManager;
         private readonly IWorkshopManager _workshopManager;
+        private readonly IInterviewManager _interviewManager;
 
         public SessionController(
             IMapper mapper,
@@ -37,9 +40,11 @@ namespace PlatformaRecrutari.Web.Controllers
             IFormManager formManager,
             UserManager<User> userManager,
             ISessionManager sessionsManager,
-            IWorkshopManager workshopManager
+            IWorkshopManager workshopManager,
+            IInterviewManager interviewManager
         )
         {
+            _interviewManager = interviewManager;
             _workshopManager = workshopManager;
             _sessionManager = sessionsManager;
             _userManager = userManager;
@@ -829,5 +834,115 @@ namespace PlatformaRecrutari.Web.Controllers
         public ActionResult<WorkshopFeedback>
             EditParticipantFeedback([FromBody] WorkshopFeedback newWorkshopValues)
             => _workshopManager.editUserFeedback(newWorkshopValues);
+    
+        [HttpPost("Interview/Create")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public ActionResult CreateInterview([FromBody] Interview interview)
+        {
+            if (interview == null)
+                return BadRequest("MissingBodyInterview");
+
+            if (interview.InterviewDateTime < DateTime.Now)
+                return BadRequest("DateEarlierThanNow");
+
+            if (_interviewManager.getOverlappingInterviews(interview).Count != 0)
+                return BadRequest("InterviewsOverlapping");
+
+            _interviewManager.createInterview(interview);
+
+            return StatusCode(201);
+        }
+
+        [HttpPost("Interview/CreateRange")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public ActionResult CreateInterviewRange([FromBody] List<Interview> interviews)
+        {
+            if (interviews == null)
+                return BadRequest("MissingBodyInterviews");
+
+            foreach (var interview in interviews)
+            {
+                if (interview.InterviewDateTime < DateTime.Now)
+                    return BadRequest("DateEarlierThanNow");
+
+                if (_interviewManager.getOverlappingInterviews(interview).Count != 0)
+                    return BadRequest("InterviewsOverlapping");
+            }
+
+            _interviewManager.createInterviewRange(interviews);
+
+            return StatusCode(201);
+        }
+
+        [HttpGet("Interview/{interviewId}")]
+        public ActionResult<InterviewDto> GetInterviewById(int interviewId)
+        { 
+            var interview = _interviewManager.getInterview(interviewId);
+
+            InterviewDto interviewDto = new();
+            DateTime commonDate = 
+                interview.InterviewDateTime - 
+                new TimeSpan(interview.InterviewDateTime.Hour, 
+                             interview.InterviewDateTime.Minute, 
+                             interview.InterviewDateTime.Second);
+
+            interviewDto.InterviewsDate = commonDate;
+            interviewDto.InterviewsDetails.Add(interview);
+
+            return interviewDto;
+        }
+
+        [HttpGet("Interviews/{sessionId}")]
+        public ActionResult<List<InterviewDto>> GetInterviewBySessionId(int sessionId)
+        {
+            var interviews = _interviewManager.getSessionsInterview(sessionId);
+            var interviewsDict = new Dictionary<DateTime, List<Interview>>();
+
+            foreach (var interview in interviews)
+            {
+                DateTime commonDate =
+                interview.InterviewDateTime -
+                new TimeSpan(interview.InterviewDateTime.Hour,
+                             interview.InterviewDateTime.Minute,
+                             interview.InterviewDateTime.Second);
+
+                if (interviewsDict.ContainsKey(commonDate)) interviewsDict[commonDate].Add(interview);
+                else {
+                    var newList = new List<Interview>();
+                    newList.Add(interview);
+                    interviewsDict.Add(commonDate, newList);
+                }
+
+            }
+
+            var interviewsDto = new List<InterviewDto>();
+
+            foreach (var pair in interviewsDict)
+            {
+                var newInterviewDto = new InterviewDto();
+                newInterviewDto.InterviewsDate = pair.Key;
+                newInterviewDto.InterviewsDetails = pair.Value;
+
+                interviewsDto.Add(newInterviewDto);
+            }
+
+            return Ok(interviewsDto);
+        }
+
+        [HttpPost("Interview/Delete")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public ActionResult DeleteInterview([FromBody] Interview interview)
+        {
+            _interviewManager.deleteInterview(interview.Id);
+            return Ok();
+        }
+
+        [HttpPost("Interview/Update")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public ActionResult UpdateInterview([FromBody] Interview interview) {
+            _interviewManager.updateInterview(interview);
+            return Ok();
+        }
+
     }
 }

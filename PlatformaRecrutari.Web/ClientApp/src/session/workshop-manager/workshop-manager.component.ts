@@ -1,7 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { yearsPerPage } from "@angular/material";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { of } from "rxjs";
 import { FormInfo } from "src/shared/interfaces/form/formInfo";
 import { UserInfo } from "src/shared/interfaces/user/userInfo";
 import { WorkshopFeedback } from "src/shared/interfaces/workshop/workshop-feedback";
