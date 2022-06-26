@@ -23,6 +23,7 @@ namespace PlatformaRecrutari.Core.Abstractions
         bool isParticipantScheduled(int sessionId, string userId);
         void deleteUserFeedback(WorkshopFeedback feedbackToDelete);
         string getWorkshopStatus(int sessionId, string participantId);
+        WorkshopFeedback editUserFeedback(WorkshopFeedback newFeedback);
         WorkshopFeedback createWrokshopFeedback(WorkshopFeedback newFeedback);
         WorkshopSchedule createWorkshopSchedule(WorkshopSchedule newSchedule);
         void deleteParticipantScheduleSlot(string participantId, int workshopId);

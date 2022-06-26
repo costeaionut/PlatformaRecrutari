@@ -129,10 +129,10 @@
   color:royalblue
 }
 
-.deleteFeedback{
+.editFeedback{
   border: none;
   background-color: inherit;
-  color:red;
+  color: royalblue;
 }
 
 .feedbackTextarea {

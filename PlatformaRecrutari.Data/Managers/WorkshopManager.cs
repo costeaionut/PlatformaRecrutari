@@ -206,5 +206,21 @@ namespace PlatformaRecrutari.Data.Managers
             _context.SaveChanges();
         }
 
+        public WorkshopFeedback editUserFeedback(WorkshopFeedback newFeedback) {
+            var currentFeedback = _context.WorkshopFeedbacks
+                .FirstOrDefault(wf => 
+                wf.ParticipantId == newFeedback.ParticipantId && 
+                wf.WorkshopId == newFeedback.WorkshopId);
+
+            currentFeedback.YesVotes = newFeedback.YesVotes;
+            currentFeedback.NoVotes= newFeedback.NoVotes;
+            currentFeedback.AbstainVotes = newFeedback.AbstainVotes;
+            currentFeedback.Status= newFeedback.Status;
+            currentFeedback.Feedback = newFeedback.Feedback;
+
+            _context.SaveChanges();
+            return currentFeedback;
+        }
+
     }
 }

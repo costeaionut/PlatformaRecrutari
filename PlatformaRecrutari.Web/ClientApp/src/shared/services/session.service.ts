@@ -195,4 +195,11 @@ export class SessionService {
       workshopFeedback
     );
   }
+
+  public editWorkshopFeedback(workshopFeedback: WorkshopFeedback) {
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.editWorkshopFeedback,
+      workshopFeedback
+    );
+  }
 }

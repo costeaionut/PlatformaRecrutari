@@ -457,11 +457,18 @@
                     Give feedback
                   </button>
                   <button
-                    (click)="deleteFeedback(participantIndex)"
-                    *ngIf="canDeleteFeedback(participantIndex)"
-                    class="deleteFeedback"
+                    (click)="
+                      editFeedbackModal(
+                        participant,
+                        this.wsInfoOpened,
+                        participantIndex,
+                        participantWSFeedback
+                      )
+                    "
+                    *ngIf="canEditFeedback(participantIndex)"
+                    class="editFeedback"
                   >
-                    Delete feedback
+                    Edit feedback
                   </button>
                 </td>
               </tr>
@@ -546,7 +553,8 @@
   <ng-template #participantWSFeedback let-modal>
     <div class="modal-header">
       <div class="modal-title">
-        <h4>Feedback</h4>
+        <h4 *ngIf="!this.editFeedbackStatus">Feedback</h4>
+        <h4 *ngIf="this.editFeedbackStatus">Edit feedback</h4>
         <span
           >Access user profile
           <a href="/user/{{ this.feedbackParticipant.id }}" target="_blank"
@@ -569,6 +577,18 @@
             <a href="{{ this.feedbackParticipant.facebook }}">{{
               this.feedbackParticipant.facebook
             }}</a>
+          </div>
+        </div>
+        <div *ngIf="this.editFeedbackStatus" class="row">
+          <div class="col">
+            <b>Status:</b>
+            <span
+              [ngClass]="{
+                green: this.editFeedbackStatus == 'Passed',
+                red: this.editFeedbackStatus == 'Rejected'
+              }"
+              >{{ this.editFeedbackStatus }}</span
+            >
           </div>
         </div>
         <div class="row">
@@ -654,10 +674,25 @@
     </div>
     <div class="modal-footer">
       <button
-        (click)="this.giveFeedback(modal)"
+        *ngIf="!this.editFeedbackStatus"
+        (click)="this.giveFeedback(modal, false)"
         class="btn btn-outline-primary"
       >
         Cast vote
+      </button>
+      <button
+        *ngIf="this.editFeedbackStatus"
+        class="btn btn-outline-danger"
+        (click)="this.deleteFeedback(this.editFeedbackPariticpantIndex, modal)"
+      >
+        Delete feedback
+      </button>
+      <button
+        *ngIf="this.editFeedbackStatus"
+        (click)="this.giveFeedback(modal, true)"
+        class="btn btn-outline-primary"
+      >
+        Save edits
       </button>
     </div>
   </ng-template>

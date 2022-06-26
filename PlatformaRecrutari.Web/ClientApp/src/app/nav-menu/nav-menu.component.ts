@@ -51,6 +51,13 @@ export class NavMenuComponent implements OnInit, OnChanges {
     }
   }
 
+  isUserNotCandidateOrPm() {
+    if (this.isUserNotCandidate()) {
+      if (this.user.role != "ProjectManager") return true;
+    }
+    return false;
+  }
+
   isUserCandidate() {
     if (this.isUserAuthenticated)
       if (this.user.role == "Candidate") return true;

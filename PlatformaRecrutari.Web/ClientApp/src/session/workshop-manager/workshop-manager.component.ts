@@ -406,6 +406,9 @@ export class WorkshopManagerComponent implements OnInit {
       this.wsInfoParticipantsFeedback[i] = await this.sessionService
         .getWorkshopFeedback(this.wsInfoParticipants[i].id, workshop.id)
         .toPromise();
+
+    console.log(this.wsInfoParticipantsFeedback);
+
     this.modalService.open(wsInfo, { centered: true, size: "lg" });
   }
 
@@ -726,12 +729,16 @@ export class WorkshopManagerComponent implements OnInit {
   abstainedVotes: number;
 
   feedbackErrors: string[];
+  editFeedbackStatus: string;
+  editFeedbackPariticpantIndex: number;
 
   giveFeedbackModal(participant: UserInfo, workshop: WorkshopInfo, modal) {
     this.userFeedback = "";
     this.feedbackErrors = [];
     this.feedbackWorkshop = workshop;
+    this.editFeedbackStatus = undefined;
     this.feedbackParticipant = participant;
+    this.editFeedbackPariticpantIndex = undefined;
     this.numberOfExpectedVotes =
       workshop.numberOfBoardMembers +
       workshop.numberOfDirectors +
@@ -741,6 +748,39 @@ export class WorkshopManagerComponent implements OnInit {
     this.givenNoVotes = 0;
     this.givenYesVotes = 0;
     this.abstainedVotes = 0;
+
+    this.maximumNumberOfVotes = [];
+    for (let i = 0; i <= this.numberOfExpectedVotes + 2; i++)
+      this.maximumNumberOfVotes.push(i);
+
+    this.modalService.open(modal, { centered: true, size: "lg" });
+  }
+
+  editFeedbackModal(
+    participant: UserInfo,
+    workshop: WorkshopInfo,
+    participantIndex: number,
+    modal
+  ) {
+    let currentFeedback: WorkshopFeedback =
+      this.wsInfoParticipantsFeedback[participantIndex];
+
+    this.feedbackErrors = [];
+    this.feedbackWorkshop = workshop;
+    this.feedbackParticipant = participant;
+    this.givenNoVotes = currentFeedback.noVotes;
+    this.userFeedback = currentFeedback.feedback;
+    this.givenYesVotes = currentFeedback.yesVotes;
+    this.editFeedbackStatus =
+      currentFeedback.status == "passed" ? "Passed" : "Rejected";
+    this.abstainedVotes = currentFeedback.abstainVotes;
+    this.editFeedbackPariticpantIndex = participantIndex;
+
+    this.numberOfExpectedVotes =
+      workshop.numberOfBoardMembers +
+      workshop.numberOfDirectors +
+      workshop.numberOfVolunteers +
+      1;
 
     this.maximumNumberOfVotes = [];
     for (let i = 0; i <= this.numberOfExpectedVotes + 2; i++)
@@ -768,7 +808,16 @@ export class WorkshopManagerComponent implements OnInit {
     return false;
   }
 
-  async giveFeedback(feedbackModal) {
+  canEditFeedback(participantIndex: number) {
+    if (
+      this.wsInfoParticipantsFeedback[participantIndex] != null &&
+      this.currentUser.role == "ProjectManager"
+    )
+      return true;
+    return false;
+  }
+
+  async giveFeedback(feedbackModal, editFeedback?) {
     let actualVotes: number =
       parseInt(this.givenYesVotes.toLocaleString()) +
       parseInt(this.givenNoVotes.toLocaleString()) +
@@ -799,12 +848,7 @@ export class WorkshopManagerComponent implements OnInit {
     }
 
     let status: string;
-    if (actualVotes / 2 < this.givenYesVotes) status = "passed";
-    else if (
-      actualVotes / 2 == this.givenYesVotes &&
-      this.givenNoVotes < this.givenYesVotes
-    )
-      status = "passed";
+    if (this.givenYesVotes > this.givenNoVotes) status = "passed";
     else status = "rejected";
 
     let newFeedback: WorkshopFeedback = {
@@ -818,34 +862,92 @@ export class WorkshopManagerComponent implements OnInit {
       status: status,
     };
 
-    this.sessionService.createWorkshopFeedback(newFeedback).subscribe(
-      (_) => {
-        Swal.fire({
-          title: "Feedback was saved succesfully!",
-          icon: "success",
-          showConfirmButton: false,
-          showCancelButton: false,
-          showCloseButton: false,
-          timer: 1500,
-        }).then(async (_res) => {
-          await this.updateParticipantsFeedbackStatus();
-          feedbackModal.close();
-        });
-      },
-      (_err) => {
-        Swal.fire({
-          title: "There was an error...\nFeedback was not saved!",
-          icon: "error",
-          showConfirmButton: false,
-          showCancelButton: false,
-          showCloseButton: false,
-          timer: 1500,
-        });
-      }
-    );
+    if (status == "passed" && !editFeedback) {
+      var res = await Swal.fire({
+        title:
+          `Are you sure you want to pass` +
+          ` ${this.feedbackParticipant.firstName} ${this.feedbackParticipant.lastName}`,
+        icon: "question",
+        showCancelButton: true,
+        showConfirmButton: true,
+        cancelButtonColor: "red",
+        confirmButtonColor: "green",
+        cancelButtonText: "No",
+        confirmButtonText: "Yes",
+      });
+      if (res.dismiss) return;
+    } else if (status == "rejected" && !editFeedback) {
+      var res = await Swal.fire({
+        title:
+          `Are you sure you want to reject` +
+          ` ${this.feedbackParticipant.firstName} ${this.feedbackParticipant.lastName}`,
+        icon: "question",
+        showCancelButton: true,
+        showConfirmButton: true,
+        cancelButtonColor: "red",
+        confirmButtonColor: "green",
+        cancelButtonText: "No",
+        confirmButtonText: "Yes",
+      });
+      if (res.dismiss) return;
+    }
+
+    if (editFeedback == false || editFeedback === undefined)
+      this.sessionService.createWorkshopFeedback(newFeedback).subscribe(
+        (_) => {
+          Swal.fire({
+            title: "Feedback was saved succesfully!",
+            icon: "success",
+            showConfirmButton: false,
+            showCancelButton: false,
+            showCloseButton: false,
+            timer: 1500,
+          }).then(async (_res) => {
+            await this.updateParticipantsFeedbackStatus();
+            feedbackModal.close();
+          });
+        },
+        (_err) => {
+          Swal.fire({
+            title: "There was an error...\nFeedback was not saved!",
+            icon: "error",
+            showConfirmButton: false,
+            showCancelButton: false,
+            showCloseButton: false,
+            timer: 1500,
+          });
+        }
+      );
+    else {
+      this.sessionService.editWorkshopFeedback(newFeedback).subscribe(
+        (_) => {
+          Swal.fire({
+            title: "Feedback was updated succesfully!",
+            icon: "success",
+            showConfirmButton: false,
+            showCancelButton: false,
+            showCloseButton: false,
+            timer: 1500,
+          }).then(async (_res) => {
+            await this.updateParticipantsFeedbackStatus();
+            feedbackModal.close();
+          });
+        },
+        (_err) => {
+          Swal.fire({
+            title: "There was an error...\nFeedback was not updated!",
+            icon: "error",
+            showConfirmButton: false,
+            showCancelButton: false,
+            showCloseButton: false,
+            timer: 1500,
+          });
+        }
+      );
+    }
   }
 
-  async deleteFeedback(participantIndex: string) {
+  async deleteFeedback(participantIndex: string, feedbackModal) {
     Swal.fire({
       title: "Are you sure you want to delete the feedback?",
       icon: "question",
@@ -861,7 +963,7 @@ export class WorkshopManagerComponent implements OnInit {
           .deleteWorkshopFeedback(
             this.wsInfoParticipantsFeedback[participantIndex]
           )
-          .subscribe((_) => {
+          .subscribe(async (_) => {
             Swal.fire({
               title: "Feedback deleted succesfully",
               icon: "success",
@@ -869,8 +971,10 @@ export class WorkshopManagerComponent implements OnInit {
               showConfirmButton: false,
               showCloseButton: false,
               timer: 1500,
+            }).then((_) => {
+              feedbackModal.close();
             });
-            this.updateParticipantsFeedbackStatus();
+            await this.updateParticipantsFeedbackStatus();
           });
     });
   }

@@ -29,12 +29,22 @@
           </li>
 
           <li
-            *ngIf="isUserNotCandidate()"
+            *ngIf="isUserPM()"
             class="nav-item"
             [routerLinkActive]="['link-active']"
           >
             <a class="nav-link text-dark" [routerLink]="['/sessions']"
               >Session Manager</a
+            >
+          </li>
+
+          <li
+            *ngIf="isUserNotCandidateOrPm()"
+            class="nav-item"
+            [routerLinkActive]="['link-active']"
+          >
+            <a class="nav-link text-dark" [routerLink]="['/sessions']"
+              >Sessions</a
             >
           </li>
 

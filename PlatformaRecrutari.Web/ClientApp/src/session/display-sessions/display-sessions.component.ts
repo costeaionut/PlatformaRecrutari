@@ -111,11 +111,12 @@ export class DisplaySessionsComponent implements OnInit {
                       this.currentSession.id
                     )
                     .toPromise();
-                if (workshopFeedback.status == "passed")
-                  this.participantsStatus[i] = "Passed workshop stage";
-                else if (workshopFeedback.status == "rejected")
-                  this.participantsStatus[i] = "Rejected at workshop stage";
-                else
+                if (workshopFeedback != null) {
+                  if (workshopFeedback.status == "passed")
+                    this.participantsStatus[i] = "Passed workshop stage";
+                  else if (workshopFeedback.status == "rejected")
+                    this.participantsStatus[i] = "Rejected at workshop stage";
+                } else
                   this.participantsStatus[i] = "Waiting for workshop feedback";
               } else this.participantsStatus[i] = "Scheduled for workshop";
             } else this.participantsStatus[i] = "Not scheduled for workshop";

@@ -40,4 +40,5 @@ export enum ApiCallPaths {
   postWorkshopFeedback = "api/Session/Workshop/Feedback/Create/",
   deleteWorkshopFeedback = "api/Session/Workshop/Feedback/Delete/",
   getWorkshopFeedbackBySessionId = "api/Session/Workshop/FeedbackBySession/",
+  editWorkshopFeedback = "api/Session/Workshop/Feedback/Edit/",
 }

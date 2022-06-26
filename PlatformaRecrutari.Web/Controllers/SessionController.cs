@@ -823,5 +823,11 @@ namespace PlatformaRecrutari.Web.Controllers
 
             return _workshopManager.GetWorkshopFeedbackBySessionId(participantId, sessionId);
         }
+
+        [HttpPost("Workshop/Feedback/Edit")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public ActionResult<WorkshopFeedback>
+            EditParticipantFeedback([FromBody] WorkshopFeedback newWorkshopValues)
+            => _workshopManager.editUserFeedback(newWorkshopValues);
     }
 }
