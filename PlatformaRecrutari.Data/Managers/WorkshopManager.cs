@@ -1,6 +1,7 @@
 ﻿using PlatformaRecrutari.Core.Abstractions;
 using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops;
 using System;
 using System.Collections.Generic;
@@ -180,5 +181,30 @@ namespace PlatformaRecrutari.Data.Managers
             _context.WorkshopSchedules.Remove(scheduleToDelete);
             _context.SaveChanges();
         }
+    
+        public WorkshopFeedback createWrokshopFeedback(WorkshopFeedback newFeedback) {
+            var res = this._context.WorkshopFeedbacks.Add(newFeedback);
+            this._context.SaveChanges();
+
+            return res.Entity;
+        }
+
+        public WorkshopFeedback getUsersFeedbackForWorkshop(string participantId, int workshopId)
+         => _context.WorkshopFeedbacks
+                .FirstOrDefault(wf => wf.WorkshopId == workshopId && wf.ParticipantId == participantId);
+
+        public WorkshopFeedback GetWorkshopFeedbackBySessionId(string participantId, int sessionId) {
+            var workshopsIds = _context.Workshops.Where(w => w.SessionId == sessionId).Select(w => w.Id).ToList();
+            return _context.WorkshopFeedbacks
+                .FirstOrDefault(wf => wf.ParticipantId == participantId 
+                                      && workshopsIds.Contains(wf.WorkshopId));
+        }
+
+        public void deleteUserFeedback(WorkshopFeedback feedbackToDelete)
+        {
+            _context.WorkshopFeedbacks.Remove(feedbackToDelete);
+            _context.SaveChanges();
+        }
+
     }
 }

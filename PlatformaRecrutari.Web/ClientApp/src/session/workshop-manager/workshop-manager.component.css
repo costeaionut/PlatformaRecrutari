@@ -122,3 +122,36 @@
   background-color: inherit;
   color:red
 }
+
+.giveFeedback{
+  border: none;
+  background-color: inherit;
+  color:royalblue
+}
+
+.deleteFeedback{
+  border: none;
+  background-color: inherit;
+  color:red;
+}
+
+.feedbackTextarea {
+  resize: none;
+  overflow: hidden;
+  border: 0;
+  border-bottom: 1px solid grey;
+}
+
+.feedbackTextarea:focus {
+  outline: none;
+}
+
+.green{
+  color: green
+}
+.red{
+  color:red
+}
+.orange{
+  color:orange
+}

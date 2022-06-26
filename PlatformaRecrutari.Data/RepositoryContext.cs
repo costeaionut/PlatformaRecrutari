@@ -31,6 +31,7 @@ namespace PlatformaRecrutari.Data
         public DbSet<InputsOption> InputsOptions { get; set; }
         public DbSet<GridQuestion> GridQuestions { get; set; }
         public DbSet<BaseQuestion> SimpleQuestions { get; set; }
+        public DbSet<WorkshopFeedback> WorkshopFeedbacks { get; set; }
         public DbSet<WorkshopSchedule> WorkshopSchedules { get; set; }
         public DbSet<RecruitmentSession> RecruitmentSessions { get; set; }
 
@@ -109,6 +110,14 @@ namespace PlatformaRecrutari.Data
 
             modelBuilder.Entity<WorkshopSchedule>()
                 .HasKey(ws => new { ws.ParticipantId, ws.WorkshopId});
+
+            modelBuilder.Entity<WorkshopFeedback>()
+                .HasKey(wf => new { wf.ParticipantId, wf.WorkshopId });
+
+            modelBuilder.Entity<WorkshopFeedback>()
+                .HasOne<Workshop>()
+                .WithMany()
+                .HasForeignKey(wf => wf.WorkshopId);
         }
     }
 }

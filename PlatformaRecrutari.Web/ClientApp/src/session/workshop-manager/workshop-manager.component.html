@@ -417,7 +417,19 @@
               >
                 <td>{{ participantIndex + 1 }}.</td>
                 <td>{{ participant.firstName }} {{ participant.lastName }}</td>
-                <td>Workshop not finished</td>
+                <td
+                  [ngClass]="{
+                    green: getParticipantStatus(participantIndex) == 'Passed',
+                    red: getParticipantStatus(participantIndex) == 'Rejected',
+                    orange:
+                      getParticipantStatus(participantIndex) ==
+                        'Workshop not finished' ||
+                      getParticipantStatus(participantIndex) ==
+                        'Waiting for feedback'
+                  }"
+                >
+                  {{ getParticipantStatus(participantIndex) }}
+                </td>
                 <td style="padding-left: 5px">
                   <button
                     *ngIf="canRemoveParticipantFromWS(participantIndex)"
@@ -430,6 +442,26 @@
                     class="removeParticipant"
                   >
                     Remove from worshop
+                  </button>
+                  <button
+                    (click)="
+                      giveFeedbackModal(
+                        participant,
+                        this.wsInfoOpened,
+                        participantWSFeedback
+                      )
+                    "
+                    *ngIf="canGiveFeedback(participantIndex)"
+                    class="giveFeedback"
+                  >
+                    Give feedback
+                  </button>
+                  <button
+                    (click)="deleteFeedback(participantIndex)"
+                    *ngIf="canDeleteFeedback(participantIndex)"
+                    class="deleteFeedback"
+                  >
+                    Delete feedback
                   </button>
                 </td>
               </tr>
@@ -507,6 +539,125 @@
         *ngIf="canParticipateAsVolunteerOrCDDD() === 'canRemove'"
       >
         Remove myself from this workshop
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template #participantWSFeedback let-modal>
+    <div class="modal-header">
+      <div class="modal-title">
+        <h4>Feedback</h4>
+        <span
+          >Access user profile
+          <a href="/user/{{ this.feedbackParticipant.id }}" target="_blank"
+            >here</a
+          ></span
+        >
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <b>Candidate:</b> {{ this.feedbackParticipant.firstName }}
+            {{ this.feedbackParticipant.lastName }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <b>Facebook: </b>
+            <a href="{{ this.feedbackParticipant.facebook }}">{{
+              this.feedbackParticipant.facebook
+            }}</a>
+          </div>
+        </div>
+        <div class="row">
+          <div style="margin-right: 15px; padding-top: 2px" class="col-1">
+            <span> <b>Feedback:</b></span>
+          </div>
+          <div class="col">
+            <textarea
+              rows="1"
+              cols="50"
+              style="padding-left: 0"
+              class="feedbackTextarea"
+              [(ngModel)]="this.userFeedback"
+              appTextareaAutoresize
+            ></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-2" style="padding-top: 15px; padding-right: 0">
+            <span>Yes votes: </span>
+          </div>
+          <div class="col" style="padding-left: 0; padding-top: 10px">
+            <select
+              [(ngModel)]="this.givenYesVotes"
+              class="form-control"
+              style="width: 20%; height: 90%"
+            >
+              <option
+                *ngFor="let num of this.maximumNumberOfVotes"
+                value="{{ num }}"
+              >
+                {{ num }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-2" style="padding-top: 15px; padding-right: 0">
+            <span>No votes: </span>
+          </div>
+          <div class="col" style="padding-left: 0; padding-top: 10px">
+            <select
+              [(ngModel)]="this.givenNoVotes"
+              class="form-control"
+              style="width: 20%; height: 90%"
+            >
+              <option
+                *ngFor="let num of this.maximumNumberOfVotes"
+                value="{{ num }}"
+              >
+                {{ num }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-2" style="padding-top: 15px; padding-right: 0">
+            <span>Abstention: </span>
+          </div>
+          <div class="col" style="padding-left: 0; padding-top: 10px">
+            <select
+              [(ngModel)]="this.abstainedVotes"
+              class="form-control"
+              style="width: 20%; height: 90%"
+            >
+              <option
+                *ngFor="let num of this.maximumNumberOfVotes"
+                value="{{ num }}"
+              >
+                {{ num }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div *ngIf="this.feedbackErrors.length != 0" class="row">
+          <em
+            style="color: red; width: 100%"
+            *ngFor="let err of this.feedbackErrors"
+            >{{ err }}</em
+          >
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button
+        (click)="this.giveFeedback(modal)"
+        class="btn btn-outline-primary"
+      >
+        Cast vote
       </button>
     </div>
   </ng-template>

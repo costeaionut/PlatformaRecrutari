@@ -234,9 +234,14 @@
             [ngClass]="{
               approvedStatus:
                 this.participantsStatus[userIndex] == 'Passed form stage' ||
-                this.participantsStatus[userIndex] == 'Scheduled for workshop',
+                this.participantsStatus[userIndex] ==
+                  'Scheduled for workshop' ||
+                this.participantsStatus[userIndex] == 'Passed workshop stage',
               rejectedStatus:
-                this.participantsStatus[userIndex] == 'Rejected at form stage',
+                this.participantsStatus[userIndex] ==
+                  'Rejected at form stage' ||
+                this.participantsStatus[userIndex] ==
+                  'Rejected at workshop stage',
               waitingStatus:
                 this.participantsStatus[userIndex] ==
                   'Waiting for form feedback' ||

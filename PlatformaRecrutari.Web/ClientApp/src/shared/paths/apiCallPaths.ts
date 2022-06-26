@@ -35,4 +35,9 @@ export enum ApiCallPaths {
   getParticipantAnswer = "api/Participants/FindParticipantAnswer/",
   getPaticipantStatus = "api/Participants/FindParticipantStatus/",
   getSessionParticipants = "api/Participants/GetSessionsParticipants/",
+
+  getWorkshopFeedback = "api/Session/Workshop/Feedback/",
+  postWorkshopFeedback = "api/Session/Workshop/Feedback/Create/",
+  deleteWorkshopFeedback = "api/Session/Workshop/Feedback/Delete/",
+  getWorkshopFeedbackBySessionId = "api/Session/Workshop/FeedbackBySession/",
 }

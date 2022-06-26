@@ -6,6 +6,7 @@ import { FormFeedbackPost } from "src/shared/dto/feedback/send-form-feedback";
 import { FormDto } from "src/shared/dto/form-dto";
 import { FormInfo } from "src/shared/interfaces/form/formInfo";
 import { UserInfo } from "src/shared/interfaces/user/userInfo";
+import { WorkshopFeedback } from "src/shared/interfaces/workshop/workshop-feedback";
 import { WorkshopInfo } from "src/shared/interfaces/workshop/workshop-info";
 import { AuthenticationService } from "src/shared/services/authentication.service";
 import { DtoMapperService } from "src/shared/services/dto-mapper.service";
@@ -102,9 +103,21 @@ export class DisplaySessionsComponent implements OnInit {
                   this.participants[i].id
                 )
                 .toPromise();
-              if (workshopStatus == "Finished")
-                this.participantsStatus[i] = "Waiting for workshop feedback";
-              else this.participantsStatus[i] = "Scheduled for workshop";
+              if (workshopStatus == "Finished") {
+                let workshopFeedback: WorkshopFeedback =
+                  await this.sessionService
+                    .getWorkshopFeedbackBySessionId(
+                      this.participants[i].id,
+                      this.currentSession.id
+                    )
+                    .toPromise();
+                if (workshopFeedback.status == "passed")
+                  this.participantsStatus[i] = "Passed workshop stage";
+                else if (workshopFeedback.status == "rejected")
+                  this.participantsStatus[i] = "Rejected at workshop stage";
+                else
+                  this.participantsStatus[i] = "Waiting for workshop feedback";
+              } else this.participantsStatus[i] = "Scheduled for workshop";
             } else this.participantsStatus[i] = "Not scheduled for workshop";
           }
           break;
@@ -129,6 +142,8 @@ export class DisplaySessionsComponent implements OnInit {
     let waitingScheduleWorkshopUsers: UserInfo[] = [];
     let scheduledWorkshopUsers: UserInfo[] = [];
     let waitingWorkshopFeedbackUsers: UserInfo[] = [];
+    let passedWorkshopUsers: UserInfo[] = [];
+    let rejectedWorkshopUsers: UserInfo[] = [];
 
     let waitingFormStatus: string[] = [];
     let passedFormStatus: string[] = [];
@@ -136,6 +151,8 @@ export class DisplaySessionsComponent implements OnInit {
     let waitingScheduleWorkshopStatus: string[] = [];
     let scheduledWorkshopStatus: string[] = [];
     let waitingWorkshopFeedbackStatus: string[] = [];
+    let passedWorkshopStatus: string[] = [];
+    let rejectedWorkshopStatus: string[] = [];
 
     for (let i = 0; i < this.participants.length; i++) {
       switch (this.participantsStatus[i]) {
@@ -150,6 +167,14 @@ export class DisplaySessionsComponent implements OnInit {
         case "Rejected at form stage":
           rejectedFormUsers.push(this.participants[i]);
           rejectedFormStatus.push(this.participantsStatus[i]);
+          break;
+        case "Passed workshop stage":
+          passedWorkshopUsers.push(this.participants[i]);
+          passedWorkshopStatus.push(this.participantsStatus[i]);
+          break;
+        case "Rejected at workshop stage":
+          rejectedWorkshopUsers.push(this.participants[i]);
+          rejectedWorkshopStatus.push(this.participantsStatus[i]);
           break;
         case "Scheduled for workshop":
           scheduledWorkshopUsers.push(this.participants[i]);
@@ -171,7 +196,9 @@ export class DisplaySessionsComponent implements OnInit {
       ...waitingScheduleWorkshopUsers,
       ...waitingWorkshopFeedbackUsers,
       ...scheduledWorkshopUsers,
+      ...passedWorkshopUsers,
       ...passedFormUsers,
+      ...rejectedWorkshopUsers,
       ...rejectedFormUsers,
     ];
     this.participantsStatus = [
@@ -179,7 +206,9 @@ export class DisplaySessionsComponent implements OnInit {
       ...waitingScheduleWorkshopStatus,
       ...waitingWorkshopFeedbackStatus,
       ...scheduledWorkshopStatus,
+      ...passedWorkshopStatus,
       ...passedFormStatus,
+      ...rejectedWorkshopStatus,
       ...rejectedFormStatus,
     ];
   }

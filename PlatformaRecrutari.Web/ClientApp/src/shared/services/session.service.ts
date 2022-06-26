@@ -5,6 +5,7 @@ import { CreateSessionDto } from "../dto/session/create-session-dto";
 import { SessionDto } from "../dto/session/get-session-dto";
 import { FormInfo } from "../interfaces/form/formInfo";
 import { UserInfo } from "../interfaces/user/userInfo";
+import { WorkshopFeedback } from "../interfaces/workshop/workshop-feedback";
 import { WorkshopInfo } from "../interfaces/workshop/workshop-info";
 import { WorkshopSchedule } from "../interfaces/workshop/workshop-schedule";
 import { ApiCallPaths } from "./../paths/apiCallPaths";
@@ -159,6 +160,39 @@ export class SessionService {
         ApiCallPaths.deleteScheduleSlot +
         `${participantId}/${workshopId}`,
       {}
+    );
+  }
+
+  public createWorkshopFeedback(workshopFeedback: WorkshopFeedback) {
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.postWorkshopFeedback,
+      workshopFeedback
+    );
+  }
+
+  public getWorkshopFeedback(participantId: string, workshopId: number) {
+    return this.http.get<WorkshopFeedback>(
+      this.baseUrl +
+        ApiCallPaths.getWorkshopFeedback +
+        `${participantId}/${workshopId}`
+    );
+  }
+
+  public getWorkshopFeedbackBySessionId(
+    participantId: string,
+    sessionId: number
+  ) {
+    return this.http.get<WorkshopFeedback>(
+      this.baseUrl +
+        ApiCallPaths.getWorkshopFeedbackBySessionId +
+        `${participantId}/${sessionId}`
+    );
+  }
+
+  public deleteWorkshopFeedback(workshopFeedback: WorkshopFeedback) {
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.deleteWorkshopFeedback,
+      workshopFeedback
     );
   }
 }

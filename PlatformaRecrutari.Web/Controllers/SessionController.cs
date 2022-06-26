@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System;
 using PlatformaRecrutari.Dto.Sessions.FormQuesitons;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
 
 namespace PlatformaRecrutari.Web.Controllers
 {
@@ -25,18 +26,24 @@ namespace PlatformaRecrutari.Web.Controllers
 
         private readonly IMapper _mapper;
         private readonly IFormManager _formManager;
+        private readonly IRoleManager _roleManager;
+        private readonly UserManager<User> _userManager;
         private readonly ISessionManager _sessionManager;
         private readonly IWorkshopManager _workshopManager;
 
         public SessionController(
             IMapper mapper,
+            IRoleManager roleManager,
             IFormManager formManager,
+            UserManager<User> userManager,
             ISessionManager sessionsManager,
             IWorkshopManager workshopManager
         )
         {
             _workshopManager = workshopManager;
             _sessionManager = sessionsManager;
+            _userManager = userManager;
+            _roleManager = roleManager;
             _formManager = formManager;
             _mapper = mapper;
         }
@@ -628,7 +635,7 @@ namespace PlatformaRecrutari.Web.Controllers
         }
     
         [HttpGet("Workshop/ParticipantsToBeScheduled/{workshopId}")]
-        public List<User> GetParticipantsWhoCanBeScheduled(int workshopId)
+        public List<UserDto> GetParticipantsWhoCanBeScheduled(int workshopId)
         {
 
             var workshop = this._workshopManager.getWorkshopById(workshopId);
@@ -638,8 +645,16 @@ namespace PlatformaRecrutari.Web.Controllers
             var users = this._formManager.getUsersWhoPassedForm(form.Id);
 
             var eligibleUsers = this._workshopManager.getUsersEligibleForSchedule(users, session);
+            List<UserDto> eligibleUsersDto = new();
 
-            return eligibleUsers;
+            foreach (var user in eligibleUsers)
+            {
+                var mappedUser = this._mapper.Map<UserDto>(user);
+                mappedUser.Role = this._roleManager.GetRoleType(user.RoleId);
+                eligibleUsersDto.Add(mappedUser);
+            }
+
+            return eligibleUsersDto;
         }
     
         [HttpPost("Workshop/Schedule")]
@@ -656,18 +671,59 @@ namespace PlatformaRecrutari.Web.Controllers
 
             return BadRequest("WaitForFormToClose");
         }
-    
+
         [HttpGet("Workshop/Scheduled/Participants/{workshopId}")]
-        public ActionResult<List<User>> GetScheduledParticipants(int workshopId)
-            => this._workshopManager.getWorkshopParticipants(this._workshopManager.getWorkshopById(workshopId));
+        public ActionResult<List<UserDto>> GetScheduledParticipants(int workshopId)
+        { 
+            var users = 
+                this._workshopManager.getWorkshopParticipants(this._workshopManager.getWorkshopById(workshopId));
+
+            List<UserDto> usersDto = new();
+
+            foreach (var user in users)
+            {
+                var mappedUser = this._mapper.Map<UserDto>(user);
+                mappedUser.Role = this._roleManager.GetRoleType(user.RoleId);
+                usersDto.Add(mappedUser);
+            }
+
+            return usersDto;
+        }
 
         [HttpGet("Workshop/Scheduled/Volunteers/{workshopId}")]
-        public ActionResult<List<User>> GetScheduledVolunteers(int workshopId)
-            => this._workshopManager.getWorkshopVolunteers(this._workshopManager.getWorkshopById(workshopId));
+        public ActionResult<List<UserDto>> GetScheduledVolunteers(int workshopId)
+        { 
+            var users = 
+                this._workshopManager.getWorkshopVolunteers(this._workshopManager.getWorkshopById(workshopId));
+
+            List<UserDto> usersDto = new();
+
+            foreach (var user in users)
+            {
+                var mappedUser = this._mapper.Map<UserDto>(user);
+                mappedUser.Role = this._roleManager.GetRoleType(user.RoleId);
+                usersDto.Add(mappedUser);
+            }
+
+            return usersDto;
+        }
 
         [HttpGet("Workshop/Scheduled/CDDD/{workshopId}")]
-        public ActionResult<List<User>> GetScheduledCDDD(int workshopId)
-            => this._workshopManager.getWorkshopScheduledCDDD(this._workshopManager.getWorkshopById(workshopId));
+        public ActionResult<List<UserDto>> GetScheduledCDDD(int workshopId)
+        {
+            var users = 
+                this._workshopManager.getWorkshopScheduledCDDD(this._workshopManager.getWorkshopById(workshopId));
+
+            List<UserDto> usersDto = new();
+            foreach (var user in users)
+            {
+                var mappedUser = this._mapper.Map<UserDto>(user);
+                mappedUser.Role = this._roleManager.GetRoleType(user.RoleId);
+                usersDto.Add(mappedUser);
+            }
+
+            return usersDto;
+        }
 
         [HttpGet("Workshop/IsScheduled/{userId}/{sessionId}")]
         public ActionResult<bool> IsParticipantScheduled(int sessionId, string userId)
@@ -678,14 +734,23 @@ namespace PlatformaRecrutari.Web.Controllers
             => this._workshopManager.getWorkshopStatus(sessionId, userId);
     
         [HttpPost("Workshop/Scheduled/WhoScheduled/{sessionId}")]
-        public ActionResult<List<User>> GetWhoScheduled([FromBody] List<User> users, int sessionId)
+        public ActionResult<List<UserDto>> GetWhoScheduled([FromBody] List<User> users, int sessionId)
         {
             if (users == null)
                 return BadRequest("MissingBodyUsers");
 
             var workshops = _workshopManager.getWorkshopRangeBySessionId(sessionId);
 
-            return _workshopManager.getVolunteerWhoScheduledParticipants(workshops, users);
+            var foundUsers = _workshopManager.getVolunteerWhoScheduledParticipants(workshops, users);
+            List<UserDto> usersDto = new();
+            foreach (var user in foundUsers)
+            {
+                var mappedUser = this._mapper.Map<UserDto>(user);
+                mappedUser.Role = this._roleManager.GetRoleType(user.RoleId);
+                usersDto.Add(mappedUser);
+            }
+
+            return usersDto;
         }
 
         [HttpPost("Workshop/Schedule/DeleteSchedule/{participantId}/{workshopId}")]
@@ -695,5 +760,68 @@ namespace PlatformaRecrutari.Web.Controllers
             return Ok();
         }
 
+        [HttpPost("Workshop/Feedback/Create")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public async Task<ActionResult<WorkshopFeedback>> 
+            CreateWorkshopFeedbackAsync([FromBody] WorkshopFeedback newFeedback)
+        {
+            if (newFeedback == null)
+                return BadRequest("MissingBodyFeedback");
+
+            var participant = await this._userManager.FindByIdAsync(newFeedback.ParticipantId);
+            var participantRole = this._roleManager.GetRoleType(participant.RoleId);
+            
+            var feedbackGiver = await this._userManager.FindByIdAsync(newFeedback.FeedbackGiverId);
+            var feedbackGiverRole = this._roleManager.GetRoleType(feedbackGiver.RoleId);
+
+            if (participant == null || feedbackGiver == null)
+                return BadRequest("Participant|GiverNotFound");
+
+            if (participantRole != RoleType.Candidate)
+                return BadRequest("CandidateRoleNotEligible");
+
+            if (feedbackGiverRole != RoleType.ProjectManager)
+                return BadRequest("FeedbackGiverNotEligible");
+
+            if (_workshopManager.getUsersFeedbackForWorkshop(newFeedback.ParticipantId, newFeedback.WorkshopId) != null)
+                return BadRequest("FeedbackAlreadyGiven");
+
+            var res = _workshopManager.createWrokshopFeedback(newFeedback);
+
+            return res;
+        }
+
+        [HttpGet("Workshop/Feedback/{participantId}/{workshopId}")]
+        public async Task<ActionResult<WorkshopFeedback>> GetParticipantWorkshopFeedbackAsync(string participantId, int workshopId) 
+        {
+            var res = await this._userManager.FindByIdAsync(participantId);
+            if (res == null)
+                return BadRequest("ParticipantNotFound");
+
+            return _workshopManager.getUsersFeedbackForWorkshop(participantId, workshopId);
+        }
+    
+        [HttpPost("Workshop/Feedback/Delete")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public IActionResult DeleteParticipantsFeedback([FromBody] WorkshopFeedback workshopFeedback)
+        {
+            if (workshopFeedback == null)
+                return BadRequest("MissingBodyFeedback");
+
+            _workshopManager.deleteUserFeedback(workshopFeedback);
+
+            return Ok();
+        }
+    
+        [HttpGet("Workshop/FeedbackBySession/{participantId}/{sessionId}")]
+        public async Task<ActionResult<WorkshopFeedback>> 
+            GetParticipantWorkshopFormBySessionIdAsync(string participantId, int sessionId) 
+        {
+            var participant = await this._userManager.FindByIdAsync(participantId);
+            if (participant == null)
+                return BadRequest("ParticipantNotFound");
+
+            return _workshopManager.GetWorkshopFeedbackBySessionId(participantId, sessionId);
+        }
     }
 }

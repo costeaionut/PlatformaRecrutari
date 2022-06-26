@@ -1,13 +1,15 @@
 import { Component, Input, OnInit } from "@angular/core";
+import { yearsPerPage } from "@angular/material";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { of } from "rxjs";
 import { FormInfo } from "src/shared/interfaces/form/formInfo";
 import { UserInfo } from "src/shared/interfaces/user/userInfo";
+import { WorkshopFeedback } from "src/shared/interfaces/workshop/workshop-feedback";
 import { WorkshopInfo } from "src/shared/interfaces/workshop/workshop-info";
 import { WorkshopSchedule } from "src/shared/interfaces/workshop/workshop-schedule";
 import { AuthenticationService } from "src/shared/services/authentication.service";
 import { SessionService } from "src/shared/services/session.service";
-import Swal from "sweetalert2";
+import Swal, { SweetAlertResult } from "sweetalert2";
 
 @Component({
   selector: "app-workshop-manager",
@@ -250,6 +252,8 @@ export class WorkshopManagerComponent implements OnInit {
   canSchedule(): boolean {
     if (
       this.currentUser.role != "Participant" &&
+      this.currentUser.role != "DepartmentDirector" &&
+      this.currentUser.role != "BoardMember" &&
       new Date(this.form.endDate) < new Date()
     )
       return true;
@@ -353,6 +357,7 @@ export class WorkshopManagerComponent implements OnInit {
 
   //An array containing the person's who scheduled the users
   wsInfoParticipantsSchedulerVolunteer: Array<UserInfo>;
+  wsInfoParticipantsFeedback: Array<WorkshopFeedback>;
   wsInfoParticipants: Array<UserInfo>;
   wsInfoVolunteers: Array<UserInfo>;
   wsInfoCddd: Array<UserInfo>;
@@ -387,12 +392,43 @@ export class WorkshopManagerComponent implements OnInit {
       .toPromise();
     this.wsInfoVolunteers = await promiseVolunteers;
     this.wsInfoCddd = await promiseCDDD;
+    this.wsInfoCd = new Array<UserInfo>();
+    this.wsInfoDd = new Array<UserInfo>();
     this.wsInfoCddd.forEach((cddd) => {
       if (cddd.role == "BoardMember") this.wsInfoCd.push(cddd);
       if (cddd.role == "DepartmentDirector") this.wsInfoDd.push(cddd);
     });
 
+    this.wsInfoParticipantsFeedback = Array(
+      this.wsInfoParticipants.length
+    ).fill(undefined);
+    for (let i = 0; i < this.wsInfoParticipants.length; i++)
+      this.wsInfoParticipantsFeedback[i] = await this.sessionService
+        .getWorkshopFeedback(this.wsInfoParticipants[i].id, workshop.id)
+        .toPromise();
     this.modalService.open(wsInfo, { centered: true, size: "lg" });
+  }
+
+  getParticipantStatus(participantIndex: number) {
+    if (this.parseWorkshopStatus(this.wsInfoOpened) == "Finished")
+      if (this.wsInfoParticipantsFeedback[participantIndex] == null)
+        return "Waiting for feedback";
+      else if (
+        this.wsInfoParticipantsFeedback[participantIndex].status == "passed"
+      )
+        return "Passed";
+      else return "Rejected";
+    return "Workshop not finished";
+  }
+
+  async updateParticipantsFeedbackStatus() {
+    for (let i = 0; i < this.wsInfoParticipants.length; i++)
+      this.wsInfoParticipantsFeedback[i] = await this.sessionService
+        .getWorkshopFeedback(
+          this.wsInfoParticipants[i].id,
+          this.wsInfoOpened.id
+        )
+        .toPromise();
   }
 
   deleteScheduledParticipant(participantId: string, workshopId: number) {
@@ -473,6 +509,7 @@ export class WorkshopManagerComponent implements OnInit {
         else return "canApply";
       case "DepartmentDirector":
         let foundDD = false;
+        console.log(this.wsInfoCddd);
         this.wsInfoDd.forEach((dd) => {
           if (dd.id == this.currentUser.id) foundDD = true;
         });
@@ -675,6 +712,166 @@ export class WorkshopManagerComponent implements OnInit {
               });
             }
           );
+    });
+  }
+
+  userFeedback: string;
+  maximumNumberOfVotes: number[];
+  feedbackParticipant: UserInfo;
+  numberOfExpectedVotes: number;
+  feedbackWorkshop: WorkshopInfo;
+
+  givenNoVotes: number;
+  givenYesVotes: number;
+  abstainedVotes: number;
+
+  feedbackErrors: string[];
+
+  giveFeedbackModal(participant: UserInfo, workshop: WorkshopInfo, modal) {
+    this.userFeedback = "";
+    this.feedbackErrors = [];
+    this.feedbackWorkshop = workshop;
+    this.feedbackParticipant = participant;
+    this.numberOfExpectedVotes =
+      workshop.numberOfBoardMembers +
+      workshop.numberOfDirectors +
+      workshop.numberOfVolunteers +
+      1;
+
+    this.givenNoVotes = 0;
+    this.givenYesVotes = 0;
+    this.abstainedVotes = 0;
+
+    this.maximumNumberOfVotes = [];
+    for (let i = 0; i <= this.numberOfExpectedVotes + 2; i++)
+      this.maximumNumberOfVotes.push(i);
+
+    this.modalService.open(modal, { centered: true, size: "lg" });
+  }
+
+  canGiveFeedback(participantIndex: number) {
+    if (
+      this.wsInfoParticipantsFeedback[participantIndex] == null &&
+      this.currentUser.role == "ProjectManager" &&
+      this.parseWorkshopStatus(this.wsInfoOpened) == "Finished"
+    )
+      return true;
+    return false;
+  }
+
+  canDeleteFeedback(participantIndex: number) {
+    if (
+      this.wsInfoParticipantsFeedback[participantIndex] != null &&
+      this.currentUser.role == "ProjectManager"
+    )
+      return true;
+    return false;
+  }
+
+  async giveFeedback(feedbackModal) {
+    let actualVotes: number =
+      parseInt(this.givenYesVotes.toLocaleString()) +
+      parseInt(this.givenNoVotes.toLocaleString()) +
+      parseInt(this.abstainedVotes.toLocaleString());
+
+    this.feedbackErrors = [];
+    if (this.userFeedback == "")
+      this.feedbackErrors.push("Please give user a feedback!");
+    if (actualVotes == 0) this.feedbackErrors.push("Total votes can't be 0!");
+    if (this.feedbackErrors.length != 0) return;
+
+    if (actualVotes != this.numberOfExpectedVotes) {
+      let res = await Swal.fire({
+        title: "Votes are not matching",
+        text:
+          `There are ${this.numberOfExpectedVotes} expected votes` +
+          ` and ${actualVotes} actual votes. Continue?`,
+        icon: "warning",
+        showCancelButton: true,
+        showConfirmButton: true,
+        cancelButtonColor: "red",
+        confirmButtonColor: "green",
+        cancelButtonText: "No",
+        confirmButtonText: "Yes",
+      });
+
+      if (res.dismiss) return;
+    }
+
+    let status: string;
+    if (actualVotes / 2 < this.givenYesVotes) status = "passed";
+    else if (
+      actualVotes / 2 == this.givenYesVotes &&
+      this.givenNoVotes < this.givenYesVotes
+    )
+      status = "passed";
+    else status = "rejected";
+
+    let newFeedback: WorkshopFeedback = {
+      participantId: this.feedbackParticipant.id,
+      feedbackGiverId: this.currentUser.id,
+      workshopId: this.feedbackWorkshop.id,
+      yesVotes: this.givenYesVotes,
+      noVotes: this.givenNoVotes,
+      abstainVotes: this.abstainedVotes,
+      feedback: this.userFeedback,
+      status: status,
+    };
+
+    this.sessionService.createWorkshopFeedback(newFeedback).subscribe(
+      (_) => {
+        Swal.fire({
+          title: "Feedback was saved succesfully!",
+          icon: "success",
+          showConfirmButton: false,
+          showCancelButton: false,
+          showCloseButton: false,
+          timer: 1500,
+        }).then(async (_res) => {
+          await this.updateParticipantsFeedbackStatus();
+          feedbackModal.close();
+        });
+      },
+      (_err) => {
+        Swal.fire({
+          title: "There was an error...\nFeedback was not saved!",
+          icon: "error",
+          showConfirmButton: false,
+          showCancelButton: false,
+          showCloseButton: false,
+          timer: 1500,
+        });
+      }
+    );
+  }
+
+  async deleteFeedback(participantIndex: string) {
+    Swal.fire({
+      title: "Are you sure you want to delete the feedback?",
+      icon: "question",
+      showCancelButton: true,
+      showConfirmButton: true,
+      cancelButtonColor: "red",
+      confirmButtonColor: "green",
+      cancelButtonText: "No",
+      confirmButtonText: "Yes",
+    }).then((res) => {
+      if (res.value)
+        this.sessionService
+          .deleteWorkshopFeedback(
+            this.wsInfoParticipantsFeedback[participantIndex]
+          )
+          .subscribe((_) => {
+            Swal.fire({
+              title: "Feedback deleted succesfully",
+              icon: "success",
+              showCancelButton: false,
+              showConfirmButton: false,
+              showCloseButton: false,
+              timer: 1500,
+            });
+            this.updateParticipantsFeedbackStatus();
+          });
     });
   }
 }
