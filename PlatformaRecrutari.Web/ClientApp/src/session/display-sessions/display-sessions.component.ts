@@ -4,6 +4,7 @@ import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { FormFeedbackResponse } from "src/shared/dto/feedback/response-form-feedback";
 import { FormFeedbackPost } from "src/shared/dto/feedback/send-form-feedback";
 import { FormDto } from "src/shared/dto/form-dto";
+import { ParticipantsDto } from "src/shared/dto/participant-dto";
 import { FormInfo } from "src/shared/interfaces/form/formInfo";
 import { UserInfo } from "src/shared/interfaces/user/userInfo";
 import { WorkshopFeedback } from "src/shared/interfaces/workshop/workshop-feedback";
@@ -64,71 +65,21 @@ export class DisplaySessionsComponent implements OnInit {
       .toPromise();
 
     this.currentUser = await this.authService.getCurrentUser().toPromise();
-    this.participants = await this.participantsService
+    let participantsDto: ParticipantsDto[] = await this.participantsService
       .getSessionParticipants(this.currentSession.id)
       .toPromise();
 
-    await this.getParticipantsStatus();
+    this.getParticipantsStatus(participantsDto);
     this.orderParticipantsByWaitingStatus();
   }
 
-  async getParticipantsStatus() {
-    this.participantsStatus = Array(this.participants.length).fill("");
-
-    for (let i = 0; i < this.participants.length; i++) {
-      let status: FormFeedbackResponse = await this.participantsService
-        .getParticipantStatus(this.participants[i].id)
-        .toPromise();
-      switch (status.participantStatus) {
-        case "Waiting for form feedback":
-          this.participantsStatus[i] = "Waiting for form feedback";
-          break;
-        case "PassedForm":
-          let workshops: WorkshopInfo[] = await this.sessionService
-            .getSessionWorkshops(this.currentSession.id)
-            .toPromise();
-          if (workshops.length == 0)
-            this.participantsStatus[i] = "Passed form stage";
-          else {
-            let isScheduled: boolean = await this.sessionService
-              .isParticipantScheduledForWS(
-                this.currentSession.id,
-                this.participants[i].id
-              )
-              .toPromise();
-            if (isScheduled) {
-              let workshopStatus: string = await this.sessionService
-                .getWorkshopStatusFromParticipantAndSession(
-                  this.currentSession.id,
-                  this.participants[i].id
-                )
-                .toPromise();
-              if (workshopStatus == "Finished") {
-                let workshopFeedback: WorkshopFeedback =
-                  await this.sessionService
-                    .getWorkshopFeedbackBySessionId(
-                      this.participants[i].id,
-                      this.currentSession.id
-                    )
-                    .toPromise();
-                if (workshopFeedback != null) {
-                  if (workshopFeedback.status == "passed")
-                    this.participantsStatus[i] = "Passed workshop stage";
-                  else if (workshopFeedback.status == "rejected")
-                    this.participantsStatus[i] = "Rejected at workshop stage";
-                } else
-                  this.participantsStatus[i] = "Waiting for workshop feedback";
-              } else this.participantsStatus[i] = "Scheduled for workshop";
-            } else this.participantsStatus[i] = "Not scheduled for workshop";
-          }
-          break;
-        case "RejectedForm":
-          this.participantsStatus[i] = "Rejected at form stage";
-          break;
-        default:
-          break;
-      }
-    }
+  getParticipantsStatus(participants: ParticipantsDto[]) {
+    this.participants = new Array<UserInfo>();
+    this.participantsStatus = new Array<string>();
+    participants.forEach((participant) => {
+      this.participants.push(participant.user);
+      this.participantsStatus.push(participant.status);
+    });
   }
 
   goToUserProfile(userIndex: number) {
@@ -140,20 +91,32 @@ export class DisplaySessionsComponent implements OnInit {
     let waitingFormUsers: UserInfo[] = [];
     let passedFormUsers: UserInfo[] = [];
     let rejectedFormUsers: UserInfo[] = [];
+
     let waitingScheduleWorkshopUsers: UserInfo[] = [];
     let scheduledWorkshopUsers: UserInfo[] = [];
     let waitingWorkshopFeedbackUsers: UserInfo[] = [];
     let passedWorkshopUsers: UserInfo[] = [];
     let rejectedWorkshopUsers: UserInfo[] = [];
 
+    let waitingScheduleInterviewUsers: UserInfo[] = [];
+    let scheduledInterviewUsers: UserInfo[] = [];
+    let waitingInterviewFeedbackUsers: UserInfo[] = [];
+    let finalVoteUsers: UserInfo[] = [];
+
     let waitingFormStatus: string[] = [];
     let passedFormStatus: string[] = [];
     let rejectedFormStatus: string[] = [];
+
     let waitingScheduleWorkshopStatus: string[] = [];
     let scheduledWorkshopStatus: string[] = [];
     let waitingWorkshopFeedbackStatus: string[] = [];
     let passedWorkshopStatus: string[] = [];
     let rejectedWorkshopStatus: string[] = [];
+
+    let waitingScheduleInterviewStatus: string[] = [];
+    let scheduledInterviewStatus: string[] = [];
+    let waitingInterviewFeedbackStatus: string[] = [];
+    let finalVoteStatus: string[] = [];
 
     for (let i = 0; i < this.participants.length; i++) {
       switch (this.participantsStatus[i]) {
@@ -189,26 +152,62 @@ export class DisplaySessionsComponent implements OnInit {
           waitingScheduleWorkshopUsers.push(this.participants[i]);
           waitingScheduleWorkshopStatus.push(this.participantsStatus[i]);
           break;
+        case "Not scheduled for interview":
+          waitingScheduleInterviewUsers.push(this.participants[i]);
+          waitingScheduleInterviewStatus.push(this.participantsStatus[i]);
+          break;
+        case "Scheduled for interview":
+          scheduledInterviewUsers.push(this.participants[i]);
+          scheduledInterviewStatus.push(this.participantsStatus[i]);
+          break;
+        case "Waiting for interview feedback":
+          waitingInterviewFeedbackUsers.push(this.participants[i]);
+          waitingInterviewFeedbackStatus.push(this.participantsStatus[i]);
+          break;
+        case "Ready for final vote":
+          finalVoteUsers.push(this.participants[i]);
+          finalVoteStatus.push(this.participantsStatus[i]);
+          break;
       }
     }
+
+    console.log(finalVoteUsers);
 
     this.participants = [
       ...waitingFormUsers,
       ...waitingScheduleWorkshopUsers,
+      ...waitingScheduleInterviewUsers,
+
       ...waitingWorkshopFeedbackUsers,
+      ...waitingInterviewFeedbackUsers,
+
+      ...finalVoteUsers,
+
+      ...scheduledInterviewUsers,
       ...scheduledWorkshopUsers,
+
       ...passedWorkshopUsers,
       ...passedFormUsers,
+
       ...rejectedWorkshopUsers,
       ...rejectedFormUsers,
     ];
     this.participantsStatus = [
       ...waitingFormStatus,
       ...waitingScheduleWorkshopStatus,
+      ...waitingScheduleInterviewStatus,
+
       ...waitingWorkshopFeedbackStatus,
+      ...waitingInterviewFeedbackStatus,
+
+      ...finalVoteStatus,
+
+      ...scheduledInterviewStatus,
       ...scheduledWorkshopStatus,
+
       ...passedWorkshopStatus,
       ...passedFormStatus,
+
       ...rejectedWorkshopStatus,
       ...rejectedFormStatus,
     ];
@@ -239,7 +238,10 @@ export class DisplaySessionsComponent implements OnInit {
                 title: "Feedback saved successfully",
                 icon: "success",
               });
-              await this.getParticipantsStatus();
+              let participantsDto = await this.participantsService
+                .getSessionParticipants(this.currentSession.id)
+                .toPromise();
+              this.getParticipantsStatus(participantsDto);
               this.orderParticipantsByWaitingStatus();
             },
             (err) => {
@@ -254,7 +256,10 @@ export class DisplaySessionsComponent implements OnInit {
 
   async changeDisplay(display: string) {
     if (display == "candidates") {
-      await this.getParticipantsStatus();
+      let participantsDto = await this.participantsService
+        .getSessionParticipants(this.currentSession.id)
+        .toPromise();
+      this.getParticipantsStatus(participantsDto);
       this.orderParticipantsByWaitingStatus();
     }
     this.whatToDisplay = display;

@@ -72,5 +72,58 @@ namespace PlatformaRecrutari.Data.Managers
 
             return newFeedback.Entity;
         }
+
+        public string GetParticipantsStatus(string participantId)
+        {
+            var formFeedback = _context.FormFeedbacks.FirstOrDefault(fs => fs.CandidateId == participantId);
+
+            var form = _context.Forms.FirstOrDefault(f => f.Id == formFeedback.FormId);
+            var workshops = _context.Workshops.Where(w => w.SessionId == form.SessionId).ToList();
+            var workshopIds = workshops.Select(w => w.Id).ToList();
+
+            if (formFeedback == null) return "Waiting for form feedback";
+            if (formFeedback.Status == StatusType.RejectedForm) return "Rejected at form stage";
+            if (formFeedback.Status == StatusType.PassedForm) {
+                if (workshops.Count == 0) return "Passed form stage";
+                var workshopSchedule = _context.WorkshopSchedules
+                    .FirstOrDefault(ws => ws.ParticipantId == participantId && workshopIds.Contains(ws.WorkshopId));
+                if (workshopSchedule == null) return "Not scheduled for workshop";
+                else
+                {
+                    var currentWorkshop = workshops.FirstOrDefault(w => w.Id == workshopSchedule.WorkshopId);
+                    if (DateTime.Now < currentWorkshop.WorkshopDate || 
+                        (currentWorkshop.WorkshopDate < DateTime.Now && 
+                        DateTime.Now < (currentWorkshop.WorkshopDate + new TimeSpan(4, 0, 0)))) 
+                        return "Scheduled for workshop";
+                    else
+                    {
+                        var workshopFeedback = _context.WorkshopFeedbacks
+                            .FirstOrDefault(wf => wf.ParticipantId == participantId && workshopIds.Contains(wf.WorkshopId));
+                        if (workshopFeedback == null) return "Waiting for workshop feedback";
+                        if (workshopFeedback.Status == "rejected") return "Rejected at workshop stage";
+                        if(workshopFeedback.Status == "passed") {
+                            var interviews = _context.Interviews
+                                .Where(i => i.SessionId == currentWorkshop.SessionId).ToList();
+                            var interviewsIds = interviews.Select(i => i.Id).ToList();
+
+                            if(interviews.Count == 0) return "Passed workshop stage";
+                            var interviewSchedule = _context.InterviewSchedules
+                                .FirstOrDefault(s => s.ParticipantId == participantId && interviewsIds.Contains(s.InterviewId));
+                            if (interviewSchedule == null) return "Not scheduled for interview";
+                            var currentInterview = interviews.FirstOrDefault(i => i.Id == interviewSchedule.InterviewId);
+                            if (DateTime.Now < currentInterview.InterviewDateTime) return "Scheduled for interview";
+                            else
+                            {
+                                var interviewFeedback = _context.InterviewFeedbacks
+                                    .FirstOrDefault(f => f.InterviewId == currentInterview.Id);
+                                if (interviewFeedback == null) return "Waiting for interview feedback";
+                                else return "Ready for final vote";
+                            }
+                        }
+                    }
+                }
+            }
+            return "ErrorNotFound";
+        }
     }
 }

@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { FormFeedbackResponse } from "../dto/feedback/response-form-feedback";
 import { FormFeedbackPost } from "../dto/feedback/send-form-feedback";
+import { ParticipantsDto } from "../dto/participant-dto";
 import { FormAnswer } from "../interfaces/form/answers/formAnswer";
 import { QuestionAnswer } from "../interfaces/form/answers/questionAnswer";
 import { UserInfo } from "../interfaces/user/userInfo";
@@ -25,7 +26,7 @@ export class ParticipantsService {
   }
 
   public getSessionParticipants(sessionId: number) {
-    return this.http.get<Array<UserInfo>>(
+    return this.http.get<Array<ParticipantsDto>>(
       this.baseUrl + ApiCallPaths.getSessionParticipants + `${sessionId}`
     );
   }

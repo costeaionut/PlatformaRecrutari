@@ -8,6 +8,7 @@ using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
 using PlatformaRecrutari.Dto.Responses.ParticipantStatus;
+using PlatformaRecrutari.Dto.Sessions;
 using PlatformaRecrutari.Dto.Sessions.FormAnswers;
 using PlatformaRecrutari.Dto.User;
 using System;
@@ -109,10 +110,16 @@ namespace PlatformaRecrutari.Web.Controllers
             foreach (var gridQuestion in formGridQuestion)
                 questionIds.Add(gridQuestion.Id);
 
-            List<UserDto> participantsInfo = new();
+            List<ParticipantDto> participantsInfo = new();
             List<string> candidateIds = _participantsManager.FindParticipantIdByQuestionIdRange(questionIds);
             foreach (var candidateId in candidateIds)
-                participantsInfo.Add(_mapper.Map<UserDto>(await _userManager.FindByIdAsync(candidateId)));
+            {
+                ParticipantDto participantDto = new();
+                UserDto user = _mapper.Map<UserDto>(await _userManager.FindByIdAsync(candidateId));
+                participantDto.User = user;
+                participantDto.Status = _participantsManager.GetParticipantsStatus(candidateId);
+                participantsInfo.Add(participantDto);
+            }
 
             return Ok(participantsInfo); 
         }

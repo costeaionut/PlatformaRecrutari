@@ -10,11 +10,12 @@ namespace PlatformaRecrutari.Core.Abstractions
 {
     public interface IParticipantsManager
     {
-        FormAnswers AddFormAnswer(FormAnswers answerToBeAdded);
-        void DeleteFormAnswer(FormAnswers answerToBeDeleted);
         List<string> FindParticipantIdByQuestionIdRange(List<int> questionIds);
         List<FormAnswers> FindParticipantAnswers(string userId, int formId);
         FormFeedback FindParticipantFormFeedback(string userId, int formId);
+        FormAnswers AddFormAnswer(FormAnswers answerToBeAdded);
+        void DeleteFormAnswer(FormAnswers answerToBeDeleted);
         FormFeedback AddFormFeedback(FormFeedback feedback);
+        string GetParticipantsStatus(string participantId);
     }
 }

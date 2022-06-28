@@ -236,7 +236,10 @@
                 this.participantsStatus[userIndex] == 'Passed form stage' ||
                 this.participantsStatus[userIndex] ==
                   'Scheduled for workshop' ||
-                this.participantsStatus[userIndex] == 'Passed workshop stage',
+                this.participantsStatus[userIndex] == 'Passed workshop stage' ||
+                this.participantsStatus[userIndex] ==
+                  'Scheduled for interview' ||
+                this.participantsStatus[userIndex] == 'Ready for final vote',
               rejectedStatus:
                 this.participantsStatus[userIndex] ==
                   'Rejected at form stage' ||
@@ -248,7 +251,11 @@
                 this.participantsStatus[userIndex] ==
                   'Not scheduled for workshop' ||
                 this.participantsStatus[userIndex] ==
-                  'Waiting for workshop feedback'
+                  'Waiting for workshop feedback' ||
+                this.participantsStatus[userIndex] ==
+                  'Not scheduled for interview' ||
+                this.participantsStatus[userIndex] ==
+                  'Waiting for interview feedback'
             }"
             (click)="goToUserProfile(userIndex)"
           >
