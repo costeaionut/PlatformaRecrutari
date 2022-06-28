@@ -103,3 +103,15 @@
 .cancelMyScheduleButton:hover{
     color:red;
 }
+
+.feedbackTextarea{
+    resize: none;
+    overflow: hidden;
+    border: 0;
+    background-color: inherit;
+    border-bottom: 1px solid grey;
+}
+
+.feedbackTextarea:focus{
+    outline: 0;
+}

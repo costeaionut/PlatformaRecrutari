@@ -1,6 +1,7 @@
 ﻿using PlatformaRecrutari.Core.Abstractions;
 using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Interviews;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -128,5 +129,37 @@ namespace PlatformaRecrutari.Data.Managers
                 .Where(u => usersPassedWSIds.Contains(u.Id) && !usersScheduledIds.Contains(u.Id))
                 .ToList();
         }
+    
+        public InterviewFeedback addInterviewFeedback(InterviewFeedback interviewFeedback) {
+            var newFeedback = _context.InterviewFeedbacks.Add(interviewFeedback);
+            _context.SaveChanges();
+
+            return newFeedback.Entity;
+        }
+
+        public InterviewFeedback getInterviewsFeedback(int interviewId)
+            => _context.InterviewFeedbacks.FirstOrDefault(f => f.InterviewId == interviewId);
+
+        public InterviewFeedback getParticipantFeedback(string participantId, int sessionId)
+        {
+            var interviewsIds = _context.Interviews
+                .Where(i => i.SessionId == sessionId)
+                .Select(i => i.Id)
+                .ToList();
+
+            var feedbacks = _context.InterviewFeedbacks.Where(f => interviewsIds.Contains(f.InterviewId)).ToList();
+            foreach (var feedback in feedbacks)
+            {
+                var scheduled = this.getInterviewsScheduledUsers(feedback.InterviewId);
+
+                foreach (var participant in scheduled)
+                {
+                    if (participant.Type == "Participant" && participant.ParticipantId == participantId)
+                        return feedback;
+                }
+            }
+            return null;
+        }
+
     }
 }

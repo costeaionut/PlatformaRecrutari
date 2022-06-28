@@ -40,6 +40,7 @@ namespace PlatformaRecrutari.Data
         public DbSet<WorkshopSchedule> WorkshopSchedules { get; set; }
 
         public DbSet<Interview> Interviews { get; set; }
+        public DbSet<InterviewFeedback> InterviewFeedbacks { get; set; }
         public DbSet<InterviewSchedule> InterviewSchedules { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -145,6 +146,10 @@ namespace PlatformaRecrutari.Data
                 .WithMany()
                 .HasForeignKey(i => i.InterviewId);
 
+            modelBuilder.Entity<InterviewFeedback>()
+                .HasOne<Interview>()
+                .WithMany()
+                .HasForeignKey(i => i.InterviewId);
         }
     }
 }

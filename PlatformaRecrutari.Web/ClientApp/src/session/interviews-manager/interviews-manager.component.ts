@@ -1,13 +1,13 @@
 import { Component, Input, OnInit, TemplateRef } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { InterviewDto } from "src/shared/dto/interview/interviewDto";
+import { InterviewFeedback } from "src/shared/interfaces/interview/interview-feedback";
 import { InterviewInfo } from "src/shared/interfaces/interview/interview-info";
 import { InterviewParticipantsInfo } from "src/shared/interfaces/interview/interview-participants-info";
 import { InterviewSchedule } from "src/shared/interfaces/interview/interview-schedule";
 import { UserInfo } from "src/shared/interfaces/user/userInfo";
 import { SessionService } from "src/shared/services/session.service";
 import Swal from "sweetalert2";
-import { isJSDocThisTag } from "typescript";
 
 @Component({
   selector: "app-interviews-manager",
@@ -19,6 +19,7 @@ export class InterviewsManagerComponent implements OnInit {
   @Input() currentUser: UserInfo;
 
   interviewsParticipants: Map<number, InterviewParticipantsInfo>;
+  interviewsFeedbacks: Map<number, InterviewFeedback>;
   interviews: Map<Date, Array<InterviewInfo>>;
   interviewsDates: Date[];
 
@@ -35,6 +36,7 @@ export class InterviewsManagerComponent implements OnInit {
 
   async getSessionInterviews() {
     this.interviews = new Map<Date, Array<InterviewInfo>>();
+    this.interviewsFeedbacks = new Map<number, InterviewFeedback>();
     this.interviewsParticipants = new Map<number, InterviewParticipantsInfo>();
 
     let interviewsDto: Array<InterviewDto> = await this.sessionService
@@ -49,6 +51,10 @@ export class InterviewsManagerComponent implements OnInit {
         this.interviewsParticipants.set(
           interviewDetail.id,
           intDto.interviewsScheduledUsers[interviewIndex]
+        );
+        this.interviewsFeedbacks.set(
+          interviewDetail.id,
+          intDto.interviewsFeedbacks[interviewIndex]
         );
       });
       this.interviews.set(
@@ -401,6 +407,13 @@ export class InterviewsManagerComponent implements OnInit {
         );
     });
   }
+  canDeleteDisplayInterview() {
+    return (
+      this.currentUser.id == this.session.creatorId &&
+      this.currentUser.role == "ProjectManager" &&
+      this.displayInterview.interviewDateTime > new Date()
+    );
+  }
 
   scheduleMyself(interview: InterviewInfo) {
     let displayRole = "";
@@ -478,9 +491,10 @@ export class InterviewsManagerComponent implements OnInit {
 
   canSchedule(interview: InterviewInfo) {
     if (
-      this.currentUser.role == "Volunteer" ||
-      (this.currentUser.role == "ProjectManager" &&
-        this.currentUser.id == this.session.creatorId)
+      (this.currentUser.role == "Volunteer" ||
+        (this.currentUser.role == "ProjectManager" &&
+          this.currentUser.id == this.session.creatorId)) &&
+      interview.interviewDateTime > new Date()
     )
       if (this.interviewsParticipants.get(interview.id).participant == null)
         return true;
@@ -488,9 +502,10 @@ export class InterviewsManagerComponent implements OnInit {
   }
   canScheduleMyself(interview: InterviewInfo) {
     if (
-      this.currentUser.role == "Volunteer" ||
-      this.currentUser.role == "DepartmentDirector" ||
-      this.currentUser.role == "BoardMember"
+      (this.currentUser.role == "Volunteer" ||
+        this.currentUser.role == "DepartmentDirector" ||
+        this.currentUser.role == "BoardMember") &&
+      interview.interviewDateTime > new Date()
     ) {
       switch (this.currentUser.role) {
         case "Volunteer":
@@ -511,9 +526,10 @@ export class InterviewsManagerComponent implements OnInit {
   }
   canCancelMySchedule(interview: InterviewInfo) {
     if (
-      this.currentUser.role == "Volunteer" ||
-      this.currentUser.role == "DepartmentDirector" ||
-      this.currentUser.role == "BoardMember"
+      (this.currentUser.role == "Volunteer" ||
+        this.currentUser.role == "DepartmentDirector" ||
+        this.currentUser.role == "BoardMember") &&
+      interview.interviewDateTime > new Date()
     ) {
       switch (this.currentUser.role) {
         case "Volunteer":
@@ -604,6 +620,64 @@ export class InterviewsManagerComponent implements OnInit {
           );
     });
   }
+  isInterviewFinished(interview: InterviewInfo) {
+    if (interview.interviewDateTime < new Date()) return true;
+    return false;
+  }
+
+  userCanGiveFeedback() {
+    var displayInterviewParticipants = this.interviewsParticipants.get(
+      this.displayInterview.id
+    );
+
+    if (displayInterviewParticipants.participant == null) return false;
+
+    switch (this.currentUser.role) {
+      case "Volunteer":
+        if (this.displayInterviewParticipants.hr.id == this.currentUser.id)
+          return true;
+        break;
+      case "BoardMember":
+        if (this.displayInterviewParticipants.cd.id == this.currentUser.id)
+          return true;
+        break;
+      case "DepartmentDirector":
+        if (this.displayInterviewParticipants.dd.id == this.currentUser.id)
+          return true;
+        break;
+    }
+
+    return false;
+  }
+
+  userCanViewFeedback() {
+    var displayInterviewParticipants = this.interviewsParticipants.get(
+      this.displayInterview.id
+    );
+
+    if (displayInterviewParticipants.participant == null) return false;
+    if (this.interviewsFeedbacks.get(this.displayInterview.id) == null)
+      return false;
+
+    switch (this.currentUser.role) {
+      case "Volunteer":
+        if (this.displayInterviewParticipants.hr.id == this.currentUser.id)
+          return true;
+        break;
+      case "BoardMember":
+        if (this.displayInterviewParticipants.cd.id == this.currentUser.id)
+          return true;
+        break;
+      case "DepartmentDirector":
+        if (this.displayInterviewParticipants.dd.id == this.currentUser.id)
+          return true;
+      case "ProjectManager":
+        return true;
+        break;
+    }
+
+    return false;
+  }
 
   searchedParticipant: string;
   selectedParticipant: UserInfo;
@@ -680,9 +754,10 @@ export class InterviewsManagerComponent implements OnInit {
   canRemoveParticipantSchedule(interview: InterviewInfo) {
     if (this.interviewsParticipants.get(interview.id).participant != null) {
       if (
-        this.currentUser.role == "ProjectManager" ||
-        this.interviewsParticipants.get(interview.id).schedulerId ==
-          this.currentUser.id
+        (this.currentUser.role == "ProjectManager" ||
+          this.interviewsParticipants.get(interview.id).schedulerId ==
+            this.currentUser.id) &&
+        interview.interviewDateTime > new Date()
       ) {
         return true;
       }
@@ -733,6 +808,84 @@ export class InterviewsManagerComponent implements OnInit {
               });
             }
           );
+    });
+  }
+
+  feedbackInterviewParticipants: InterviewParticipantsInfo;
+  feedbackModalErrors: string[];
+  candidateFeedback: string;
+  CDVote: string;
+  HRVote: string;
+  DDVote: string;
+  openInterviewFeedbackModal(templateContent) {
+    this.feedbackInterviewParticipants = this.interviewsParticipants.get(
+      this.displayInterview.id
+    );
+    this.feedbackModalErrors = [];
+    this.candidateFeedback = "";
+    this.HRVote = "";
+    this.DDVote = "";
+    this.CDVote = "";
+    this.modalService.open(templateContent, { centered: true, size: "lg" });
+  }
+
+  checkForErrorsFeedbackModal() {
+    if (this.candidateFeedback == "")
+      this.feedbackModalErrors.push("Feedback is required!");
+    if (this.HRVote == "")
+      this.feedbackModalErrors.push("CD vote is required!");
+    if (this.DDVote == "")
+      this.feedbackModalErrors.push("CD vote is required!");
+    if (this.CDVote == "")
+      this.feedbackModalErrors.push("CD vote is required!");
+  }
+
+  sendFeedback() {
+    this.checkForErrorsFeedbackModal();
+    if (this.feedbackModalErrors.length != 0) return;
+
+    let feedback: InterviewFeedback = {
+      id: 0,
+      interviewId: this.displayInterview.id,
+      feedback: this.candidateFeedback,
+      hrVote: this.HRVote,
+      ddVote: this.DDVote,
+      cdVote: this.CDVote,
+    };
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Feedback cannot be changed!",
+      icon: "question",
+      showCancelButton: true,
+      showConfirmButton: true,
+      cancelButtonColor: "green",
+      confirmButtonColor: "red",
+      cancelButtonText: "No",
+      confirmButtonText: "Yes",
+    }).then((res) => {
+      if (res.value)
+        this.sessionService.addInterviewFeedback(feedback).subscribe(
+          (_res) => {
+            Swal.fire({
+              title: "Feedback added successfully!",
+              icon: "success",
+              timer: 1500,
+              showConfirmButton: false,
+            }).then(async (_res) => {
+              await this.ngOnInit();
+              this.modalService.dismissAll();
+            });
+          },
+          (err) => {
+            Swal.fire({
+              title: "Feedback couldn't be saved!",
+              icon: "error",
+              timer: 1500,
+              showConfirmButton: false,
+            });
+          }
+        );
     });
   }
 }

@@ -899,6 +899,7 @@ namespace PlatformaRecrutari.Web.Controllers
             var interviews = _interviewManager.getSessionsInterview(sessionId);
             var interviewsDict = new Dictionary<DateTime, List<Interview>>();
             var interviewsPariticipantsDict = new Dictionary<DateTime, List<InterviewScheduleDto>>();
+            var interviewsFeedbackDict = new Dictionary<DateTime, List<InterviewFeedback>>();
 
             foreach (var interview in interviews)
             {
@@ -939,11 +940,13 @@ namespace PlatformaRecrutari.Web.Controllers
                     }
                     interviewsDict[commonDate].Add(interview);
                     interviewsPariticipantsDict[commonDate].Add(interviewScheduledUsers);
+                    interviewsFeedbackDict[commonDate].Add(_interviewManager.getInterviewsFeedback(interview.Id));
                 }
                 else
                 {
                     var newInterviewList = new List<Interview>();
                     var newInterviewParticipantList = new List<InterviewScheduleDto>();
+                    var newInterviewFeedbackList = new List<InterviewFeedback>();
 
                     List<InterviewSchedule> participants =
                         _interviewManager.getInterviewsScheduledUsers(interview.Id);
@@ -973,10 +976,12 @@ namespace PlatformaRecrutari.Web.Controllers
                         }
                     }
 
+                    newInterviewFeedbackList.Add(_interviewManager.getInterviewsFeedback(interview.Id));
                     newInterviewParticipantList.Add(interviewScheduledUsers);
                     newInterviewList.Add(interview);
 
                     interviewsPariticipantsDict.Add(commonDate, newInterviewParticipantList);
+                    interviewsFeedbackDict.Add(commonDate, newInterviewFeedbackList);
                     interviewsDict.Add(commonDate, newInterviewList);
                 }
 
@@ -990,6 +995,7 @@ namespace PlatformaRecrutari.Web.Controllers
                 newInterviewDto.InterviewsDate = pair.Key;
                 newInterviewDto.InterviewsDetails = pair.Value;
                 newInterviewDto.InterviewsScheduledUsers = interviewsPariticipantsDict[pair.Key];
+                newInterviewDto.InterviewsFeedbacks = interviewsFeedbackDict[pair.Key];
 
                 interviewsDto.Add(newInterviewDto);
             }
@@ -1055,5 +1061,15 @@ namespace PlatformaRecrutari.Web.Controllers
             return eligibleUsersDto;
         }
 
+        [HttpPost("Interview/Feedback/Create")]
+        public ActionResult<InterviewFeedback> AddInterviewFeedback([FromBody] InterviewFeedback interviewFeedback)
+        {
+            if (interviewFeedback == null)
+                return BadRequest("MissingBodyFeedback");
+
+            var newFeedback = _interviewManager.addInterviewFeedback(interviewFeedback);
+
+            return Ok(newFeedback);
+        }
     }
 }

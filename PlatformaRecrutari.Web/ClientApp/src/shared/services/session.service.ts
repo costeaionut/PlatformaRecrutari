@@ -5,6 +5,7 @@ import { InterviewDto } from "../dto/interview/interviewDto";
 import { CreateSessionDto } from "../dto/session/create-session-dto";
 import { SessionDto } from "../dto/session/get-session-dto";
 import { FormInfo } from "../interfaces/form/formInfo";
+import { InterviewFeedback } from "../interfaces/interview/interview-feedback";
 import { InterviewInfo } from "../interfaces/interview/interview-info";
 import { InterviewSchedule } from "../interfaces/interview/interview-schedule";
 import { UserInfo } from "../interfaces/user/userInfo";
@@ -258,6 +259,14 @@ export class SessionService {
   public getInterviewEligibleUsers(sessionId: number) {
     return this.http.get<UserInfo[]>(
       this.baseUrl + ApiCallPaths.getInterviewEligibleUsers + `${sessionId}`
+    );
+  }
+
+  public addInterviewFeedback(interviewFeedback: InterviewFeedback) {
+    console.log(ApiCallPaths);
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.addInterviewFeedback,
+      interviewFeedback
     );
   }
 }

@@ -1,5 +1,6 @@
 ﻿using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Interviews;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,10 @@ namespace PlatformaRecrutari.Core.Abstractions
         void deleteInterviewSchedule(InterviewSchedule interviewSchedule);
 
         List<User> getUsersEligibleForInterviewSchedule(int sessionId);
+
+        InterviewFeedback getInterviewsFeedback(int interviewId);
+        InterviewFeedback addInterviewFeedback(InterviewFeedback interviewFeedback);
+        InterviewFeedback getParticipantFeedback(string participantId, int sessionId);
 
     }
 }

@@ -108,6 +108,10 @@
             {{ interview.break }} mins
           </td>
           <td
+            *ngIf="
+              !isInterviewFinished(interview) ||
+              this.interviewsParticipants.get(interview.id).participant == null
+            "
             class="interviewCol"
             (click)="
               this.openInterviewInfoModal(displayInterviewInfo, interview)
@@ -150,6 +154,24 @@
                   this.interviewsParticipants.get(interview.id).cd != null
               }"
               >CD</span
+            >
+          </td>
+          <td
+            *ngIf="
+              this.isInterviewFinished(interview) &&
+              this.interviewsParticipants.get(interview.id).participant != null
+            "
+            class="interviewCol"
+            (click)="
+              this.openInterviewInfoModal(displayInterviewInfo, interview)
+            "
+          >
+            <span
+              [ngClass]="{
+                scheduled: this.interviewsFeedbacks.get(interview.id) != null,
+                notScheduled: this.interviewsFeedbacks.get(interview.id) == null
+              }"
+              >Feedback</span
             >
           </td>
           <td align="right">
@@ -640,14 +662,32 @@
       Remove participant
     </button>
     <button
-      *ngIf="
-        this.currentUser.id == this.session.creatorId &&
-        this.currentUser.role == 'ProjectManager'
-      "
+      *ngIf="canDeleteDisplayInterview()"
       (click)="this.deleteOpenedInterview()"
       class="btn btn-outline-danger"
     >
       Delete
+    </button>
+    <button
+      *ngIf="
+        this.isInterviewFinished(this.displayInterview) &&
+        this.userCanGiveFeedback() &&
+        this.interviewsFeedbacks.get(this.displayInterview.id) == null
+      "
+      (click)="this.openInterviewFeedbackModal(giveParticipantFeedback)"
+      class="btn btn-outline-primary"
+    >
+      Give Feedback
+    </button>
+    <button
+      *ngIf="
+        this.isInterviewFinished(this.displayInterview) &&
+        this.userCanViewFeedback()
+      "
+      class="btn btn-outline-primary"
+      (click)="openInterviewFeedbackModal(viewParticipantFeedback)"
+    >
+      View feedback
     </button>
   </div>
 </ng-template>
@@ -791,6 +831,165 @@
   <div class="modal-footer">
     <button (click)="scheduleParticipant()" class="btn btn-primary">
       Schedule
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #giveParticipantFeedback let-modal>
+  <div class="modal-header">
+    <div class="modal-title">
+      <h4>Interview Feedback</h4>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <b>Participant: </b>
+          <a
+            href="/user/{{ this.feedbackInterviewParticipants.participant.id }}"
+            target="_blank"
+          >
+            {{ this.feedbackInterviewParticipants.participant.firstName }}
+            {{ this.feedbackInterviewParticipants.participant.lastName }}
+          </a>
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-1" style="margin-right: 15px; padding-top: 2px">
+          <b>Feedback:</b>
+        </div>
+        <div class="col">
+          <textarea
+            class="feedbackTextarea"
+            cols="40"
+            rows="1"
+            appTextareaAutoresize
+            placeholder="Feedback"
+            [(ngModel)]="this.candidateFeedback"
+          ></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-2"><b>HR Vote: </b></div>
+        <div class="col">
+          <mat-radio-group [(ngModel)]="this.HRVote">
+            <div class="container">
+              <div class="row">
+                <div class="col" *ngFor="let option of ['Yes', 'Maybe', 'No']">
+                  <mat-radio-button
+                    color="primary"
+                    class="example-radio-button"
+                    [value]="option"
+                  >
+                    {{ option }}
+                  </mat-radio-button>
+                </div>
+              </div>
+            </div>
+          </mat-radio-group>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-2"><b>DD Vote: </b></div>
+        <div class="col">
+          <mat-radio-group [(ngModel)]="this.DDVote">
+            <div class="container">
+              <div class="row">
+                <div class="col" *ngFor="let option of ['Yes', 'Maybe', 'No']">
+                  <mat-radio-button
+                    color="primary"
+                    class="example-radio-button"
+                    [value]="option"
+                  >
+                    {{ option }}
+                  </mat-radio-button>
+                </div>
+              </div>
+            </div>
+          </mat-radio-group>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-2"><b>CD Vote: </b></div>
+        <div class="col">
+          <mat-radio-group [(ngModel)]="this.CDVote">
+            <div class="container">
+              <div class="row">
+                <div class="col" *ngFor="let option of ['Yes', 'Maybe', 'No']">
+                  <mat-radio-button
+                    color="primary"
+                    class="example-radio-button"
+                    [value]="option"
+                  >
+                    {{ option }}
+                  </mat-radio-button>
+                </div>
+              </div>
+            </div>
+          </mat-radio-group>
+        </div>
+      </div>
+      <div *ngIf="this.feedbackModalErrors.length != 0" class="row">
+        <div *ngFor="let err of this.feedbackModalErrors" class="col-12">
+          <em style="color: red">{{ err }}</em>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button (click)="sendFeedback()" class="btn btn-outline-primary">
+      Submit Feedback
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #viewParticipantFeedback let-modal>
+  <div class="modal-header">Participant's feedback</div>
+  <div class="modal-body">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <b>Participant: </b>
+          <a
+            href="/user/{{ this.feedbackInterviewParticipants.participant.id }}"
+            target="_blank"
+          >
+            {{ this.feedbackInterviewParticipants.participant.firstName }}
+            {{ this.feedbackInterviewParticipants.participant.lastName }}
+          </a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12"><b>Feedback:</b></div>
+        <div class="col-12" style="word-break: break-all; overflow: hidden">
+          {{ this.interviewsFeedbacks.get(this.displayInterview.id).feedback }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <b>Director vote: </b>
+          {{ this.interviewsFeedbacks.get(this.displayInterview.id).ddVote }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <b>CD vote: </b>
+          {{ this.interviewsFeedbacks.get(this.displayInterview.id).cdVote }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <b>HR vote: </b>
+          {{ this.interviewsFeedbacks.get(this.displayInterview.id).hrVote }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button (click)="modal.close()" class="btn btn-outline-danger">
+      Close
     </button>
   </div>
 </ng-template>

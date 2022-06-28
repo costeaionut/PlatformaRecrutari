@@ -756,13 +756,17 @@ export class WorkshopManagerComponent implements OnInit {
     this.modalService.open(modal, { centered: true, size: "lg" });
   }
 
-  editFeedbackModal(
+  viewedWorkshopFeedback: WorkshopFeedback;
+  viewFeedbackModal(
     participant: UserInfo,
     workshop: WorkshopInfo,
     participantIndex: number,
     modal
   ) {
     let currentFeedback: WorkshopFeedback =
+      this.wsInfoParticipantsFeedback[participantIndex];
+
+    this.viewedWorkshopFeedback =
       this.wsInfoParticipantsFeedback[participantIndex];
 
     this.feedbackErrors = [];
@@ -808,13 +812,8 @@ export class WorkshopManagerComponent implements OnInit {
     return false;
   }
 
-  canEditFeedback(participantIndex: number) {
-    if (
-      this.wsInfoParticipantsFeedback[participantIndex] != null &&
-      this.currentUser.role == "ProjectManager"
-    )
-      return true;
-    return false;
+  canViewFeedback(participantIndex: number) {
+    return this.wsInfoParticipantsFeedback[participantIndex] != null;
   }
 
   async giveFeedback(feedbackModal, editFeedback?) {
