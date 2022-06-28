@@ -1,4 +1,9 @@
-<div *ngIf="this.currentUser && this.interviewsDates" class="container">
+<div
+  *ngIf="
+    this.currentUser && this.interviewsDates && this.interviewsParticipants
+  "
+  class="container"
+>
   <div class="row" style="margin-top: 10px">
     <div class="col">
       <h4>Interviews</h4>
@@ -36,7 +41,7 @@
     </div>
     <div class="col" style="margin-top: 5px" align="right">
       <button
-        *ngIf="this.selectedDateIndex + 1 != this.interviewsDates.length"
+        *ngIf="this.selectedDateIndex + 1 < this.interviewsDates.length"
         (click)="changePage(1)"
         class="changePageButton"
       >
@@ -44,53 +49,135 @@
       </button>
     </div>
   </div>
-  <div class="row table-responsive" style="margin-top: 20px">
-    <div class="container table">
-      <div class="row">
-        <div class="col-1"><b>#</b></div>
-        <div class="col"><b>Date&Time</b></div>
-        <div class="col"><b>Duration</b></div>
-        <div class="col"><b>Break</b></div>
-        <div class="col-2" align="right"><b>Actions</b></div>
-      </div>
-      <div
-        *ngFor="
-          let interview of this.interviews.get(this.selectedDate);
-          index as interviewIndex
-        "
-        class="row interviewRow"
-      >
-        <div
-          (click)="this.openInterviewInfoModal(displayInterviewInfo, interview)"
-          class="col-1 interviewCol"
+  <div class="row table-responsive">
+    <table class="table">
+      <thead clas="tableHeader">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Date&Time</th>
+          <th scope="col">Duration</th>
+          <th scope="col">Break</th>
+          <th scope="col">Status</th>
+          <td
+            scope="col"
+            align="right"
+            style="border-bottom: 2px solid #dee2e6"
+          >
+            <b>Actions</b>
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="
+            let interview of this.interviews.get(this.selectedDate);
+            index as interviewIndex
+          "
+          class="interviewRow"
         >
-          {{ interviewIndex + 1 }}
-        </div>
-        <div
-          (click)="this.openInterviewInfoModal(displayInterviewInfo, interview)"
-          class="col interviewCol"
-        >
-          {{ interview.interviewDateTime.toLocaleString() }}
-        </div>
-        <div
-          (click)="this.openInterviewInfoModal(displayInterviewInfo, interview)"
-          class="col interviewCol"
-        >
-          {{ interview.duration }} mins
-        </div>
-        <div
-          (click)="this.openInterviewInfoModal(displayInterviewInfo, interview)"
-          class="col interviewCol"
-        >
-          {{ interview.break }} mins
-        </div>
-        <div
-          style="cursor: default; padding: 0"
-          class="col-2"
-          align="right"
-        ></div>
-      </div>
-    </div>
+          <td
+            class="interviewCol"
+            (click)="
+              this.openInterviewInfoModal(displayInterviewInfo, interview)
+            "
+          >
+            {{ interviewIndex + 1 }}
+          </td>
+          <td
+            class="interviewCol"
+            (click)="
+              this.openInterviewInfoModal(displayInterviewInfo, interview)
+            "
+          >
+            {{ interview.interviewDateTime.toLocaleString() }}
+          </td>
+          <td
+            class="interviewCol"
+            (click)="
+              this.openInterviewInfoModal(displayInterviewInfo, interview)
+            "
+          >
+            {{ interview.duration }} mins
+          </td>
+          <td
+            class="interviewCol"
+            (click)="
+              this.openInterviewInfoModal(displayInterviewInfo, interview)
+            "
+          >
+            {{ interview.break }} mins
+          </td>
+          <td
+            class="interviewCol"
+            (click)="
+              this.openInterviewInfoModal(displayInterviewInfo, interview)
+            "
+          >
+            <span
+              [ngClass]="{
+                notScheduled:
+                  this.interviewsParticipants.get(interview.id).participant ==
+                  null,
+                scheduled:
+                  this.interviewsParticipants.get(interview.id).participant !=
+                  null
+              }"
+              >Candidate</span
+            >,
+            <span
+              [ngClass]="{
+                notScheduled:
+                  this.interviewsParticipants.get(interview.id).hr == null,
+                scheduled:
+                  this.interviewsParticipants.get(interview.id).hr != null
+              }"
+              >HR</span
+            >,
+            <span
+              [ngClass]="{
+                notScheduled:
+                  this.interviewsParticipants.get(interview.id).dd == null,
+                scheduled:
+                  this.interviewsParticipants.get(interview.id).dd != null
+              }"
+              >DD</span
+            >,
+            <span
+              [ngClass]="{
+                notScheduled:
+                  this.interviewsParticipants.get(interview.id).cd == null,
+                scheduled:
+                  this.interviewsParticipants.get(interview.id).cd != null
+              }"
+              >CD</span
+            >
+          </td>
+          <td align="right">
+            <button
+              (click)="openScheduleModal(interview, scheduleParticipantModal)"
+              *ngIf="this.canSchedule(interview)"
+              class="scheduleButton"
+            >
+              Schedule
+            </button>
+            <button
+              (click)="scheduleMyself(interview)"
+              *ngIf="this.canScheduleMyself(interview)"
+              class="scheduleButton"
+            >
+              Schedule Myself
+            </button>
+            <button
+              (click)="this.cancelMySchedule(interview)"
+              *ngIf="this.canCancelMySchedule(interview)"
+              class="cancelMyScheduleButton"
+            >
+              Cancel my schedule
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -475,17 +562,83 @@
         <b>Break: </b>{{ this.displayInterview.break }} mins
       </div>
     </div>
-    <div class="row">
-      <div class="col"><b> Department Director</b>: -</div>
+    <br />
+    <div
+      *ngIf="this.displayInterviewParticipants.participant != null"
+      class="row"
+    >
+      <div class="col">
+        <b>Participant: </b>
+        <a
+          target="_blank"
+          href="user/{{ displayInterviewParticipants.participant.id }}"
+        >
+          {{ displayInterviewParticipants.participant.firstName }}
+          {{ displayInterviewParticipants.participant.lastName }}
+        </a>
+      </div>
     </div>
-    <div class="row">
-      <div class="col"><b> Board Member</b>: -</div>
+    <div *ngIf="this.displayInterviewParticipants.dd != null" class="row">
+      <div class="col">
+        <b> Department Director</b>:
+        <a target="_blank" href="user/{{ displayInterviewParticipants.dd.id }}">
+          {{ displayInterviewParticipants.dd.firstName }}
+          {{ displayInterviewParticipants.dd.lastName }}
+        </a>
+      </div>
     </div>
-    <div class="row">
-      <div class="col"><b> HR Volunteer</b>: -</div>
+    <div *ngIf="this.displayInterviewParticipants.cd != null" class="row">
+      <div class="col">
+        <b> Board Member</b>:
+        <a target="_blank" href="user/{{ displayInterviewParticipants.cd.id }}">
+          {{ displayInterviewParticipants.cd.firstName }}
+          {{ displayInterviewParticipants.cd.lastName }}
+        </a>
+      </div>
+    </div>
+    <div *ngIf="this.displayInterviewParticipants.hr != null" class="row">
+      <div class="col">
+        <b> HR Volunteer</b>:
+        <a target="_blank" href="user/{{ displayInterviewParticipants.hr.id }}">
+          {{ displayInterviewParticipants.hr.firstName }}
+          {{ displayInterviewParticipants.hr.lastName }}
+        </a>
+      </div>
+    </div>
+
+    <div
+      *ngIf="this.displayInterviewParticipants.participant == null"
+      class="row"
+    >
+      <div class="col">
+        <b>Participant</b>: <span style="color: green"> Available spot</span>
+      </div>
+    </div>
+    <div *ngIf="this.displayInterviewParticipants.dd == null" class="row">
+      <div class="col">
+        <b> Department Director</b>:
+        <span style="color: green"> Available spot</span>
+      </div>
+    </div>
+    <div *ngIf="this.displayInterviewParticipants.cd == null" class="row">
+      <div class="col">
+        <b> Board Member</b>: <span style="color: green"> Available spot</span>
+      </div>
+    </div>
+    <div *ngIf="this.displayInterviewParticipants.hr == null" class="row">
+      <div class="col">
+        <b> HR Volunteer</b>: <span style="color: green"> Available spot</span>
+      </div>
     </div>
   </div>
   <div class="modal-footer">
+    <button
+      (click)="removeParticipant()"
+      *ngIf="this.canRemoveParticipantSchedule(this.displayInterview)"
+      class="btn btn-outline-danger"
+    >
+      Remove participant
+    </button>
     <button
       *ngIf="
         this.currentUser.id == this.session.creatorId &&
@@ -495,6 +648,149 @@
       class="btn btn-outline-danger"
     >
       Delete
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #scheduleParticipantModal let-modal>
+  <div class="modal-header">
+    <div class="modal-title"><h4>Schedule participant</h4></div>
+  </div>
+  <div class="modal-body container">
+    <div class="row">
+      <div class="col">
+        <b>Interview Date&Time</b>:
+        {{ this.scheduleInterview.interviewDateTime.toLocaleString() }}
+      </div>
+    </div>
+    <br />
+    <div
+      *ngIf="
+        this.interviewsParticipants.get(this.scheduleInterview.id).hr != null
+      "
+      class="row"
+    >
+      <div class="col">
+        <b> HR Volunteer</b>:
+        {{
+          this.interviewsParticipants.get(this.scheduleInterview.id).hr
+            .firstName
+        }}
+        {{
+          this.interviewsParticipants.get(this.scheduleInterview.id).hr.lastName
+        }}
+      </div>
+    </div>
+    <div
+      *ngIf="
+        this.interviewsParticipants.get(this.scheduleInterview.id).dd != null
+      "
+      class="row"
+    >
+      <div class="col">
+        <b> Department Director</b>:
+        {{
+          this.interviewsParticipants.get(this.scheduleInterview.id).dd
+            .firstName
+        }}
+        {{
+          this.interviewsParticipants.get(this.scheduleInterview.id).dd.lastName
+        }}
+      </div>
+    </div>
+    <div
+      *ngIf="
+        this.interviewsParticipants.get(this.scheduleInterview.id).cd != null
+      "
+      class="row"
+    >
+      <div class="col">
+        <b> Board Member</b>:
+        {{
+          this.interviewsParticipants.get(this.scheduleInterview.id).cd
+            .firstName
+        }}
+        {{
+          this.interviewsParticipants.get(this.scheduleInterview.id).cd.lastName
+        }}
+      </div>
+    </div>
+
+    <div
+      *ngIf="
+        this.interviewsParticipants.get(this.scheduleInterview.id).hr == null
+      "
+      class="row"
+    >
+      <div class="col">
+        <b> HR Volunteer</b>: <span style="color: green">Available spot</span>
+      </div>
+    </div>
+    <div
+      *ngIf="
+        this.interviewsParticipants.get(this.scheduleInterview.id).dd == null
+      "
+      class="row"
+    >
+      <div class="col">
+        <b> Department Director</b>:
+        <span style="color: green">Available spot</span>
+      </div>
+    </div>
+    <div
+      *ngIf="
+        this.interviewsParticipants.get(this.scheduleInterview.id).cd == null
+      "
+      class="row"
+    >
+      <div class="col">
+        <b> Board Member</b>: <span style="color: green">Available spot</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div style="margin-top: 10px" class="col">
+        <b>Select User: </b>
+        <input
+          type="text"
+          class="form-control searchbar"
+          placeholder="Participant Name"
+          aria-label="Username"
+          aria-describedby="addon-wrapping"
+          (input)="updateFilteredList()"
+          [(ngModel)]="this.searchedParticipant"
+        />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <select
+          size="6"
+          style="
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border-color: #dadee3;
+            outline: none;
+          "
+          class="form-select"
+          aria-label="size 6 select example"
+          [(ngModel)]="this.selectedParticipant"
+        >
+          <option
+            value="{{ user.id }}"
+            (click)="this.updateSelected(user)"
+            *ngFor="let user of this.filteredParticipantsToBeScheduled"
+          >
+            {{ user.firstName }} {{ user.lastName }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button (click)="scheduleParticipant()" class="btn btn-primary">
+      Schedule
     </button>
   </div>
 </ng-template>

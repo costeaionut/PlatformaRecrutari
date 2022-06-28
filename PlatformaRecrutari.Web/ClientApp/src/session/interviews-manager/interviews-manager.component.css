@@ -64,17 +64,42 @@
 }
 
 .interviewRow{
-    border-top: 1px solid rgba(128, 128, 128, 0.4);
-    padding-top: 10px;
-    padding-bottom: 10px;
     transition-property: background-color;
-    transition-duration: 0.5s;
+    transition-duration: 0.75s;
 }
 
 .interviewRow:hover{
-    background-color: rgba(128, 128, 128, 0.2);
+    background-color: rgba(128, 128, 128, 0.1);
 }
 
 .interviewCol:hover{
     cursor: pointer;
+}
+
+.notScheduled{
+    color: red;
+}
+
+.scheduled{
+    color: green
+}
+
+.scheduleButton{
+    border: 0;
+    color:rgba(65, 105, 225, 0.5);
+    background-color: inherit;
+}
+
+.scheduleButton:hover{
+    color: royalblue;
+}
+
+.cancelMyScheduleButton{
+    border: 0;
+    color:rgba(255, 0, 0, 0.5);
+    background-color: inherit;
+}
+
+.cancelMyScheduleButton:hover{
+    color:red;
 }

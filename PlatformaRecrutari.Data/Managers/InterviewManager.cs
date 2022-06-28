@@ -1,4 +1,5 @@
 ﻿using PlatformaRecrutari.Core.Abstractions;
+using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Interviews;
 using System;
 using System.Collections.Generic;
@@ -78,6 +79,54 @@ namespace PlatformaRecrutari.Data.Managers
             _context.SaveChanges();
 
             return currentInterview;
+        }
+    
+        public InterviewSchedule addInterviewSchedule(InterviewSchedule interviewSchedule)
+        {
+            var newIS = _context.InterviewSchedules.Add(interviewSchedule).Entity;
+            _context.SaveChanges();
+            return newIS;
+        }
+
+        public InterviewSchedule getInterviewSchedule(string participantId, int interviewId)
+            => _context.InterviewSchedules
+            .FirstOrDefault(s => s.ParticipantId == participantId && s.InterviewId == interviewId);
+
+        public void deleteInterviewSchedule(InterviewSchedule interviewSchedule) 
+        {
+            _context.InterviewSchedules.Remove(interviewSchedule);
+            _context.SaveChanges();
+        }
+
+        public List<InterviewSchedule> getInterviewsScheduledUsers(int interviewId) =>
+            _context.InterviewSchedules.Where(s => s.InterviewId == interviewId).ToList();
+    
+        public List<User> getUsersEligibleForInterviewSchedule(int sessionId)
+        {
+            List<int> workshopIds = _context.Workshops
+                .Where(w => w.SessionId == sessionId)
+                .Select(w => w.Id)
+                .ToList();
+
+            List<int> interviewIds = _context.Interviews
+                .Where(w => w.SessionId == sessionId)
+                .Select(w => w.Id)
+                .ToList();
+
+            List<string> usersPassedWSIds =
+                _context.WorkshopFeedbacks
+                .Where(wf => workshopIds.Contains(wf.WorkshopId) && wf.Status == "passed")
+                .Select(wf => wf.ParticipantId).ToList();
+
+            List<string> usersScheduledIds = _context
+                .InterviewSchedules
+                .Where(s => interviewIds.Contains(s.InterviewId))
+                .Select(s => s.ParticipantId)
+                .ToList();
+
+            return _context.Users
+                .Where(u => usersPassedWSIds.Contains(u.Id) && !usersScheduledIds.Contains(u.Id))
+                .ToList();
         }
     }
 }

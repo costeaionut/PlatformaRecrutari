@@ -8,9 +8,9 @@ namespace PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops
 {
     public static class ScheduleTypes
     {
-        public static string CD = "CD";
-        public static string Director = "DD";
-        public static string Volunteer = "Volunteer";
-        public static string Participant = "Participant";
+        public const string CD = "CD";
+        public const string Director = "DD";
+        public const string Volunteer = "Volunteer";
+        public const string Participant = "Participant";
     }
 }

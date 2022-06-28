@@ -449,7 +449,7 @@ export class WorkshopManagerComponent implements OnInit {
           .subscribe(
             async (_res) => {
               Swal.fire({
-                title: "User removed from workshop",
+                title: "Participant removed from workshop",
                 icon: "success",
                 timer: 1500,
               });
@@ -486,9 +486,11 @@ export class WorkshopManagerComponent implements OnInit {
       (this.wsInfoParticipantsSchedulerVolunteer[participantIndex].id ==
         this.currentUser.id ||
         this.currentUser.role == "ProjectManager") &&
-      this.wsInfoDate < new Date()
+      new Date() < this.wsInfoDate
     ) {
+      return true;
     }
+    return false;
   }
 
   canParticipateAsVolunteerOrCDDD() {

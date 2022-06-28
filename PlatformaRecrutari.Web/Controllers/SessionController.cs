@@ -25,7 +25,8 @@ namespace PlatformaRecrutari.Web.Controllers
     [Authorize]
     public class SessionController : ControllerBase
     {
-
+        private const string AnyOfVolunteerPMCDDD = 
+            "ProjectManager,Volunteer,DepartmentDirector,BoardMemeber" ;
         private readonly IMapper _mapper;
         private readonly IFormManager _formManager;
         private readonly IRoleManager _roleManager;
@@ -893,10 +894,11 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpGet("Interviews/{sessionId}")]
-        public ActionResult<List<InterviewDto>> GetInterviewBySessionId(int sessionId)
+        public async Task<ActionResult<List<InterviewDto>>> GetInterviewBySessionIdAsync(int sessionId)
         {
             var interviews = _interviewManager.getSessionsInterview(sessionId);
             var interviewsDict = new Dictionary<DateTime, List<Interview>>();
+            var interviewsPariticipantsDict = new Dictionary<DateTime, List<InterviewScheduleDto>>();
 
             foreach (var interview in interviews)
             {
@@ -906,11 +908,76 @@ namespace PlatformaRecrutari.Web.Controllers
                              interview.InterviewDateTime.Minute,
                              interview.InterviewDateTime.Second);
 
-                if (interviewsDict.ContainsKey(commonDate)) interviewsDict[commonDate].Add(interview);
-                else {
-                    var newList = new List<Interview>();
-                    newList.Add(interview);
-                    interviewsDict.Add(commonDate, newList);
+                if (interviewsDict.ContainsKey(commonDate)) { 
+
+                    List<InterviewSchedule> participants = 
+                        _interviewManager.getInterviewsScheduledUsers(interview.Id);
+                    
+                    InterviewScheduleDto interviewScheduledUsers = new InterviewScheduleDto();
+                    interviewScheduledUsers.InterviewId = interview.Id;
+                    foreach (var participant in participants)
+                    {
+                        var user = await _userManager.FindByIdAsync(participant.ParticipantId);
+                        var userDto = _mapper.Map<UserDto>(user);
+                        userDto.Role = _roleManager.GetRoleType(user.RoleId);
+                        interviewScheduledUsers.SchedulerId = participant.VolunteerId;
+                        switch (participant.Type)
+                        {
+                            case ScheduleTypes.Participant:
+                                interviewScheduledUsers.Participant = userDto;
+                                break;
+                            case ScheduleTypes.Volunteer:
+                                interviewScheduledUsers.HR = userDto;
+                                break;
+                            case ScheduleTypes.Director:
+                                interviewScheduledUsers.DD = userDto;
+                                break;
+                            case ScheduleTypes.CD:
+                                interviewScheduledUsers.CD = userDto;
+                                break;
+                        }
+                    }
+                    interviewsDict[commonDate].Add(interview);
+                    interviewsPariticipantsDict[commonDate].Add(interviewScheduledUsers);
+                }
+                else
+                {
+                    var newInterviewList = new List<Interview>();
+                    var newInterviewParticipantList = new List<InterviewScheduleDto>();
+
+                    List<InterviewSchedule> participants =
+                        _interviewManager.getInterviewsScheduledUsers(interview.Id);
+
+                    InterviewScheduleDto interviewScheduledUsers = new InterviewScheduleDto();
+                    interviewScheduledUsers.InterviewId = interview.Id;
+                    foreach (var participant in participants)
+                    {
+                        var user = await _userManager.FindByIdAsync(participant.ParticipantId);
+                        var userDto = _mapper.Map<UserDto>(user);
+                        userDto.Role = _roleManager.GetRoleType(user.RoleId);
+                        interviewScheduledUsers.SchedulerId = participant.VolunteerId;
+                        switch (participant.Type)
+                        {
+                            case ScheduleTypes.Participant:
+                                interviewScheduledUsers.Participant = userDto;
+                                break;
+                            case ScheduleTypes.Volunteer:
+                                interviewScheduledUsers.HR = userDto;
+                                break;
+                            case ScheduleTypes.Director:
+                                interviewScheduledUsers.DD = userDto;
+                                break;
+                            case ScheduleTypes.CD:
+                                interviewScheduledUsers.CD = userDto;
+                                break;
+                        }
+                    }
+
+                    newInterviewParticipantList.Add(interviewScheduledUsers);
+                    newInterviewList.Add(interview);
+
+                    interviewsPariticipantsDict.Add(commonDate, newInterviewParticipantList);
+                    interviewsDict.Add(commonDate, newInterviewList);
                 }
 
             }
@@ -922,6 +989,7 @@ namespace PlatformaRecrutari.Web.Controllers
                 var newInterviewDto = new InterviewDto();
                 newInterviewDto.InterviewsDate = pair.Key;
                 newInterviewDto.InterviewsDetails = pair.Value;
+                newInterviewDto.InterviewsScheduledUsers = interviewsPariticipantsDict[pair.Key];
 
                 interviewsDto.Add(newInterviewDto);
             }
@@ -942,6 +1010,49 @@ namespace PlatformaRecrutari.Web.Controllers
         public ActionResult UpdateInterview([FromBody] Interview interview) {
             _interviewManager.updateInterview(interview);
             return Ok();
+        }
+
+        [HttpPost("Interview/Schedule/Create")]
+        [Authorize(Roles = AnyOfVolunteerPMCDDD)]
+        public ActionResult<InterviewSchedule> CreateInterviewSchedule([FromBody] InterviewSchedule interviewSchedule)
+        {
+            if (interviewSchedule == null)
+                return BadRequest("MissingBodySchedule");
+
+            List<InterviewSchedule> alreadyScheduledInterviews = 
+                _interviewManager.getInterviewsScheduledUsers(interviewSchedule.InterviewId);
+            foreach (var scheduledInterview in alreadyScheduledInterviews)
+            {
+                if (scheduledInterview.Type == interviewSchedule.Type)
+                    return BadRequest("InterviewAlreadyTaken");
+            }
+
+            return _interviewManager.addInterviewSchedule(interviewSchedule);
+        } 
+
+        [HttpPost("Interview/Schedule/Delete")]
+        [Authorize(Roles = AnyOfVolunteerPMCDDD)]
+        public ActionResult DeleteInterviewSchedule([FromBody] InterviewSchedule interviewSchedule)
+        {
+            _interviewManager.deleteInterviewSchedule(interviewSchedule);
+            return Ok();
+        }
+
+        [HttpGet("Interview/Schedule/GetEligibleCandidates/{sessionId}")]
+        public ActionResult<List<UserDto>> GetCandidatesEligivleForInterview(int sessionId)
+        {
+            List<UserDto> eligibleUsersDto = new();
+
+            var eligibleUsers = _interviewManager.getUsersEligibleForInterviewSchedule(sessionId);
+
+            foreach (var user in eligibleUsers)
+            {
+                var userDto = _mapper.Map<UserDto>(user);
+                userDto.Role = _roleManager.GetRoleType(user.RoleId);
+                eligibleUsersDto.Add(userDto);
+            }
+
+            return eligibleUsersDto;
         }
 
     }

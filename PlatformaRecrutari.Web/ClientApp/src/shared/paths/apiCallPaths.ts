@@ -48,4 +48,8 @@ export enum ApiCallPaths {
   getInterviewBySessionId = "api/Session/Interviews/",
   deleteInterview = "api/Session/Interview/Delete/",
   editInterview = "api/Session/Interview/Update/",
+
+  postInterviewSchedule = "api/Session/Interview/Schedule/Create/",
+  deleteInterviewSchedule = "api/Session/Interview/Schedule/Delete/",
+  getInterviewEligibleUsers = "api/Session/Interview/Schedule/GetEligibleCandidates/",
 }

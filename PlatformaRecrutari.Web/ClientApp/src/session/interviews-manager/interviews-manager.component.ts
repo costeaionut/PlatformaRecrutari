@@ -2,9 +2,12 @@ import { Component, Input, OnInit, TemplateRef } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { InterviewDto } from "src/shared/dto/interview/interviewDto";
 import { InterviewInfo } from "src/shared/interfaces/interview/interview-info";
+import { InterviewParticipantsInfo } from "src/shared/interfaces/interview/interview-participants-info";
+import { InterviewSchedule } from "src/shared/interfaces/interview/interview-schedule";
 import { UserInfo } from "src/shared/interfaces/user/userInfo";
 import { SessionService } from "src/shared/services/session.service";
 import Swal from "sweetalert2";
+import { isJSDocThisTag } from "typescript";
 
 @Component({
   selector: "app-interviews-manager",
@@ -15,6 +18,7 @@ export class InterviewsManagerComponent implements OnInit {
   @Input() session: SessionInfo;
   @Input() currentUser: UserInfo;
 
+  interviewsParticipants: Map<number, InterviewParticipantsInfo>;
   interviews: Map<Date, Array<InterviewInfo>>;
   interviewsDates: Date[];
 
@@ -22,22 +26,29 @@ export class InterviewsManagerComponent implements OnInit {
   selectedDateIndex: number;
   selectedDateString: string;
 
+  eligibleUsers: UserInfo[];
+
   constructor(
     private modalService: NgbModal,
     private sessionService: SessionService
   ) {}
 
-  async ngOnInit() {
+  async getSessionInterviews() {
     this.interviews = new Map<Date, Array<InterviewInfo>>();
+    this.interviewsParticipants = new Map<number, InterviewParticipantsInfo>();
 
     let interviewsDto: Array<InterviewDto> = await this.sessionService
       .getInterviewsBySessionId(this.session.id)
       .toPromise();
 
     interviewsDto.forEach((intDto) => {
-      intDto.interviewsDetails.forEach((interviewDetail) => {
+      intDto.interviewsDetails.forEach((interviewDetail, interviewIndex) => {
         interviewDetail.interviewDateTime = new Date(
           interviewDetail.interviewDateTime
+        );
+        this.interviewsParticipants.set(
+          interviewDetail.id,
+          intDto.interviewsScheduledUsers[interviewIndex]
         );
       });
       this.interviews.set(
@@ -47,9 +58,21 @@ export class InterviewsManagerComponent implements OnInit {
     });
     this.interviewsDates = Array.from(this.interviews.keys());
 
-    this.selectedDate = this.interviewsDates[0];
+    if (this.selectedDateIndex === undefined) this.selectedDateIndex = 0;
+    this.selectedDate = this.interviewsDates[this.selectedDateIndex];
     this.selectedDateString = this.selectedDate.toLocaleDateString();
-    this.selectedDateIndex = 0;
+  }
+
+  async getEligibleUsers() {
+    this.eligibleUsers = await this.sessionService
+      .getInterviewEligibleUsers(this.session.id)
+      .toPromise();
+  }
+
+  async ngOnInit() {
+    await this.getEligibleUsers();
+    await this.getSessionInterviews();
+    console.log(this.eligibleUsers);
   }
 
   changeDisplayCreate(newDisplay: string) {
@@ -313,8 +336,12 @@ export class InterviewsManagerComponent implements OnInit {
   }
 
   displayInterview: InterviewInfo;
+  displayInterviewParticipants: InterviewParticipantsInfo;
   openInterviewInfoModal(displayInterviewModal, interview: InterviewInfo) {
     this.displayInterview = interview;
+    this.displayInterviewParticipants = this.interviewsParticipants.get(
+      interview.id
+    );
 
     this.modalService.open(displayInterviewModal, {
       centered: true,
@@ -342,21 +369,370 @@ export class InterviewsManagerComponent implements OnInit {
               showConfirmButton: false,
               timer: 1500,
             }).then(async (res) => {
-              await this.ngOnInit();
-              this.displayInterview = undefined;
+              await this.getSessionInterviews();
+
+              try {
+                this.selectedDate =
+                  this.interviewsDates[this.selectedDateIndex];
+              } catch (error) {
+                try {
+                  this.selectedDate =
+                    this.interviewsDates[this.selectedDateIndex - 1];
+                  this.selectedDateIndex -= 1;
+                } catch (error) {
+                  this.selectedDate =
+                    this.interviewsDates[this.selectedDateIndex + 1];
+                  this.selectedDateIndex += 1;
+                }
+              }
               this.modalService.dismissAll();
+              this.displayInterview = undefined;
             });
           },
           (err) => {
             Swal.fire({
               title:
                 "There was an error deleting this interview...\nPlease try again",
-              icon: "success",
+              icon: "error",
               showConfirmButton: false,
               timer: 1500,
             });
           }
         );
+    });
+  }
+
+  scheduleMyself(interview: InterviewInfo) {
+    let displayRole = "";
+    let role = "";
+    switch (this.currentUser.role) {
+      case "Volunteer":
+        displayRole = "volunteer";
+        role = "Volunteer";
+        break;
+
+      case "DepartmentDirector":
+        displayRole = "department director";
+        role = "DD";
+        break;
+
+      case "BoardMember":
+        displayRole = "board member";
+        role = "CD";
+        break;
+      default:
+        break;
+    }
+
+    Swal.fire({
+      title: `Are you sure you want to participate as a ${displayRole}`,
+      icon: "question",
+      showCancelButton: true,
+      showConfirmButton: true,
+      cancelButtonColor: "green",
+      confirmButtonColor: "red",
+      cancelButtonText: "No",
+      confirmButtonText: "Yes",
+    }).then((res) => {
+      if (res.value) {
+        let newInterviewSchedule: InterviewSchedule = {
+          interviewId: interview.id,
+          participantId: this.currentUser.id,
+          volunteerId: this.currentUser.id,
+          type: role,
+        };
+        this.sessionService
+          .createInterviewSchedule(newInterviewSchedule)
+          .subscribe(
+            async (_res) => {
+              Swal.fire({
+                title: "You are now participating at this interview!",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+              await this.getSessionInterviews();
+            },
+            (_err) => {
+              if (_err.error == "InterviewAlreadyTaken")
+                Swal.fire({
+                  title: "Interview slot is already booked!",
+                  icon: "error",
+                  showConfirmButton: false,
+                  timer: 2500,
+                }).then(async (_) => {
+                  await this.getSessionInterviews();
+                });
+              else
+                Swal.fire({
+                  title: "Sorry there was an error...\nPlease try again later!",
+                  icon: "error",
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+            }
+          );
+      }
+    });
+  }
+
+  canSchedule(interview: InterviewInfo) {
+    if (
+      this.currentUser.role == "Volunteer" ||
+      (this.currentUser.role == "ProjectManager" &&
+        this.currentUser.id == this.session.creatorId)
+    )
+      if (this.interviewsParticipants.get(interview.id).participant == null)
+        return true;
+    return false;
+  }
+  canScheduleMyself(interview: InterviewInfo) {
+    if (
+      this.currentUser.role == "Volunteer" ||
+      this.currentUser.role == "DepartmentDirector" ||
+      this.currentUser.role == "BoardMember"
+    ) {
+      switch (this.currentUser.role) {
+        case "Volunteer":
+          if (this.interviewsParticipants.get(interview.id).hr == null)
+            return true;
+          break;
+        case "DepartmentDirector":
+          if (this.interviewsParticipants.get(interview.id).dd == null)
+            return true;
+          break;
+        case "BoardMember":
+          if (this.interviewsParticipants.get(interview.id).cd == null)
+            return true;
+          break;
+      }
+    }
+    return false;
+  }
+  canCancelMySchedule(interview: InterviewInfo) {
+    if (
+      this.currentUser.role == "Volunteer" ||
+      this.currentUser.role == "DepartmentDirector" ||
+      this.currentUser.role == "BoardMember"
+    ) {
+      switch (this.currentUser.role) {
+        case "Volunteer":
+          if (this.interviewsParticipants.get(interview.id).hr != null)
+            if (
+              this.interviewsParticipants.get(interview.id).hr.id ==
+              this.currentUser.id
+            )
+              return true;
+          break;
+        case "DepartmentDirector":
+          if (this.interviewsParticipants.get(interview.id).dd != null)
+            if (
+              this.interviewsParticipants.get(interview.id).dd.id ==
+              this.currentUser.id
+            )
+              return true;
+          break;
+        case "BoardMember":
+          if (this.interviewsParticipants.get(interview.id).cd != null)
+            if (
+              this.interviewsParticipants.get(interview.id).cd.id ==
+              this.currentUser.id
+            )
+              return true;
+          break;
+      }
+    }
+    return false;
+  }
+  cancelMySchedule(interview: InterviewInfo) {
+    let role = "";
+    switch (this.currentUser.role) {
+      case "Volunteer":
+        role = "Volunteer";
+        break;
+
+      case "DepartmentDirector":
+        role = "DD";
+        break;
+
+      case "BoardMember":
+        role = "CD";
+        break;
+      default:
+        break;
+    }
+
+    let interviewSchedule: InterviewSchedule = {
+      interviewId: interview.id,
+      participantId: this.currentUser.id,
+      volunteerId: this.currentUser.id,
+      type: role,
+    };
+
+    Swal.fire({
+      title: "Are you sure you don't want to participate anymore?",
+      icon: "question",
+      showCancelButton: true,
+      showConfirmButton: true,
+      cancelButtonColor: "green",
+      confirmButtonColor: "red",
+      cancelButtonText: "No",
+      confirmButtonText: "Yes",
+    }).then((res) => {
+      if (res.value)
+        this.sessionService
+          .deleteInterviewSchedule(interviewSchedule)
+          .subscribe(
+            async (_) => {
+              Swal.fire({
+                title: "You are not assigned anymore!",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+              await this.getSessionInterviews();
+            },
+            (err) => {
+              Swal.fire({
+                title:
+                  "There was an error with your request!\nPlease try again later",
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+            }
+          );
+    });
+  }
+
+  searchedParticipant: string;
+  selectedParticipant: UserInfo;
+  scheduleInterview: InterviewInfo;
+  filteredParticipantsToBeScheduled: UserInfo[];
+  openScheduleModal(interview: InterviewInfo, scheduleParticipantModal) {
+    this.scheduleInterview = interview;
+    this.filteredParticipantsToBeScheduled = this.eligibleUsers;
+
+    this.searchedParticipant = "";
+    this.selectedParticipant = undefined;
+
+    this.modalService.open(scheduleParticipantModal, {
+      centered: true,
+      size: "lg",
+    });
+  }
+
+  updateFilteredList() {
+    this.filteredParticipantsToBeScheduled = [];
+    this.eligibleUsers.forEach((participant) => {
+      let fullName =
+        `${participant.firstName} ${participant.lastName}`.toLowerCase();
+      if (fullName.includes(this.searchedParticipant.toLowerCase()))
+        this.filteredParticipantsToBeScheduled.push(participant);
+    });
+  }
+  updateSelected(user: UserInfo) {
+    this.selectedParticipant = user;
+    this.searchedParticipant = `${this.selectedParticipant.firstName} ${this.selectedParticipant.lastName}`;
+    this.updateFilteredList();
+  }
+  scheduleParticipant() {
+    let scheduleInterview: InterviewSchedule = {
+      interviewId: this.scheduleInterview.id,
+      participantId: this.selectedParticipant.id,
+      volunteerId: this.currentUser.id,
+      type: "Participant",
+    };
+
+    this.sessionService.createInterviewSchedule(scheduleInterview).subscribe(
+      (res) => {
+        Swal.fire({
+          title: "Participant scheduled successfully!",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 2000,
+        }).then(async (_) => {
+          await this.ngOnInit();
+          this.modalService.dismissAll();
+        });
+      },
+      (err) => {
+        if (err.error == "InterviewAlreadyTaken")
+          Swal.fire({
+            title: "There was already a participant scheduled here!",
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2000,
+          }).then(async (_) => {
+            await this.ngOnInit();
+            this.modalService.dismissAll();
+          });
+        else
+          Swal.fire({
+            title: "There was an error please try again later...",
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2000,
+          });
+      }
+    );
+  }
+  canRemoveParticipantSchedule(interview: InterviewInfo) {
+    if (this.interviewsParticipants.get(interview.id).participant != null) {
+      if (
+        this.currentUser.role == "ProjectManager" ||
+        this.interviewsParticipants.get(interview.id).schedulerId ==
+          this.currentUser.id
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+  removeParticipant() {
+    let interviewSchedule: InterviewSchedule = {
+      interviewId: this.displayInterview.id,
+      participantId: this.interviewsParticipants.get(this.displayInterview.id)
+        .participant.id,
+      volunteerId: this.interviewsParticipants.get(this.displayInterview.id)
+        .schedulerId,
+      type: "Participant",
+    };
+
+    Swal.fire({
+      title: "Are you sure you want to remove participant?",
+      icon: "question",
+      showCancelButton: true,
+      showConfirmButton: true,
+      cancelButtonColor: "green",
+      confirmButtonColor: "red",
+      cancelButtonText: "No",
+      confirmButtonText: "Yes",
+    }).then((res) => {
+      if (res.value)
+        this.sessionService
+          .deleteInterviewSchedule(interviewSchedule)
+          .subscribe(
+            (res) => {
+              Swal.fire({
+                title: "Participant removed successfully",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              }).then(async (res) => {
+                await this.ngOnInit();
+                this.modalService.dismissAll();
+              });
+            },
+            (err) => {
+              Swal.fire({
+                title: "Sorry there was an error...\nPlease try again later",
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false,
+              });
+            }
+          );
     });
   }
 }

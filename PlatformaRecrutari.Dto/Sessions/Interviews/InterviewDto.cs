@@ -17,5 +17,6 @@ namespace PlatformaRecrutari.Dto.Sessions.Interviews
 
         public DateTime InterviewsDate { get; set; }
         public List<Interview> InterviewsDetails { get; set; }
+        public List<InterviewScheduleDto> InterviewsScheduledUsers { get; set; }
     }
 }
