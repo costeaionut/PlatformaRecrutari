@@ -18,6 +18,7 @@ using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_S
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Interviews;
 using PlatformaRecrutari.Dto.Sessions.Interviews;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FinalVote;
+using PlatformaRecrutari.Dto.Sessions.FinalVotes;
 
 namespace PlatformaRecrutari.Web.Controllers
 {
@@ -1078,8 +1079,11 @@ namespace PlatformaRecrutari.Web.Controllers
         [HttpPost("FinalVote/Voter/Create")]
         public async Task<ActionResult<Voter>> AddNewVoterAsync([FromBody] Voter voter)
         {
+
             if (voter == null)
                 return BadRequest("MissingBodyVoterInfo");
+
+            voter.Status = "WaitingApproval";
 
             var volunteer = await _userManager.FindByIdAsync(voter.VolunteerId);
             var session = _sessionManager.GetSessionById(voter.SessionId);
@@ -1134,8 +1138,50 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpGet("FinalVote/GetSessionVoters/{sessionId}")]
-        public ActionResult<List<Voter>> GetSessionsVoters(int sessionId)
-            => _finalVoteManager.GetVotersBySessionId(sessionId);
+        public async Task<ActionResult<List<VoterDto>>> GetSessionsVotersAsync(int sessionId)
+        { 
+            var voters = _finalVoteManager.GetVotersBySessionId(sessionId);
+            var votersDto = new List<VoterDto>();
+            foreach (var voter in voters)
+            {
+                var user = await _userManager.FindByIdAsync(voter.VolunteerId);
+                var userDto = _mapper.Map<UserDto>(user);
+                userDto.Role = _roleManager.GetRoleType(user.RoleId);
+
+                var voterDto = new VoterDto();
+                voterDto.User = userDto;
+                voterDto.Status = voter.Status;
+
+                votersDto.Add(voterDto);
+            }
+            return votersDto;
+        }
+
+        [HttpPut("FinalVote/ChangeVoterStatus")]
+        public async Task<ActionResult<VoterDto>> ChangeVoterStatusAsync([FromBody] Voter voter) 
+        {
+            if (voter == null)
+                return BadRequest("MissingVoterBody");
+
+            var currentVoter = 
+                _finalVoteManager
+                .GetVotersBySessionId(voter.SessionId)
+                .Find(v => v.VolunteerId == voter.VolunteerId);
+
+            if (currentVoter.Status == voter.Status)
+                return BadRequest("AlreadyHasStatus");
+
+            voter = _finalVoteManager.UpdateVoterStatus(voter);
+
+            var voterDto = new VoterDto();
+            var user = await _userManager.FindByIdAsync(voter.VolunteerId);
+            var userDto = _mapper.Map<UserDto>(user);
+            userDto.Role = _roleManager.GetRoleType(user.RoleId);
+            voterDto.User = userDto;
+            voterDto.Status = voter.Status;
+
+            return voterDto;
+        }
 
         [HttpPut("FinalVote/StartVotingSession/{sessionId}")]
         [Authorize(Roles = RoleType.ProjectManager)]
@@ -1149,5 +1195,20 @@ namespace PlatformaRecrutari.Web.Controllers
             _sessionManager.UpdateSessionInfo(session);
             return Ok();
         }
+    
+        [HttpGet("FinalVote/Voter/{sessionId}/{volunteerId}")]
+        public async Task<ActionResult<VoterDto>> GetVoterDtoAsync(int sessionId, string volunteerId)
+        {
+            var voterInfo = _finalVoteManager.GetVoter(volunteerId, sessionId);
+
+            var voterDto = new VoterDto();
+            var user = await _userManager.FindByIdAsync(voterInfo.VolunteerId);
+            var userDto = _mapper.Map<UserDto>(user);
+            userDto.Role = _roleManager.GetRoleType(user.RoleId);
+            voterDto.User = userDto;
+            voterDto.Status = voterInfo.Status;
+
+            return voterDto;
+;        }
     }
 }

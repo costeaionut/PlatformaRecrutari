@@ -54,6 +54,11 @@ export enum ApiCallPaths {
   postInterviewSchedule = "api/Session/Interview/Schedule/Create/",
   deleteInterviewSchedule = "api/Session/Interview/Schedule/Delete/",
   getInterviewEligibleUsers = "api/Session/Interview/Schedule/GetEligibleCandidates/",
-
   addInterviewFeedback = "api/Session/Interview/Feedback/Create",
+
+  startFinalVoteMeeting = "api/Session/FinalVote/StartVotingSession/",
+  getFinalVoteVoters = "api/Session/FinalVote/GetSessionVoters/",
+  requestFinalVoteParticipation = "api/Session/FinalVote/Voter/Create/",
+  changeVoterStatus = "api/Session/FinalVote/ChangeVoterStatus/",
+  getVoter = "api/Session/FinalVote/Voter/",
 }

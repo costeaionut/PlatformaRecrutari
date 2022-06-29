@@ -48,5 +48,19 @@ namespace PlatformaRecrutari.Data.Managers
 
         public List<Voter> GetVotersBySessionId(int sessionId)
             => _context.Voters.Where(v => v.SessionId == sessionId).ToList();
+
+        public Voter UpdateVoterStatus(Voter voter)
+        {
+            var oldVoter = _context.Voters
+                .FirstOrDefault(v => v.VolunteerId == voter.VolunteerId && v.SessionId == voter.SessionId);
+            oldVoter.Status = voter.Status;
+
+            _context.SaveChanges();
+            return oldVoter;
+        }
+
+        public Voter GetVoter(string volunteerId, int sessionId)
+            => _context.Voters.FirstOrDefault(v => v.SessionId == sessionId && v.VolunteerId == volunteerId);
+        
     }
 }

@@ -3,6 +3,8 @@ import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { FormFeedbackResponse } from "src/shared/dto/feedback/response-form-feedback";
 import { FormFeedbackPost } from "src/shared/dto/feedback/send-form-feedback";
+import { VoterPostDto } from "src/shared/dto/final-vote/voter-post-dto";
+import { VoterDto } from "src/shared/dto/final-vote/voterDto";
 import { FormDto } from "src/shared/dto/form-dto";
 import { ParticipantsDto } from "src/shared/dto/participant-dto";
 import { FormInfo } from "src/shared/interfaces/form/formInfo";
@@ -23,9 +25,13 @@ import Swal from "sweetalert2";
 export class DisplaySessionsComponent implements OnInit {
   currentSession: SessionInfo;
   currentForm: FormInfo;
-  currentUser: UserInfo;
+
   creator: UserInfo;
   whatToDisplay: string;
+
+  currentUser: UserInfo;
+  participatesInFinalVote: boolean;
+  currentUserVoter: VoterDto;
 
   editingSession: boolean;
   invalidSession: boolean;
@@ -69,8 +75,24 @@ export class DisplaySessionsComponent implements OnInit {
       .getSessionParticipants(this.currentSession.id)
       .toPromise();
 
+    await this.getCurrentUserFinalVoteParticipationStatus();
+
     this.getParticipantsStatus(participantsDto);
     this.orderParticipantsByWaitingStatus();
+  }
+
+  async getCurrentUserFinalVoteParticipationStatus() {
+    if (this.currentSession.isFinalVoteStarted) {
+      let voterDto: VoterDto = await this.sessionService
+        .getVoter(this.currentSession.id, this.currentUser.id)
+        .toPromise();
+      this.currentUserVoter = voterDto;
+      if (voterDto == null) {
+        this.participatesInFinalVote = false;
+      } else {
+        this.participatesInFinalVote = true;
+      }
+    }
   }
 
   getParticipantsStatus(participants: ParticipantsDto[]) {
@@ -170,8 +192,6 @@ export class DisplaySessionsComponent implements OnInit {
           break;
       }
     }
-
-    console.log(finalVoteUsers);
 
     this.participants = [
       ...waitingFormUsers,
@@ -488,5 +508,54 @@ export class DisplaySessionsComponent implements OnInit {
     } else {
       this.router.navigate(["final-vote", this.currentSession.id]);
     }
+  }
+
+  async volunteerGoToFinalVotePage() {
+    if (
+      this.currentUserVoter === null ||
+      this.currentUserVoter === undefined ||
+      this.currentUserVoter.status == "WaitingApproval"
+    ) {
+      this.currentUserVoter = await this.sessionService
+        .getVoter(this.currentSession.id, this.currentUser.id)
+        .toPromise();
+    }
+    if (this.currentUserVoter.status != "Approved")
+      Swal.fire({
+        title: "Please wait for approval!",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+    else this.router.navigate(["final-vote", this.currentSession.id]);
+  }
+
+  requestAccessToFinalVotePage() {
+    let newVoter: VoterPostDto = {
+      sessionId: this.currentSession.id,
+      volunteerId: this.currentUser.id,
+      status: "WaitingApproval",
+    };
+
+    this.sessionService.requestFinalVoteParticipation(newVoter).subscribe(
+      (_res) => {
+        Swal.fire({
+          title: "Your request has been sent!",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then((res) => {
+          this.participatesInFinalVote = true;
+        });
+      },
+      (err) => {
+        Swal.fire({
+          title: "We couldn't add your request...\nPlease try again later",
+          icon: "error",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    );
   }
 }

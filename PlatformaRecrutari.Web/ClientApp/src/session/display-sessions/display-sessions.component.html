@@ -20,6 +20,28 @@
           >
         </p>
       </div>
+      <div
+        *ngIf="
+          this.currentUser.role != 'ProjectManager' &&
+          this.currentSession.isFinalVoteStarted
+        "
+        align="right"
+      >
+        <button
+          (click)="requestAccessToFinalVotePage()"
+          class="btn btn-outline-success"
+          *ngIf="!this.participatesInFinalVote"
+        >
+          Participate in final vote meeting
+        </button>
+        <button
+          (click)="volunteerGoToFinalVotePage()"
+          class="btn btn-outline-success"
+          *ngIf="this.participatesInFinalVote"
+        >
+          Final Vote
+        </button>
+      </div>
       <div *ngIf="shouldShowActions()" class="col" align="right">
         <button
           style="margin: 5px"

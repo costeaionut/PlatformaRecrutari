@@ -13,6 +13,9 @@ namespace PlatformaRecrutari.Core.Abstractions
         public List<Vote> GetParticipantVotes(int sessionId, string participantId);
         VotedParticipant GetParticipantWaitingForAnswer(int sessionId);
         public List<Voter> GetVotersBySessionId(int sessionId);
+        Voter GetVoter(string volunteerId, int sessionId);
+
+        public Voter UpdateVoterStatus(Voter voter);
 
         public VotedParticipant AddVotedParticipant(VotedParticipant votedParticipant);
         public Voter AddVoter(Voter voter);

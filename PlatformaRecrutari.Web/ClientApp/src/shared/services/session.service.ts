@@ -1,5 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { VoterPostDto } from "../dto/final-vote/voter-post-dto";
+import { VoterDto } from "../dto/final-vote/voterDto";
 import { FormDto } from "../dto/form-dto";
 import { InterviewDto } from "../dto/interview/interviewDto";
 import { CreateSessionDto } from "../dto/session/create-session-dto";
@@ -263,10 +265,42 @@ export class SessionService {
   }
 
   public addInterviewFeedback(interviewFeedback: InterviewFeedback) {
-    console.log(ApiCallPaths);
     return this.http.post(
       this.baseUrl + ApiCallPaths.addInterviewFeedback,
       interviewFeedback
+    );
+  }
+
+  public startFinalVoteMeeting(sessionId: number) {
+    return this.http.put(
+      this.baseUrl + ApiCallPaths.startFinalVoteMeeting + sessionId,
+      {}
+    );
+  }
+
+  public requestFinalVoteParticipation(voter: VoterPostDto) {
+    return this.http.post<VoterPostDto>(
+      this.baseUrl + ApiCallPaths.requestFinalVoteParticipation,
+      voter
+    );
+  }
+
+  public changeVoterStatus(voter: VoterPostDto) {
+    return this.http.put<VoterDto>(
+      this.baseUrl + ApiCallPaths.changeVoterStatus,
+      voter
+    );
+  }
+
+  public getFinalVoteVoters(sessionId: number) {
+    return this.http.get<Array<VoterDto>>(
+      this.baseUrl + ApiCallPaths.getFinalVoteVoters + sessionId
+    );
+  }
+
+  public getVoter(sessionId: number, voterId: string) {
+    return this.http.get<VoterDto>(
+      this.baseUrl + ApiCallPaths.getVoter + `${sessionId}/${voterId}`
     );
   }
 }
