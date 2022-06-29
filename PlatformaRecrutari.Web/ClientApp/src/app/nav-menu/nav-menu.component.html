@@ -57,11 +57,14 @@
           </li>
 
           <li
-            *ngIf="this.user.role == 'Candidate'"
+            *ngIf="this.user"
             class="nav-item"
             [routerLinkActive]="['link-active']"
           >
-            <a class="nav-link text-dark" [routerLink]="['user', this.user.id]"
+            <a
+              *ngIf="this.user.role == 'Candidate'"
+              class="nav-link text-dark"
+              [routerLink]="['user', this.user.id]"
               >Profile</a
             >
           </li>

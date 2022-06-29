@@ -33,6 +33,7 @@ export class SessionCreationManagerComponent implements OnInit {
       startDate: new Date(),
       endDate: new Date(),
       isOpen: false,
+      isFinalVoteStarted: false,
     };
 
     this.formInfo = {

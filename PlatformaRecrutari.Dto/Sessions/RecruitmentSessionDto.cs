@@ -21,6 +21,7 @@ namespace PlatformaRecrutari.Dto.Sessions
         public DateTime EndDate { get; set; }
         [Required(ErrorMessage = "Session's status is required.")]
         public bool IsOpen { get; set; }
+        public bool IsFinalVoteStarted { get; set; }
         public FormDto Form { get; set; }
     }
 }

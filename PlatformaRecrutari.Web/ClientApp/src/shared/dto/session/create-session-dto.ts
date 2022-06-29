@@ -7,6 +7,7 @@ export interface CreateSessionDto {
   startDate: Date;
   endDate: Date;
   isOpen: boolean;
+  isFinalVoteStarted: boolean;
   form: FormDto;
   workshop: string;
   interview: string;

@@ -144,6 +144,7 @@ export class DtoMapperService {
       startDate: new Date(sessionInfo.startDate.setHours(3, 0, 0)),
       endDate: new Date(sessionInfo.endDate.setHours(3, 0, 0)),
       isOpen: sessionInfo.isOpen,
+      isFinalVoteStarted: sessionInfo.isFinalVoteStarted,
       form: formDto,
       workshop: "notImplemented",
       interview: "notImplemented",

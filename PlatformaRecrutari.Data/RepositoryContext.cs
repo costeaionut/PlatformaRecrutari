@@ -12,6 +12,7 @@ using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Inputed_Optio
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Interviews;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FinalVote;
 
 namespace PlatformaRecrutari.Data
 {
@@ -43,6 +44,10 @@ namespace PlatformaRecrutari.Data
         public DbSet<InterviewFeedback> InterviewFeedbacks { get; set; }
         public DbSet<InterviewSchedule> InterviewSchedules { get; set; }
         
+        public DbSet<Vote> Votes { get; set; }
+        public DbSet<Voter> Voters { get; set; }
+        public DbSet<VotedParticipant> VotedParticipants { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -150,6 +155,47 @@ namespace PlatformaRecrutari.Data
                 .HasOne<Interview>()
                 .WithMany()
                 .HasForeignKey(i => i.InterviewId);
+
+            modelBuilder.Entity<Vote>()
+                .HasKey(v => new { v.VoterId, v.ParticipantId, v.SessionId });
+
+            modelBuilder.Entity<Voter>()
+                .HasKey(v => new { v.VolunteerId, v.SessionId });
+
+            modelBuilder.Entity<VotedParticipant>()
+                .HasKey(vp => new { vp.ParticipantId, vp.SessionId });
+
+            modelBuilder.Entity<Vote>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(v => v.ParticipantId).OnDelete(DeleteBehavior.NoAction)
+                .HasForeignKey(v => v.VoterId).OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Vote>()
+                .HasOne<RecruitmentSession>()
+                .WithMany()
+                .HasForeignKey(v => v.SessionId).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Voter>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(v => v.VolunteerId).OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Voter>()
+                .HasOne<RecruitmentSession>()
+                .WithMany()
+                .HasForeignKey(v => v.SessionId);
+
+            modelBuilder.Entity<VotedParticipant>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(vp => vp.ParticipantId).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<VotedParticipant>()
+                .HasOne<RecruitmentSession>()
+                .WithMany()
+                .HasForeignKey(vp => vp.SessionId);
+
         }
     }
 }

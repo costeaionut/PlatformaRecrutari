@@ -55,6 +55,7 @@ namespace PlatformaRecrutari.Data.Managers
             originalData.StartDate = newData.StartDate;
             originalData.EndDate = newData.EndDate;
             originalData.IsOpen = newData.IsOpen;
+            originalData.IsFinalVoteStarted = newData.IsFinalVoteStarted;
         }
 
         public List<RecruitmentSession> GetAllSessions() =>

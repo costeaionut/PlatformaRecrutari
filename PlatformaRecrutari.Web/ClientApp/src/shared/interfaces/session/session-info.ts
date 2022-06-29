@@ -5,4 +5,5 @@ interface SessionInfo {
   startDate: Date;
   endDate: Date;
   isOpen: boolean;
+  isFinalVoteStarted: boolean;
 }

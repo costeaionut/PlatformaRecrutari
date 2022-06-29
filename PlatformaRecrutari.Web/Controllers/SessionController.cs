@@ -17,6 +17,7 @@ using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Interviews;
 using PlatformaRecrutari.Dto.Sessions.Interviews;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.FinalVote;
 
 namespace PlatformaRecrutari.Web.Controllers
 {
@@ -33,6 +34,7 @@ namespace PlatformaRecrutari.Web.Controllers
         private readonly UserManager<User> _userManager;
         private readonly ISessionManager _sessionManager;
         private readonly IWorkshopManager _workshopManager;
+        private readonly IFinalVoteManager _finalVoteManager;
         private readonly IInterviewManager _interviewManager;
 
         public SessionController(
@@ -42,10 +44,12 @@ namespace PlatformaRecrutari.Web.Controllers
             UserManager<User> userManager,
             ISessionManager sessionsManager,
             IWorkshopManager workshopManager,
+            IFinalVoteManager finalVoteManager,
             IInterviewManager interviewManager
         )
         {
             _interviewManager = interviewManager;
+            _finalVoteManager = finalVoteManager;
             _workshopManager = workshopManager;
             _sessionManager = sessionsManager;
             _userManager = userManager;
@@ -1069,6 +1073,81 @@ namespace PlatformaRecrutari.Web.Controllers
             var newFeedback = _interviewManager.addInterviewFeedback(interviewFeedback);
 
             return Ok(newFeedback);
+        }
+    
+        [HttpPost("FinalVote/Voter/Create")]
+        public async Task<ActionResult<Voter>> AddNewVoterAsync([FromBody] Voter voter)
+        {
+            if (voter == null)
+                return BadRequest("MissingBodyVoterInfo");
+
+            var volunteer = await _userManager.FindByIdAsync(voter.VolunteerId);
+            var session = _sessionManager.GetSessionById(voter.SessionId);
+
+            if (volunteer == null || session == null)
+                return BadRequest("VolunterOrSessionNotFound");
+
+            if (session.EndDate < DateTime.Now)
+                return BadRequest("SessionClosed");
+
+            return _finalVoteManager.AddVoter(voter);
+
+        }
+
+        [HttpPost("FinalVote/Vote/Create")]
+        public async Task<ActionResult<Vote>> AddNewVoteAsync([FromBody] Vote vote)
+        {
+            if (vote == null)
+                return BadRequest("MissingBodyVoterInfo");
+
+            var participant = await _userManager.FindByIdAsync(vote.ParticipantId);
+            var voter = await _userManager.FindByIdAsync(vote.VoterId);
+            var session = _sessionManager.GetSessionById(vote.SessionId);
+
+            if (participant == null || session == null || voter == null)
+                return BadRequest("ParticipantVolunterOrSessionNotFound");
+
+            if (session.EndDate < DateTime.Now)
+                return BadRequest("SessionClosed");
+
+            return _finalVoteManager.AddVote(vote);
+
+        }
+    
+        [HttpPost("FinalVote/VotedParticipant/Create")]
+        public async Task<ActionResult<VotedParticipant>> AddNewVotedParticipantAsync([FromBody] VotedParticipant participant)
+        {
+            if (participant == null)
+                return BadRequest("MissingBodyVoterInfo");
+
+            var voted = await _userManager.FindByIdAsync(participant.ParticipantId);
+            var session = _sessionManager.GetSessionById(participant.SessionId);
+
+            if ( session == null || voted == null)
+                return BadRequest("ParticipantVolunterOrSessionNotFound");
+
+            if (session.EndDate < DateTime.Now)
+                return BadRequest("SessionClosed");
+
+            return _finalVoteManager.AddVotedParticipant(participant);
+
+        }
+
+        [HttpGet("FinalVote/GetSessionVoters/{sessionId}")]
+        public ActionResult<List<Voter>> GetSessionsVoters(int sessionId)
+            => _finalVoteManager.GetVotersBySessionId(sessionId);
+
+        [HttpPut("FinalVote/StartVotingSession/{sessionId}")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public ActionResult StartVotingSession(int sessionId) {
+            var session =_sessionManager.GetSessionById(sessionId);
+            if (session == null)
+                return BadRequest("SessionNotFound");
+            if (session.IsFinalVoteStarted)
+                return NoContent();
+            session.IsFinalVoteStarted = true;
+            _sessionManager.UpdateSessionInfo(session);
+            return Ok();
         }
     }
 }
