@@ -1,0 +1,37 @@
+.displayButton{
+    border: 0;
+    width: 100%;
+    padding-top: 10px;
+    background-color: inherit;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    transition-property: background-color;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in;
+}
+
+.selected{
+    border-bottom: 2px solid royalblue;
+}
+
+.displayButton:hover{
+    background-color: rgba(128, 128, 128, 0.15);
+}
+
+.changeDisplayRowWrapper{
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+}
+.changeDisplayColWrapper{
+    padding: 0;
+}
+
+.voteButton{
+    border: 0;
+    background-color: inherit;
+    color: rgba(0, 128, 0, 0.5);
+}
+
+.voteButton:hover{
+    color: green;
+    text-decoration: underline;
+}

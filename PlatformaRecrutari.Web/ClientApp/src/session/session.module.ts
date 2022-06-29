@@ -46,7 +46,8 @@ import { NgbModalWindow } from "@ng-bootstrap/ng-bootstrap/modal/modal-window";
 import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 
 import { MatTimepickerModule } from "mat-timepicker";
-import { InterviewsManagerComponent } from './interviews-manager/interviews-manager.component';
+import { InterviewsManagerComponent } from "./interviews-manager/interviews-manager.component";
+import { FinalVoteComponent } from "./final-vote/final-vote.component";
 @NgModule({
   declarations: [
     CreateSessionComponent,
@@ -73,6 +74,7 @@ import { InterviewsManagerComponent } from './interviews-manager/interviews-mana
     CandidateApplicationFormComponent,
     WorkshopManagerComponent,
     InterviewsManagerComponent,
+    FinalVoteComponent,
   ],
   imports: [
     FormsModule,
@@ -94,6 +96,7 @@ import { InterviewsManagerComponent } from './interviews-manager/interviews-mana
     SweetAlert2Module.forRoot(),
   ],
   exports: [
+    FinalVoteComponent,
     DisplayFormComponent,
     SessionManagerComponent,
     DisplaySessionsComponent,

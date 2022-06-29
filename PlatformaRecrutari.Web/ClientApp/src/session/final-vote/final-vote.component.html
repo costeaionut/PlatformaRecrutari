@@ -1,0 +1,60 @@
+<div *ngIf="this.session" class="container">
+  <div class="row">
+    <div class="col" align="center"><h2>Final Vote</h2></div>
+  </div>
+  <div class="row changeDisplayRowWrapper">
+    <div
+      [ngClass]="{ selected: this.display == 'NotVoted' }"
+      class="col changeDisplayColWrapper"
+      align="center"
+    >
+      <button (click)="changeDisplay('NotVoted')" class="displayButton">
+        Not voted
+      </button>
+    </div>
+    <div
+      [ngClass]="{ selected: this.display == 'Voted' }"
+      class="col changeDisplayColWrapper"
+      align="center"
+    >
+      <button (click)="changeDisplay('Voted')" class="displayButton">
+        Voted
+      </button>
+    </div>
+    <div
+      [ngClass]="{ selected: this.display == 'Volunteers' }"
+      class="col changeDisplayColWrapper"
+      align="center"
+    >
+      <button (click)="changeDisplay('Volunteers')" class="displayButton">
+        Volunteers
+      </button>
+    </div>
+  </div>
+  <div *ngIf="this.display == 'NotVoted'" class="row table-responsive">
+    <table class="table">
+      <thead class="table-header">
+        <tr>
+          <td scope="col" colspan="1"><b>#</b></td>
+          <td scope="col" colspan="1"><b>Participant</b></td>
+          <td align="right" scope="col" colspan="1"><b>Action</b></td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of this.notVotedParticipants; index as userIndex">
+          <td>{{ userIndex + 1 }}</td>
+          <td>
+            <a target="_blank" href="/user/{{ this.user.id }}"
+              >{{ user.firstName }} {{ user.lastName }}</a
+            >
+          </td>
+          <td align="right">
+            <button (click)="startVote(user)" class="voteButton">Vote</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="this.display == 'Voted'" class="row"></div>
+  <div *ngIf="this.display == 'Volunteers'" class="row"></div>
+</div>

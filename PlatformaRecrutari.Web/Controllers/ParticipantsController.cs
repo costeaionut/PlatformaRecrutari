@@ -206,5 +206,6 @@ namespace PlatformaRecrutari.Web.Controllers
         [HttpGet("Workshop/{participantId}/{sessionId}")]
         public ActionResult<Workshop> GetParticipantWorkshopById(string participantId, int sessionId) =>
             _participantsManager.GetParticipantsWorkshop(participantId, sessionId);
+    
     }
 }

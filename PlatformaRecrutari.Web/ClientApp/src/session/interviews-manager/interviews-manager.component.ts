@@ -442,8 +442,8 @@ export class InterviewsManagerComponent implements OnInit {
       icon: "question",
       showCancelButton: true,
       showConfirmButton: true,
-      cancelButtonColor: "green",
-      confirmButtonColor: "red",
+      cancelButtonColor: "red",
+      confirmButtonColor: "green",
       cancelButtonText: "No",
       confirmButtonText: "Yes",
     }).then((res) => {

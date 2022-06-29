@@ -57,7 +57,7 @@
           </li>
 
           <li
-            *ngIf="this.isUserAuthenticated"
+            *ngIf="this.user.role == 'Candidate'"
             class="nav-item"
             [routerLinkActive]="['link-active']"
           >

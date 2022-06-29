@@ -847,7 +847,6 @@ export class WorkshopManagerComponent implements OnInit {
     }
 
     let status: string;
-    console.log(`Yes: ${this.givenYesVotes} \nNo: ${this.givenNoVotes}`);
     if (
       parseInt(this.givenYesVotes.toString()) >
       parseInt(this.givenNoVotes.toString())

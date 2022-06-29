@@ -464,4 +464,29 @@ export class DisplaySessionsComponent implements OnInit {
 
     return false;
   }
+
+  goToFinalVotePage() {
+    let readyForFinalVote: boolean = true;
+    this.participantsStatus.forEach((status) => {
+      if (
+        status != "Ready for final vote" &&
+        status != "Rejected at form stage" &&
+        status != "Rejected at workshop stage"
+      )
+        readyForFinalVote = false;
+    });
+
+    if (!readyForFinalVote) {
+      Swal.fire({
+        title: "Not everybody is ready for final vote!",
+        text: "Please check the participants! \nThere might be missing feedbacks or not everybody was rejected!",
+        icon: "error",
+        timer: 5000,
+        showConfirmButton: false,
+      });
+      return;
+    } else {
+      this.router.navigate(["final-vote", this.currentSession.id]);
+    }
+  }
 }

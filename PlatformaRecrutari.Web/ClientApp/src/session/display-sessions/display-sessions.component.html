@@ -22,11 +22,19 @@
       </div>
       <div *ngIf="shouldShowActions()" class="col" align="right">
         <button
+          style="margin: 5px"
+          *ngIf="!this.editingSession"
+          (click)="goToFinalVotePage()"
+          class="btn btn-outline-success"
+        >
+          Final Vote
+        </button>
+        <button
           *ngIf="this.editingSession"
           (click)="deleteSession()"
           style="margin: 5px"
           type="button"
-          class="btn btn-danger"
+          class="btn btn-outline-danger"
         >
           Delete
         </button>
@@ -34,7 +42,7 @@
           *ngIf="!editingSession"
           (click)="edit()"
           type="button"
-          class="btn btn-primary"
+          class="btn btn-outline-primary"
         >
           Edit Session
         </button>
@@ -42,7 +50,7 @@
           *ngIf="editingSession"
           (click)="stopEditing()"
           type="button"
-          class="btn btn-success"
+          class="btn btn-outline-success"
           [disabled]="this.invalidSession"
         >
           Done editing
