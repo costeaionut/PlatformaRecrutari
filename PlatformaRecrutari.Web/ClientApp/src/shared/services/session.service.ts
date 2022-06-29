@@ -1,7 +1,10 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { VotedUserDto } from "../dto/final-vote/voted-user-dto";
+import { VotedUserPostDto } from "../dto/final-vote/voted-user-post-dto";
 import { VoterPostDto } from "../dto/final-vote/voter-post-dto";
 import { VoterDto } from "../dto/final-vote/voterDto";
+import { VotePostDto } from "../dto/final-vote/votes-post-dto";
 import { FormDto } from "../dto/form-dto";
 import { InterviewDto } from "../dto/interview/interviewDto";
 import { CreateSessionDto } from "../dto/session/create-session-dto";
@@ -301,6 +304,56 @@ export class SessionService {
   public getVoter(sessionId: number, voterId: string) {
     return this.http.get<VoterDto>(
       this.baseUrl + ApiCallPaths.getVoter + `${sessionId}/${voterId}`
+    );
+  }
+
+  public getSessionVotedUsers(sessionId: number) {
+    return this.http.get<VotedUserDto[]>(
+      this.baseUrl + ApiCallPaths.getSessionsVotedUsers + sessionId
+    );
+  }
+
+  public addVotedParticipant(votedParticipants: VotedUserPostDto) {
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.addVotedParticipant,
+      votedParticipants
+    );
+  }
+
+  public getParticipantWaitingForVote(sessionId: number) {
+    return this.http.get<UserInfo>(
+      this.baseUrl + ApiCallPaths.getParticipantWaitingForVote + sessionId
+    );
+  }
+
+  public stopVoteAndCalculateResult(user: UserInfo, sessionId: number) {
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.stopVoteAndCalculateResult + sessionId,
+      user
+    );
+  }
+
+  public postMyVote(vote: VotePostDto) {
+    return this.http.post(this.baseUrl + ApiCallPaths.sendVolunteerVote, vote);
+  }
+
+  public deleteParticipantFinalVote(sessionId: number, userInfo: UserInfo) {
+    return this.http.post(
+      this.baseUrl + ApiCallPaths.deleteUserFinalVote + sessionId,
+      userInfo
+    );
+  }
+
+  public deleteMyVote(
+    sessionId: number,
+    userInfo: UserInfo,
+    participantId: string
+  ) {
+    return this.http.post(
+      this.baseUrl +
+        ApiCallPaths.deleteVolunteerVote +
+        `${sessionId}/${participantId}`,
+      userInfo
     );
   }
 }

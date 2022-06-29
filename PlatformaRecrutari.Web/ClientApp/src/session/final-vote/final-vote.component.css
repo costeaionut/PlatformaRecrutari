@@ -35,3 +35,45 @@
     color: green;
     text-decoration: underline;
 }
+
+.approveButton{
+    border: 0;
+    background-color: inherit;
+    color: rgba(0, 128, 0, 0.5);
+}
+
+.approveButton:hover{
+    color: green;
+    text-decoration: underline;
+}
+
+.rejectButton{
+    border: 0;
+    background-color: inherit;
+    color: rgba(255, 0, 0, 0.5);
+}
+
+.rejectButton:hover{
+    color: red;
+    text-decoration: underline;
+}
+
+.greenStatus{
+    color: rgb(13, 154, 27);
+}
+.rejectedStatus{
+    color: red;
+}
+.orangeStatus{
+    color: orange;
+}
+
+.voteStatusModalOpen{
+    cursor: pointer;
+    background-color: inherit;
+    transition-property: background-color;
+    transition-duration: 300ms;
+}
+.voteStatusModalOpen:hover{
+    background-color: rgba(128, 128, 128, 0.15);
+}

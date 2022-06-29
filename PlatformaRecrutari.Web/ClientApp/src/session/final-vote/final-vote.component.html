@@ -49,15 +49,106 @@
             >
           </td>
           <td align="right">
-            <button (click)="startVoteForUser(user)" class="voteButton">
+            <button
+              *ngIf="
+                this.currentUser.id == this.session.creatorId &&
+                !this.waitingForVote
+              "
+              (click)="startVoteForUser(user)"
+              class="voteButton"
+            >
               Vote
+            </button>
+            <button
+              *ngIf="
+                this.currentUser.id == this.session.creatorId &&
+                this.waitingForVote &&
+                user.id == this.waitingForVote.id
+              "
+              (click)="stopVoteForUser(user)"
+              class="voteButton"
+            >
+              Stop vote
             </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-  <div *ngIf="this.display == 'Voted'" class="row"></div>
+  <div *ngIf="this.display == 'Voted'" class="row">
+    <!-- Displayed when the session's vote is not started -->
+    <div
+      *ngIf="!this.session.isFinalVoteStarted"
+      class="container"
+      style="margin-top: 10px"
+    >
+      <div class="row">
+        <div class="col">
+          <h4>Vote didn't start</h4>
+        </div>
+      </div>
+    </div>
+    <div
+      *ngIf="this.session.isFinalVoteStarted"
+      class="container"
+      style="margin-top: 10px"
+    >
+      <div *ngIf="this.votedParticipants.length == 0" class="row">
+        <h4>There isn't any voted participant yet!</h4>
+      </div>
+      <div *ngIf="this.votedParticipants.length != 0" class="row">
+        <div class="col">
+          <div class="container">
+            <div class="row">
+              <div class="col">
+                <h4>Voted users</h4>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col responsive-table">
+                <table class="table">
+                  <thead class="table-header">
+                    <tr>
+                      <td scope="col" colspan="1"><b>#</b></td>
+                      <td scope="col" colspan="1"><b>Participant Info</b></td>
+                      <td align="right" scope="col" colspan="1">
+                        <b>Status</b>
+                      </td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      class="voteStatusModalOpen"
+                      *ngFor="
+                        let participant of this.votedParticipants;
+                        index as participantIndex
+                      "
+                      (click)="openFinalVoteInfo(finalVoteInfo, participant)"
+                    >
+                      <td>{{ participantIndex + 1 }}</td>
+                      <td>
+                        {{ participant.participantInfo.firstName }}
+                        {{ participant.participantInfo.lastName }}
+                      </td>
+                      <td align="right">
+                        <span
+                          [ngClass]="{
+                            greenStatus: participant.voteStatus == 'Approved',
+                            rejectedStatus: participant.voteStatus == 'Rejected'
+                          }"
+                          >{{ participant.voteStatus }}</span
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div *ngIf="this.display == 'Volunteers'" class="row">
     <!-- Displayed when the session's vote is not started -->
     <div
@@ -84,7 +175,7 @@
     </div>
     <!-- Displayed when the session's vote is started -->
     <div
-      class="conteiner"
+      class="container"
       style="margin-top: 10px"
       *ngIf="this.session.isFinalVoteStarted"
     >
@@ -103,13 +194,135 @@
             ></span
           >
         </div>
+        <div align="right" class="col">
+          <button (click)="voteParticipant()" class="btn btn-outline-success">
+            Vote
+          </button>
+        </div>
       </div>
       <div *ngIf="this.voters.length == 0" class="row">
         <h4>There are no voters yet!</h4>
       </div>
-      <div *ngIf="this.voters.length != 0" class="row">
-        <h4>Voters</h4>
+      <div *ngIf="this.voters.length != 0" class="row table-responsive">
+        <div class="col">
+          <table class="table">
+            <thead>
+              <tr class="table-header">
+                <td scope="col" colspan="1"><b>#</b></td>
+                <td scope="col" colspan="1"><b>Volunteer Info</b></td>
+                <td scope="col" colspan="1"><b>Status</b></td>
+                <td align="right" scope="col" colspan="1">Actions</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let voter of this.voters; index as voterIndex">
+                <td>{{ voterIndex + 1 }}</td>
+                <td>{{ voter.user.firstName }} {{ voter.user.lastName }}</td>
+                <td
+                  [ngClass]="{
+                    greenStatus: this.voter.status == 'Approved',
+                    rejectedStatus: this.voter.status == 'Rejected',
+                    orangeStatus: this.voter.status == 'WaitingApproval'
+                  }"
+                >
+                  {{ voter.status }}
+                </td>
+                <td align="right">
+                  <button
+                    (click)="
+                      this.changeVoterStatus('Approved', voter, voterIndex)
+                    "
+                    *ngIf="
+                      this.currentUser.id == this.session.creatorId &&
+                      (voter.status == 'WaitingApproval' ||
+                        voter.status == 'Rejected')
+                    "
+                    class="approveButton"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    (click)="
+                      this.changeVoterStatus('Rejected', voter, voterIndex)
+                    "
+                    *ngIf="
+                      this.currentUser.id == this.session.creatorId &&
+                      (voter.status == 'WaitingApproval' ||
+                        voter.status == 'Approved')
+                    "
+                    class="rejectButton"
+                  >
+                    Reject
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<ng-template #finalVoteInfo let-modal>
+  <div class="modal-header">
+    <div class="modal-title:"><h4>Participant final vote:</h4></div>
+  </div>
+  <div class="modal-body">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <span
+            ><b>Participant</b>:
+            {{ this.participantFinalVote.participantInfo.firstName }}
+            {{ this.participantFinalVote.participantInfo.lastName }}
+          </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col table-responsive">
+          <table class="table">
+            <thead class="table-header">
+              <tr>
+                <td scope="col"><b>#</b></td>
+                <td scope="col"><b>Voter Info</b></td>
+                <td scope="col" align="right"><b>Vote</b></td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let voter of this.volunteersVotesFinalVote;
+                  index as voterIndex
+                "
+              >
+                <td>{{ voterIndex + 1 }}</td>
+                <td>
+                  {{ voter.voterInfo.firstName }} {{ voter.voterInfo.lastName }}
+                </td>
+                <td
+                  align="right"
+                  [ngClass]="{
+                    greenStatus: this.voter.vote == 'Yes',
+                    rejectedStatus: this.voter.vote == 'No',
+                    orangeStatus: this.voter.vote == 'Abstain'
+                  }"
+                >
+                  {{ voter.vote }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    *ngIf="this.currentUser.id == this.session.creatorId"
+    class="modal-footer"
+  >
+    <button (click)="deleteFinalVote()" class="btn btn-outline-danger">
+      Delete final vote
+    </button>
+  </div>
+</ng-template>

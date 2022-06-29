@@ -14,11 +14,18 @@ namespace PlatformaRecrutari.Core.Abstractions
         VotedParticipant GetParticipantWaitingForAnswer(int sessionId);
         public List<Voter> GetVotersBySessionId(int sessionId);
         Voter GetVoter(string volunteerId, int sessionId);
+        Vote GetVolunteerVote(int sessionId, string volunteerId, string participantId);
 
+        VotedParticipant GetVotedParticipant(int sessionId, string participantId);
+        void DeleteVotedParticipant(VotedParticipant votedParticipant);
         public Voter UpdateVoterStatus(Voter voter);
+        void DeleteVote(Vote vote);
 
         public VotedParticipant AddVotedParticipant(VotedParticipant votedParticipant);
         public Voter AddVoter(Voter voter);
         public Vote AddVote(Vote vote);
+
+        void UpdateVotedParticipant(string participantId, int sessionId, string status);
+        public List<Vote> GetSessionVotes(int sessionId);
     }
 }

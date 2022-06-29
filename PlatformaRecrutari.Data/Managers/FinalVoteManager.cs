@@ -46,6 +46,10 @@ namespace PlatformaRecrutari.Data.Managers
         public VotedParticipant GetParticipantWaitingForAnswer(int sessionId)
             => _context.VotedParticipants.FirstOrDefault(vp => vp.SessionId == sessionId && vp.Status == "Waiting");
 
+        public Vote GetVolunteerVote(int sessionId, string volunteerId ,string participantId)
+            => _context.Votes
+            .FirstOrDefault(v => v.SessionId == sessionId && v.VoterId == volunteerId && v.ParticipantId == participantId);
+
         public List<Voter> GetVotersBySessionId(int sessionId)
             => _context.Voters.Where(v => v.SessionId == sessionId).ToList();
 
@@ -61,6 +65,29 @@ namespace PlatformaRecrutari.Data.Managers
 
         public Voter GetVoter(string volunteerId, int sessionId)
             => _context.Voters.FirstOrDefault(v => v.SessionId == sessionId && v.VolunteerId == volunteerId);
-        
+
+        public void UpdateVotedParticipant(string participantId, int sessionId, string status) {
+            var oldVotedParticipants = _context.VotedParticipants
+                .FirstOrDefault(vp => vp.ParticipantId == participantId && vp.SessionId == sessionId);
+            oldVotedParticipants.Status = status;
+            _context.SaveChanges();
+        }
+
+        public List<Vote> GetSessionVotes(int sessionId)
+        => _context.Votes.Where(v => v.SessionId == sessionId).ToList();
+
+        public VotedParticipant GetVotedParticipant(int sessionId, string participantId)
+         => _context.VotedParticipants.FirstOrDefault(vp => vp.ParticipantId == participantId && vp.SessionId == sessionId);
+
+        public void DeleteVotedParticipant(VotedParticipant votedParticipant) {
+            _context.VotedParticipants.Remove(votedParticipant);
+            _context.SaveChanges();
+        }
+
+        public void DeleteVote(Vote vote)
+        {
+            _context.Votes.Remove(vote);
+            _context.SaveChanges();
+        }
     }
 }

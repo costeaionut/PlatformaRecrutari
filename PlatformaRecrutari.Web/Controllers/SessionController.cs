@@ -27,8 +27,8 @@ namespace PlatformaRecrutari.Web.Controllers
     [Authorize]
     public class SessionController : ControllerBase
     {
-        private const string AnyOfVolunteerPMCDDD = 
-            "ProjectManager,Volunteer,DepartmentDirector,BoardMemeber" ;
+        private const string AnyOfVolunteerPMCDDD =
+            "ProjectManager,Volunteer,DepartmentDirector,BoardMemeber";
         private readonly IMapper _mapper;
         private readonly IFormManager _formManager;
         private readonly IRoleManager _roleManager;
@@ -232,14 +232,14 @@ namespace PlatformaRecrutari.Web.Controllers
                         formInfo.ShortQuestions.Add(shortQuestion);
                         break;
                     case QuestionTypes.MultipleOptions:
-                        MultipleQuestionDto multipleQuestion = 
+                        MultipleQuestionDto multipleQuestion =
                             this._mapper.Map<MultipleQuestionDto>(baseQuestion);
                         multipleQuestion.Options = _formManager
                             .getOptionsForBaseQuestion(multipleQuestion.Id);
                         formInfo.MultipleQuestions.Add(multipleQuestion);
                         break;
                     case QuestionTypes.SelectBoxes:
-                        SelectBoxesQuestionDto selectBoxes = 
+                        SelectBoxesQuestionDto selectBoxes =
                             this._mapper.Map<SelectBoxesQuestionDto>(baseQuestion);
                         selectBoxes.Options = _formManager.getOptionsForBaseQuestion(selectBoxes.Id);
                         formInfo.SelectBoxesQuestions.Add(selectBoxes);
@@ -254,22 +254,22 @@ namespace PlatformaRecrutari.Web.Controllers
                 switch (gridQuestion.Type)
                 {
                     case QuestionTypes.GridMultipleOptions:
-                        GridMultipleQuestionDto gridMultiple = 
+                        GridMultipleQuestionDto gridMultiple =
                             this._mapper.Map<GridMultipleQuestionDto>(gridQuestion);
 
                         gridMultiple.Rows = _formManager.getRowsForGridQuestion(gridMultiple.Id);
                         gridMultiple.Columns = _formManager.getColumnsForGridQuestion(gridMultiple.Id);
-                        
+
                         formInfo.GridMultipleQuestions.Add(gridMultiple);
                         break;
-                    
+
                     case QuestionTypes.GridSelectBoxes:
                         GridSelectBoxesQuestionDto gridSelect =
                             this._mapper.Map<GridSelectBoxesQuestionDto>(gridQuestion);
 
                         gridSelect.Rows = _formManager.getRowsForGridQuestion(gridSelect.Id);
                         gridSelect.Columns = _formManager.getColumnsForGridQuestion(gridSelect.Id);
-                        
+
                         formInfo.GridSelectBoxesQuestions.Add(gridSelect);
                         break;
 
@@ -329,7 +329,7 @@ namespace PlatformaRecrutari.Web.Controllers
             if (DateTime.Now < sessionsForm.StartDate)
                 return BadRequest($"UpcomingForm||{sessionsForm.StartDate}");
 
-            DateTime endDate = sessionsForm.EndDate + new TimeSpan(23,59,59);
+            DateTime endDate = sessionsForm.EndDate + new TimeSpan(23, 59, 59);
 
             if (endDate < DateTime.Now)
                 return BadRequest($"ClosedForm||{sessionsForm.EndDate}");
@@ -361,8 +361,8 @@ namespace PlatformaRecrutari.Web.Controllers
             this._sessionManager.DeleteSession(session);
 
             return Ok();
-        } 
-    
+        }
+
         [HttpPost("UpdateForm")]
         [Authorize(Roles = RoleType.ProjectManager)]
         public async Task<IActionResult> UpdateFormAsync([FromBody] FormDto updatedFormDto) {
@@ -476,7 +476,7 @@ namespace PlatformaRecrutari.Web.Controllers
             foreach (var gridMultipleQuestion in updatedFormDto.GridMultipleQuestions)
             {
                 var gridQuestion = _mapper.Map<GridQuestion>(gridMultipleQuestion);
-                if (gridQuestion.Id == 0) 
+                if (gridQuestion.Id == 0)
                 {
                     gridQuestion.FormId = updatedForm.Id;
                     var newGridQuestion = await _formManager.addGridQuestionToForm(gridQuestion);
@@ -527,7 +527,7 @@ namespace PlatformaRecrutari.Web.Controllers
                         newOption.QuestionId = gridMultipleQuestion.Id;
                         updatedGridRowsColumns.Add(newOption);
                     }
-                    
+
                     await this._formManager.updateQuestionOptionsAsync(gridQuestion.Id, updatedGridRowsColumns);
                 }
             }
@@ -535,7 +535,7 @@ namespace PlatformaRecrutari.Web.Controllers
             foreach (var gridSelectQuestion in updatedFormDto.GridSelectBoxesQuestions)
             {
                 var gridQuestion = _mapper.Map<GridQuestion>(gridSelectQuestion);
-                if(gridQuestion.Id == 0)
+                if (gridQuestion.Id == 0)
                 {
                     gridQuestion.FormId = updatedForm.Id;
                     var newGridQuestion = await _formManager.addGridQuestionToForm(gridQuestion);
@@ -547,7 +547,7 @@ namespace PlatformaRecrutari.Web.Controllers
                         newOption.Type = InputTypes.Row;
                         newOption.Content = row;
                         newOption.QuestionId = newGridQuestion.Id;
-                        await _formManager.addOptionsToQuestion(newOption); 
+                        await _formManager.addOptionsToQuestion(newOption);
                     }
                     foreach (var col in gridSelectQuestion.Columns)
                     {
@@ -591,12 +591,12 @@ namespace PlatformaRecrutari.Web.Controllers
                 }
             }
 
-            if(oldBaseQuestionsIds.Count != 0)
+            if (oldBaseQuestionsIds.Count != 0)
             {
                 foreach (var item in oldBaseQuestionsIds)
                     _formManager.deleteBaseQuestion(item);
             }
-            if(oldGridQuestionsIds.Count != 0)
+            if (oldGridQuestionsIds.Count != 0)
             {
                 foreach (var item in oldGridQuestionsIds)
                     _formManager.deleteGridQuestion(item);
@@ -604,7 +604,7 @@ namespace PlatformaRecrutari.Web.Controllers
 
             return Ok();
         }
-   
+
         [HttpPost("PostWorkshop")]
         [Authorize(Roles = RoleType.ProjectManager)]
         public ActionResult<Workshop> PostNewWorkshop([FromBody] Workshop newWorkshop)
@@ -619,20 +619,20 @@ namespace PlatformaRecrutari.Web.Controllers
                 return _workshopManager.updateWorkshop(newWorkshop);
 
             var res = _workshopManager.createWorkshop(newWorkshop);
-            if (res == null) 
+            if (res == null)
                 return StatusCode(500, "ErrorCreatingWorkshop");
 
             return res;
         }
 
         [HttpGet("Workshops/{sessionId}")]
-        public ActionResult<List<Workshop>> GetWorkshopsBySessionId(int sessionId) 
+        public ActionResult<List<Workshop>> GetWorkshopsBySessionId(int sessionId)
             => this._workshopManager.getWorkshopRangeBySessionId(sessionId);
 
         [HttpGet("Workshop/{workshopId}")]
         public ActionResult<Workshop> GetWorkshopById(int workshopId) =>
             this._workshopManager.getWorkshopById(workshopId);
-    
+
         [HttpPost("Workshop/Delete")]
         [Authorize(Roles = RoleType.ProjectManager)]
         public IActionResult DeleteWorkshop([FromBody] Workshop workshopToBeDeleted) {
@@ -643,7 +643,7 @@ namespace PlatformaRecrutari.Web.Controllers
 
             return Ok();
         }
-    
+
         [HttpGet("Workshop/ParticipantsToBeScheduled/{workshopId}")]
         public List<UserDto> GetParticipantsWhoCanBeScheduled(int workshopId)
         {
@@ -666,7 +666,7 @@ namespace PlatformaRecrutari.Web.Controllers
 
             return eligibleUsersDto;
         }
-    
+
         [HttpPost("Workshop/Schedule")]
         public ActionResult<WorkshopSchedule> PostNewSchedule([FromBody] WorkshopSchedule newSchedule)
         {
@@ -684,8 +684,8 @@ namespace PlatformaRecrutari.Web.Controllers
 
         [HttpGet("Workshop/Scheduled/Participants/{workshopId}")]
         public ActionResult<List<UserDto>> GetScheduledParticipants(int workshopId)
-        { 
-            var users = 
+        {
+            var users =
                 this._workshopManager.getWorkshopParticipants(this._workshopManager.getWorkshopById(workshopId));
 
             List<UserDto> usersDto = new();
@@ -702,8 +702,8 @@ namespace PlatformaRecrutari.Web.Controllers
 
         [HttpGet("Workshop/Scheduled/Volunteers/{workshopId}")]
         public ActionResult<List<UserDto>> GetScheduledVolunteers(int workshopId)
-        { 
-            var users = 
+        {
+            var users =
                 this._workshopManager.getWorkshopVolunteers(this._workshopManager.getWorkshopById(workshopId));
 
             List<UserDto> usersDto = new();
@@ -721,7 +721,7 @@ namespace PlatformaRecrutari.Web.Controllers
         [HttpGet("Workshop/Scheduled/CDDD/{workshopId}")]
         public ActionResult<List<UserDto>> GetScheduledCDDD(int workshopId)
         {
-            var users = 
+            var users =
                 this._workshopManager.getWorkshopScheduledCDDD(this._workshopManager.getWorkshopById(workshopId));
 
             List<UserDto> usersDto = new();
@@ -742,7 +742,7 @@ namespace PlatformaRecrutari.Web.Controllers
         [HttpGet("Workshop/Status/{userId}/{sessionId}")]
         public ActionResult<string> GetWorkshopStatusFromUserIdAndSessionId(string userId, int sessionId)
             => this._workshopManager.getWorkshopStatus(sessionId, userId);
-    
+
         [HttpPost("Workshop/Scheduled/WhoScheduled/{sessionId}")]
         public ActionResult<List<UserDto>> GetWhoScheduled([FromBody] List<User> users, int sessionId)
         {
@@ -772,7 +772,7 @@ namespace PlatformaRecrutari.Web.Controllers
 
         [HttpPost("Workshop/Feedback/Create")]
         [Authorize(Roles = RoleType.ProjectManager)]
-        public async Task<ActionResult<WorkshopFeedback>> 
+        public async Task<ActionResult<WorkshopFeedback>>
             CreateWorkshopFeedbackAsync([FromBody] WorkshopFeedback newFeedback)
         {
             if (newFeedback == null)
@@ -780,7 +780,7 @@ namespace PlatformaRecrutari.Web.Controllers
 
             var participant = await this._userManager.FindByIdAsync(newFeedback.ParticipantId);
             var participantRole = this._roleManager.GetRoleType(participant.RoleId);
-            
+
             var feedbackGiver = await this._userManager.FindByIdAsync(newFeedback.FeedbackGiverId);
             var feedbackGiverRole = this._roleManager.GetRoleType(feedbackGiver.RoleId);
 
@@ -802,7 +802,7 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpGet("Workshop/Feedback/{participantId}/{workshopId}")]
-        public async Task<ActionResult<WorkshopFeedback>> GetParticipantWorkshopFeedbackAsync(string participantId, int workshopId) 
+        public async Task<ActionResult<WorkshopFeedback>> GetParticipantWorkshopFeedbackAsync(string participantId, int workshopId)
         {
             var res = await this._userManager.FindByIdAsync(participantId);
             if (res == null)
@@ -810,7 +810,7 @@ namespace PlatformaRecrutari.Web.Controllers
 
             return _workshopManager.getUsersFeedbackForWorkshop(participantId, workshopId);
         }
-    
+
         [HttpPost("Workshop/Feedback/Delete")]
         [Authorize(Roles = RoleType.ProjectManager)]
         public IActionResult DeleteParticipantsFeedback([FromBody] WorkshopFeedback workshopFeedback)
@@ -822,10 +822,10 @@ namespace PlatformaRecrutari.Web.Controllers
 
             return Ok();
         }
-    
+
         [HttpGet("Workshop/FeedbackBySession/{participantId}/{sessionId}")]
-        public async Task<ActionResult<WorkshopFeedback>> 
-            GetParticipantWorkshopFormBySessionIdAsync(string participantId, int sessionId) 
+        public async Task<ActionResult<WorkshopFeedback>>
+            GetParticipantWorkshopFormBySessionIdAsync(string participantId, int sessionId)
         {
             var participant = await this._userManager.FindByIdAsync(participantId);
             if (participant == null)
@@ -839,7 +839,7 @@ namespace PlatformaRecrutari.Web.Controllers
         public ActionResult<WorkshopFeedback>
             EditParticipantFeedback([FromBody] WorkshopFeedback newWorkshopValues)
             => _workshopManager.editUserFeedback(newWorkshopValues);
-    
+
         [HttpPost("Interview/Create")]
         [Authorize(Roles = RoleType.ProjectManager)]
         public ActionResult CreateInterview([FromBody] Interview interview)
@@ -881,14 +881,14 @@ namespace PlatformaRecrutari.Web.Controllers
 
         [HttpGet("Interview/{interviewId}")]
         public ActionResult<InterviewDto> GetInterviewById(int interviewId)
-        { 
+        {
             var interview = _interviewManager.getInterview(interviewId);
 
             InterviewDto interviewDto = new();
-            DateTime commonDate = 
-                interview.InterviewDateTime - 
-                new TimeSpan(interview.InterviewDateTime.Hour, 
-                             interview.InterviewDateTime.Minute, 
+            DateTime commonDate =
+                interview.InterviewDateTime -
+                new TimeSpan(interview.InterviewDateTime.Hour,
+                             interview.InterviewDateTime.Minute,
                              interview.InterviewDateTime.Second);
 
             interviewDto.InterviewsDate = commonDate;
@@ -913,11 +913,11 @@ namespace PlatformaRecrutari.Web.Controllers
                              interview.InterviewDateTime.Minute,
                              interview.InterviewDateTime.Second);
 
-                if (interviewsDict.ContainsKey(commonDate)) { 
+                if (interviewsDict.ContainsKey(commonDate)) {
 
-                    List<InterviewSchedule> participants = 
+                    List<InterviewSchedule> participants =
                         _interviewManager.getInterviewsScheduledUsers(interview.Id);
-                    
+
                     InterviewScheduleDto interviewScheduledUsers = new InterviewScheduleDto();
                     interviewScheduledUsers.InterviewId = interview.Id;
                     foreach (var participant in participants)
@@ -1029,7 +1029,7 @@ namespace PlatformaRecrutari.Web.Controllers
             if (interviewSchedule == null)
                 return BadRequest("MissingBodySchedule");
 
-            List<InterviewSchedule> alreadyScheduledInterviews = 
+            List<InterviewSchedule> alreadyScheduledInterviews =
                 _interviewManager.getInterviewsScheduledUsers(interviewSchedule.InterviewId);
             foreach (var scheduledInterview in alreadyScheduledInterviews)
             {
@@ -1038,7 +1038,7 @@ namespace PlatformaRecrutari.Web.Controllers
             }
 
             return _interviewManager.addInterviewSchedule(interviewSchedule);
-        } 
+        }
 
         [HttpPost("Interview/Schedule/Delete")]
         [Authorize(Roles = AnyOfVolunteerPMCDDD)]
@@ -1049,7 +1049,7 @@ namespace PlatformaRecrutari.Web.Controllers
         }
 
         [HttpGet("Interview/Schedule/GetEligibleCandidates/{sessionId}")]
-        public ActionResult<List<UserDto>> GetCandidatesEligivleForInterview(int sessionId)
+        public ActionResult<List<UserDto>> GetCandidatesEligibleForInterview(int sessionId)
         {
             List<UserDto> eligibleUsersDto = new();
 
@@ -1075,7 +1075,7 @@ namespace PlatformaRecrutari.Web.Controllers
 
             return Ok(newFeedback);
         }
-    
+
         [HttpPost("FinalVote/Voter/Create")]
         public async Task<ActionResult<Voter>> AddNewVoterAsync([FromBody] Voter voter)
         {
@@ -1104,6 +1104,9 @@ namespace PlatformaRecrutari.Web.Controllers
             if (vote == null)
                 return BadRequest("MissingBodyVoterInfo");
 
+            if (_finalVoteManager.GetVolunteerVote(vote.SessionId, vote.VoterId, vote.ParticipantId) != null)
+                return BadRequest("VolunteerAlreadyVoted");
+
             var participant = await _userManager.FindByIdAsync(vote.ParticipantId);
             var voter = await _userManager.FindByIdAsync(vote.VoterId);
             var session = _sessionManager.GetSessionById(vote.SessionId);
@@ -1117,7 +1120,7 @@ namespace PlatformaRecrutari.Web.Controllers
             return _finalVoteManager.AddVote(vote);
 
         }
-    
+
         [HttpPost("FinalVote/VotedParticipant/Create")]
         public async Task<ActionResult<VotedParticipant>> AddNewVotedParticipantAsync([FromBody] VotedParticipant participant)
         {
@@ -1127,7 +1130,7 @@ namespace PlatformaRecrutari.Web.Controllers
             var voted = await _userManager.FindByIdAsync(participant.ParticipantId);
             var session = _sessionManager.GetSessionById(participant.SessionId);
 
-            if ( session == null || voted == null)
+            if (session == null || voted == null)
                 return BadRequest("ParticipantVolunterOrSessionNotFound");
 
             if (session.EndDate < DateTime.Now)
@@ -1139,7 +1142,7 @@ namespace PlatformaRecrutari.Web.Controllers
 
         [HttpGet("FinalVote/GetSessionVoters/{sessionId}")]
         public async Task<ActionResult<List<VoterDto>>> GetSessionsVotersAsync(int sessionId)
-        { 
+        {
             var voters = _finalVoteManager.GetVotersBySessionId(sessionId);
             var votersDto = new List<VoterDto>();
             foreach (var voter in voters)
@@ -1157,13 +1160,60 @@ namespace PlatformaRecrutari.Web.Controllers
             return votersDto;
         }
 
+        [HttpGet("FinalVote/GetSesionVotedUsers/{sessionId}")]
+        public async Task<ActionResult<VotedUserDto>> GetSessionsVotedUsersAsync(int sessionId)
+        {
+            var votedUsersDto = new List<VotedUserDto>();
+            var votedUsers = _finalVoteManager.GetVotedParticipantsBySessionId(sessionId);
+
+            foreach (var user in votedUsers)
+            {
+                var votedUserDto = new VotedUserDto();
+                var voters = new List<VotesDto>();
+
+                var userInfo = await _userManager.FindByIdAsync(user.ParticipantId);
+                var userDto = _mapper.Map<UserDto>(userInfo);
+                userDto.Role = _roleManager.GetRoleType(userInfo.RoleId);
+
+                if (user.Status == "Waiting") {
+                    votedUserDto.VoteStatus = "Waiting";
+                }
+                else
+                {
+                    votedUserDto.VoteStatus = user.Status;
+
+                    var participantVotes = _finalVoteManager.GetParticipantVotes(sessionId, userDto.Id);
+                    foreach (var vote in participantVotes)
+                    {
+                        var voter = new VotesDto();
+
+                        var voterInfo = await _userManager.FindByIdAsync(vote.VoterId);
+                        var voterUserDto = _mapper.Map<UserDto>(voterInfo);
+                        voterUserDto.Role = _roleManager.GetRoleType(voterInfo.RoleId);
+
+                        voter.VoterInfo = voterUserDto;
+                        voter.Vote = vote.Response;
+                        
+                        voters.Add(voter);
+                    }
+                }
+
+                votedUserDto.VotersVotes = voters;
+                votedUserDto.ParticipantInfo = userDto;
+                votedUsersDto.Add(votedUserDto);
+            }
+
+            return Ok(votedUsersDto);
+        }
+
         [HttpPut("FinalVote/ChangeVoterStatus")]
-        public async Task<ActionResult<VoterDto>> ChangeVoterStatusAsync([FromBody] Voter voter) 
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public async Task<ActionResult<VoterDto>> ChangeVoterStatusAsync([FromBody] Voter voter)
         {
             if (voter == null)
                 return BadRequest("MissingVoterBody");
 
-            var currentVoter = 
+            var currentVoter =
                 _finalVoteManager
                 .GetVotersBySessionId(voter.SessionId)
                 .Find(v => v.VolunteerId == voter.VolunteerId);
@@ -1185,21 +1235,36 @@ namespace PlatformaRecrutari.Web.Controllers
 
         [HttpPut("FinalVote/StartVotingSession/{sessionId}")]
         [Authorize(Roles = RoleType.ProjectManager)]
-        public ActionResult StartVotingSession(int sessionId) {
-            var session =_sessionManager.GetSessionById(sessionId);
+        public async Task<ActionResult> StartVotingSessionAsync(int sessionId) {
+            var session = _sessionManager.GetSessionById(sessionId);
             if (session == null)
                 return BadRequest("SessionNotFound");
             if (session.IsFinalVoteStarted)
                 return NoContent();
             session.IsFinalVoteStarted = true;
-            _sessionManager.UpdateSessionInfo(session);
+           await _sessionManager.UpdateSessionInfo(session);
+
+            var sessionCreator = await _userManager.FindByIdAsync(session.CreatorId);
+
+            if (_finalVoteManager.GetVoter(sessionCreator.Id, sessionId) != null)
+                return Ok();
+            
+            var voter = new Voter();
+            voter.VolunteerId = sessionCreator.Id;
+            voter.SessionId = sessionId;
+            voter.Status = "Approved";
+
+            _finalVoteManager.AddVoter(voter);
+
             return Ok();
         }
-    
+
         [HttpGet("FinalVote/Voter/{sessionId}/{volunteerId}")]
         public async Task<ActionResult<VoterDto>> GetVoterDtoAsync(int sessionId, string volunteerId)
         {
             var voterInfo = _finalVoteManager.GetVoter(volunteerId, sessionId);
+
+            if (voterInfo == null) return null;
 
             var voterDto = new VoterDto();
             var user = await _userManager.FindByIdAsync(voterInfo.VolunteerId);
@@ -1209,6 +1274,76 @@ namespace PlatformaRecrutari.Web.Controllers
             voterDto.Status = voterInfo.Status;
 
             return voterDto;
-;        }
+            ; }
+
+        [HttpGet("FinalVote/Voter/ParticipantWaitingForVote/{sessionId}")]
+        public async Task<ActionResult<UserDto>> GetParticipantWaitingForVote(int sessionId)
+        {
+            var votedParticipant = _finalVoteManager.GetParticipantWaitingForAnswer(sessionId);
+
+            if (votedParticipant == null)
+                return null;
+
+            var participant = await _userManager.FindByIdAsync(votedParticipant.ParticipantId);
+            var participantDto = _mapper.Map<UserDto>(participant);
+            participantDto.Role = _roleManager.GetRoleType(participant.RoleId);
+            
+            return participantDto;
+        }
+    
+        [HttpPost("FinalVote/VotedParticipant/CloseVote/{sessionId}")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public ActionResult StopAndCalculateVoteForParticipant([FromBody] UserDto user, int sessionId) 
+        {
+            if (user == null)
+                return BadRequest();
+
+            var participantReceivedVotes = _finalVoteManager.GetParticipantVotes(sessionId, user.Id);
+
+            int yesVotes = 0;
+            int noVotes = 0;
+            foreach (var vote in participantReceivedVotes)
+            {
+                if (vote.Response == "Yes") yesVotes++;
+                else noVotes++;
+            }
+
+            string status = "";
+            if ((yesVotes + noVotes)/2 < yesVotes) status = "Approved";
+            else status = "Rejected";
+
+            _finalVoteManager.UpdateVotedParticipant(user.Id, sessionId, status);
+            return Ok();
+        }
+    
+        [HttpPost("FinalVote/VotedParticipant/DeleteVote/{sessionId}")]
+        [Authorize(Roles = RoleType.ProjectManager)]
+        public ActionResult DeleteFinalVote([FromBody] UserDto user, int sessionId)
+        {
+            if (user == null)
+                return BadRequest("MissingBodyUser");
+
+            var participantFinalVote = _finalVoteManager.GetVotedParticipant(sessionId, user.Id);
+            var participantVotes = _finalVoteManager.GetParticipantVotes(sessionId, user.Id);
+
+            foreach (var vote in participantVotes)
+                _finalVoteManager.DeleteVote(vote);
+            _finalVoteManager.DeleteVotedParticipant(participantFinalVote);
+
+            return Ok();
+        }
+
+        [HttpPost("FinalVote/VotedParticipant/DeleteVoterVote/{sessionId}/{voterId}")]
+        public ActionResult DeleteVoterVote([FromBody] UserDto user, int sessionId, string voterId)
+        {
+            if (user == null)
+                return BadRequest("MissingBodyUser");
+
+            var volunteerVote = _finalVoteManager.GetVolunteerVote(sessionId, voterId, user.Id);
+            _finalVoteManager.DeleteVote(volunteerVote);
+
+
+            return Ok();
+        }
     }
 }
