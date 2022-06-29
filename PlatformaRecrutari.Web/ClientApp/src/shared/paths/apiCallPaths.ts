@@ -31,10 +31,12 @@ export enum ApiCallPaths {
   deleteScheduleSlot = "api/Session/Workshop/Schedule/DeleteSchedule/",
 
   addFormAnswrs = "api/Participants/AddFormResponse/",
+  getParticipant = "api/Participants/GetParticipant/",
   postFormFeedback = "api/Participants/PostFormFeedback",
   getParticipantAnswer = "api/Participants/FindParticipantAnswer/",
   getPaticipantStatus = "api/Participants/FindParticipantStatus/",
   getSessionParticipants = "api/Participants/GetSessionsParticipants/",
+  getParticipantWorkshop = "api/Participants/Workshop/",
 
   getWorkshopFeedback = "api/Session/Workshop/Feedback/",
   postWorkshopFeedback = "api/Session/Workshop/Feedback/Create/",

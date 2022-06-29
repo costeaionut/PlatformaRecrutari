@@ -1,6 +1,7 @@
 ﻿using PlatformaRecrutari.Core.Abstractions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,12 +77,12 @@ namespace PlatformaRecrutari.Data.Managers
         public string GetParticipantsStatus(string participantId)
         {
             var formFeedback = _context.FormFeedbacks.FirstOrDefault(fs => fs.CandidateId == participantId);
+            if (formFeedback == null) return "Waiting for form feedback";
 
             var form = _context.Forms.FirstOrDefault(f => f.Id == formFeedback.FormId);
             var workshops = _context.Workshops.Where(w => w.SessionId == form.SessionId).ToList();
             var workshopIds = workshops.Select(w => w.Id).ToList();
 
-            if (formFeedback == null) return "Waiting for form feedback";
             if (formFeedback.Status == StatusType.RejectedForm) return "Rejected at form stage";
             if (formFeedback.Status == StatusType.PassedForm) {
                 if (workshops.Count == 0) return "Passed form stage";
@@ -124,6 +125,14 @@ namespace PlatformaRecrutari.Data.Managers
                 }
             }
             return "ErrorNotFound";
+        }
+
+        public Workshop GetParticipantsWorkshop(string participantId, int sessionId)
+        {
+            var workshopsIds = _context.Workshops.Where(w => w.SessionId == sessionId).Select(w => w.Id).ToList();
+            var participantsWorkshop = _context.WorkshopSchedules
+                .FirstOrDefault(s => s.ParticipantId == participantId && workshopsIds.Contains(s.WorkshopId));
+            return _context.Workshops.FirstOrDefault(w => w.Id == participantsWorkshop.WorkshopId);
         }
     }
 }

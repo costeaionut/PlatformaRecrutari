@@ -847,8 +847,15 @@ export class WorkshopManagerComponent implements OnInit {
     }
 
     let status: string;
-    if (this.givenYesVotes > this.givenNoVotes) status = "passed";
+    console.log(`Yes: ${this.givenYesVotes} \nNo: ${this.givenNoVotes}`);
+    if (
+      parseInt(this.givenYesVotes.toString()) >
+      parseInt(this.givenNoVotes.toString())
+    )
+      status = "passed";
     else status = "rejected";
+
+    console.log(status);
 
     let newFeedback: WorkshopFeedback = {
       participantId: this.feedbackParticipant.id,

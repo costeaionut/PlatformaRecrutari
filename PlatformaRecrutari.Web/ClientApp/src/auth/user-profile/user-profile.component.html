@@ -22,6 +22,21 @@
       <div class="col">
         <button
           class="sessionTypeButton"
+          [ngClass]="{
+            disabledOption:
+              (this.profileUserStatus == 'Passed form stage' ||
+                this.profileUserStatus == 'Waiting form feedback' ||
+                this.profileUserStatus == 'Rejected at form stage' ||
+                this.profileUserStatus == 'Not scheduled for workshop') &&
+              this.currentUser.id == this.profileUserId
+          }"
+          [disabled]="
+            (this.profileUserStatus == 'Passed form stage' ||
+              this.profileUserStatus == 'Waiting form feedback' ||
+              this.profileUserStatus == 'Rejected at form stage' ||
+              this.profileUserStatus == 'Not scheduled for workshop') &&
+            this.currentUser.id == this.profileUserId
+          "
           (click)="changeDisplay('WorkshopInterview')"
           [ngClass]="{ selected: this.display == 'WorkshopInterview' }"
         >
@@ -89,17 +104,493 @@
             <div class="col-3">Phone number:</div>
             <div class="col">{{ this.profileUser.phoneNumber }}</div>
           </div>
+          <div class="row" *ngIf="this.currentUser.id != this.profileUserId">
+            <div class="col-3">Status:</div>
+            <div
+              [ngClass]="{
+                approvedStatus:
+                  this.profileUserStatus == 'Passed form stage' ||
+                  this.profileUserStatus == 'Scheduled for workshop' ||
+                  this.profileUserStatus == 'Passed workshop stage' ||
+                  this.profileUserStatus == 'Scheduled for interview' ||
+                  this.profileUserStatus == 'Ready for final vote',
+                rejectedStatus:
+                  this.profileUserStatus == 'Rejected at form stage' ||
+                  this.profileUserStatus == 'Rejected at workshop stage',
+                waitingStatus:
+                  this.profileUserStatus == 'Waiting for form feedback' ||
+                  this.profileUserStatus == 'Not scheduled for workshop' ||
+                  this.profileUserStatus == 'Waiting for workshop feedback' ||
+                  this.profileUserStatus == 'Not scheduled for interview' ||
+                  this.profileUserStatus == 'Waiting for interview feedback'
+              }"
+              class="col"
+            >
+              {{ this.profileUserStatus }}
+            </div>
+          </div>
         </div>
       </div>
       <div class="col"></div>
     </div>
   </div>
   <div *ngIf="this.display == 'FormInfo'">
-    <app-display-form
-      [formInfo]="this.activeForm"
-      [canAnswer]="false"
-      [answers]="this.userAnswers"
-      [displayTitle]="false"
-    ></app-display-form>
+    <div *ngIf="missingForm">
+      <h4>There is no active form at this moment!</h4>
+    </div>
+    <div *ngIf="!missingForm">
+      <div
+        *ngIf="
+          this.displayFormAnswers && this.currentUser.role == 'ProjectManager'
+        "
+        class="container"
+      >
+        <div class="row">
+          <div class="col"></div>
+          <div
+            *ngIf="
+              this.profileUserStatus == 'Waiting for form feedback' &&
+              this.currentUser.role == 'ProjectManager'
+            "
+            class="col-8 voteColumn"
+          >
+            <h4>Participant is waiting feedback for form:</h4>
+            <br />
+            <button
+              (click)="approveParticipantForm()"
+              class="btn btn-outline-success"
+            >
+              Pass candidate
+            </button>
+            <button
+              (click)="rejectParticipantForm()"
+              class="btn btn-outline-danger float-right"
+            >
+              Reject candidate
+            </button>
+          </div>
+          <div class="col"></div>
+        </div>
+      </div>
+      <app-display-form
+        *ngIf="this.displayFormAnswers"
+        [formInfo]="this.activeForm"
+        [canAnswer]="false"
+        [answers]="this.userAnswers"
+        [displayTitle]="false"
+      ></app-display-form>
+      <h4 *ngIf="!this.displayFormAnswers">
+        You haven't answered the form yet!
+      </h4>
+      <span *ngIf="!this.displayFormAnswers"
+        >If you don't complete the form you won't be participating in this
+        session!</span
+      >
+    </div>
+  </div>
+  <div *ngIf="this.display == 'WorkshopInterview'">
+    <div
+      class="container"
+      *ngIf="
+        this.profileUserStatus == 'Passed form stage' &&
+        this.currentUser.role != 'Candidate'
+      "
+    >
+      <div class="row">
+        <div class="col"><h4>There aren't any workshops available!</h4></div>
+      </div>
+    </div>
+    <div
+      *ngIf="
+        this.profileUserStatus == 'Not scheduled for workshop' &&
+        (this.currentUser.role == 'Volunteer' ||
+          this.currentUser.role == 'ProjectManager')
+      "
+      class="container"
+    >
+      <div class="row">
+        <div class="col"></div>
+        <div class="col-8 colWrapper">
+          <h4>Schedule participant for workshop:</h4>
+          <span
+            ><b>Participant</b>: {{ this.profileUser.firstName }}
+            {{ this.profileUser.lastName }}</span
+          >
+          <br />
+          <span *ngIf="this.selectedWorkshopIndex != 0">
+            <b>Selected workshop location</b>:
+            {{ this.selectedWorkshop.location }}
+          </span>
+          <br />
+          <br />
+          <select
+            [(ngModel)]="this.selectedWorkshopIndex"
+            (change)="updateSelectedWS()"
+            class="form-control"
+          >
+            <option
+              *ngFor="
+                let wsDisplay of this.availableWorkshopsDisplay;
+                index as wsIndex
+              "
+              value="{{ wsIndex }}"
+            >
+              {{ wsDisplay }}
+            </option>
+          </select>
+          <br />
+          <button
+            (click)="scheduleUserWorkshop()"
+            [disabled]="this.selectedWorkshopIndex == 0"
+            class="btn btn-outline-success float-right"
+          >
+            Schedule User
+          </button>
+        </div>
+        <div class="col"></div>
+      </div>
+    </div>
+    <div
+      *ngIf="this.profileUserWorkshopSchedule"
+      style="margin-bottom: 20px"
+      class="container"
+    >
+      <div class="row">
+        <div class="col"></div>
+        <div class="col-8 colWrapper">
+          <h4
+            style="
+              border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+              margin-bottom: 15px;
+            "
+          >
+            Workshop
+          </h4>
+          <span
+            ><b>Workshop Date&Time</b>:
+            {{
+              this.profileUserWorkshopSchedule.workshopDate.toLocaleString()
+            }}</span
+          >
+          <br />
+          <span
+            ><b>Location</b>:
+            {{ this.profileUserWorkshopSchedule.location }}</span
+          >
+          <br />
+          <button
+            *ngIf="
+              this.profileUserWorkshopFeedback &&
+              this.currentUser.role != 'Candidate'
+            "
+            (click)="openModal(participantWSFeedbackView)"
+            class="btn btn-outline-primary float-right"
+          >
+            See feedback
+          </button>
+        </div>
+        <div class="col"></div>
+      </div>
+    </div>
+    <div
+      *ngIf="
+        this.profileUserStatus == 'Not scheduled for interview' &&
+        (this.currentUser.role == 'Volunteer' ||
+          this.currentUser.role == 'ProjectManager')
+      "
+      class="container"
+    >
+      <div class="row">
+        <div class="col"></div>
+        <div class="col-8 colWrapper">
+          <h4 style="border-bottom: 1px solid rgba(128, 128, 128, 0.15)">
+            Interview schedule:
+          </h4>
+          <br />
+          <span><b>Available interviews dates</b>:</span>
+          <select [(ngModel)]="this.selectedDateIndex" class="form-control">
+            <option
+              *ngFor="
+                let date of this.availableInterviewsDates;
+                index as dateIndex
+              "
+              value="{{ dateIndex }}"
+            >
+              {{ date.toLocaleDateString() }}
+            </option>
+          </select>
+          <br />
+          <span
+            ><b
+              >Available interviews for
+              <em>{{
+                this.availableInterviewsDates[
+                  selectedDateIndex
+                ].toLocaleDateString()
+              }}</em></b
+            ></span
+          >
+          <select
+            [(ngModel)]="this.selectedInterviewIndex"
+            (change)="updateSelectedInterview()"
+            class="form-control"
+          >
+            <option
+              *ngFor="
+                let interview of this.availableInterviews.get(
+                  this.availableInterviewsDates[this.selectedDateIndex]
+                );
+                index as interviewIndex
+              "
+              value="{{ interviewIndex }}"
+            >
+              {{ interview.interviewDateTime.toLocaleString() }}
+            </option>
+          </select>
+          <br />
+          <div *ngIf="this.selectedInterviewParticipants">
+            <span *ngIf="this.selectedInterviewParticipants.hr"
+              ><b>HR</b>:
+              {{ this.selectedInterviewParticipants.hr.firstName }}
+              {{ this.selectedInterviewParticipants.hr.lastName }}</span
+            >
+            <span *ngIf="!this.selectedInterviewParticipants.hr">
+              <b>HR</b>: <span style="color: green">Available slot</span>
+            </span>
+            <br />
+            <span *ngIf="this.selectedInterviewParticipants.dd"
+              ><b>DD</b>:
+              {{ this.selectedInterviewParticipants.dd.firstName }}
+              {{ this.selectedInterviewParticipants.dd.lastName }}</span
+            >
+            <span *ngIf="!this.selectedInterviewParticipants.dd"
+              ><b>DD</b>: <span style="color: green">Available slot</span></span
+            >
+            <br />
+            <span *ngIf="this.selectedInterviewParticipants.cd"
+              ><b>CD</b>:
+              {{ this.selectedInterviewParticipants.cd.firstName }}
+              {{ this.selectedInterviewParticipants.cd.lastName }}</span
+            >
+            <span *ngIf="!this.selectedInterviewParticipants.cd"
+              ><b>CD</b>: <span style="color: green">Available slot</span></span
+            >
+          </div>
+          <br />
+          <button
+            (click)="scheduleUserInterview()"
+            [disabled]="!this.selectedInterview"
+            class="btn btn-outline-success float-right"
+          >
+            Schedule participant
+          </button>
+        </div>
+        <div class="col"></div>
+      </div>
+    </div>
+
+    <div *ngIf="this.profileUserInterviewSchedule" class="container">
+      <div class="row">
+        <div class="col"></div>
+        <div class="col-8 colWrapper">
+          <h4
+            style="
+              border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+              margin-bottom: 20px;
+            "
+          >
+            Interview
+          </h4>
+          <span
+            ><b>Interview Date&Time</b>:
+            {{
+              this.profileUserInterviewSchedule.interviewDateTime.toLocaleString()
+            }}</span
+          >
+          <br />
+          <div *ngIf="this.currentUser.role != 'Candidate'">
+            <span
+              ><b>HR</b>:
+              <span *ngIf="this.profileUserInterviewParticipants.hr"
+                >{{ this.profileUserInterviewParticipants.hr.firstName }}
+                {{ this.profileUserInterviewParticipants.hr.lastName }}</span
+              >
+              <span
+                style="color: green"
+                *ngIf="!this.profileUserInterviewParticipants.hr"
+                >Available slot</span
+              >
+            </span>
+            <br />
+            <span
+              ><b>DD</b>:
+              <span *ngIf="this.profileUserInterviewParticipants.dd"
+                >{{ this.profileUserInterviewParticipants.dd.firstName }}
+                {{ this.profileUserInterviewParticipants.dd.lastName }}</span
+              >
+              <span
+                style="color: green"
+                *ngIf="!this.profileUserInterviewParticipants.dd"
+                >Available slot</span
+              >
+            </span>
+            <br />
+            <span
+              ><b>CD</b>:
+              <span *ngIf="this.profileUserInterviewParticipants.cd"
+                >{{ this.profileUserInterviewParticipants.cd.firstName }}
+                {{ this.profileUserInterviewParticipants.cd.lastName }}</span
+              >
+              <span
+                style="color: green"
+                *ngIf="!this.profileUserInterviewParticipants.cd"
+                >Available slot</span
+              >
+            </span>
+          </div>
+          <br />
+          <button
+            *ngIf="
+              this.profileUserInterviewFeedback &&
+              this.currentUser.role != 'Candidate'
+            "
+            (click)="this.openModal(viewParticipantFeedback)"
+            class="btn btn-outline-primary float-right"
+          >
+            See feedback
+          </button>
+        </div>
+        <div class="col"></div>
+      </div>
+    </div>
+
+    <ng-template #participantWSFeedbackView let-modal>
+      <div class="modal-header">
+        <div class="modal-title"><h4>Workshop feedback info</h4></div>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="container">
+            <div class="row">
+              <div class="col">
+                <b>Candidate:</b> {{ this.profileUser.firstName }}
+                {{ this.profileUser.lastName }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <b>Facebook: </b>
+                <a href="{{ this.profileUser.facebook }}">{{
+                  this.profileUser.facebook
+                }}</a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <b>Status: </b>
+                <span
+                  [ngClass]="{
+                    green: this.profileUserWorkshopFeedback.status == 'Passed',
+                    red: this.profileUserWorkshopFeedback.status == 'Rejected'
+                  }"
+                  >{{ this.profileUserWorkshopFeedback.status }}</span
+                >
+              </div>
+            </div>
+            <br />
+            <div class="row" style="margin-bottom: 15px">
+              <div class="col-12" style="padding: 0"><b>Feedback:</b></div>
+              <div
+                class="col-12"
+                style="
+                  padding: 0;
+                  word-break: break-all;
+                  overflow: hidden;
+                  white-space: pre-wrap;
+                "
+              >
+                <span>{{ this.profileUserWorkshopFeedback.feedback }}</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <b>Yes votes: </b
+                >{{ this.profileUserWorkshopFeedback.yesVotes }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <b>No votes: </b>{{ this.profileUserWorkshopFeedback.noVotes }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <b>Abstains: </b
+                >{{ this.profileUserWorkshopFeedback.abstainVotes }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"></div>
+    </ng-template>
+
+    <ng-template #viewParticipantFeedback let-modal>
+      <div class="modal-header">Participant's feedback</div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <b>Participant: </b>
+              {{ this.profileUser.firstName }}
+              {{ this.profileUser.lastName }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12" style="padding: 0"><b>Feedback:</b></div>
+            <div
+              class="col-12"
+              style="
+                word-break: break-all;
+                overflow: hidden;
+                white-space: pre-wrap;
+                padding: 0;
+              "
+            >
+              <span>{{ this.profileUserInterviewFeedback.feedback }}</span>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col">
+              <b>Director vote: </b>
+              {{ this.profileUserInterviewFeedback.ddVote }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <b>CD vote: </b>
+              {{ this.profileUserInterviewFeedback.cdVote }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <b>HR vote: </b>
+              {{ this.profileUserInterviewFeedback.hrVote }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button (click)="modal.close()" class="btn btn-outline-danger">
+          Close
+        </button>
+      </div>
+    </ng-template>
   </div>
 </div>
+
+<br />
+<br />
+<br />
+<br />

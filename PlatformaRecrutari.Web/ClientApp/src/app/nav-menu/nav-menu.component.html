@@ -61,6 +61,16 @@
             class="nav-item"
             [routerLinkActive]="['link-active']"
           >
+            <a class="nav-link text-dark" [routerLink]="['user', this.user.id]"
+              >Profile</a
+            >
+          </li>
+
+          <li
+            *ngIf="this.isUserAuthenticated"
+            class="nav-item"
+            [routerLinkActive]="['link-active']"
+          >
             <a class="nav-link text-dark" [routerLink]="['']" (click)="logout()"
               >Logout</a
             >

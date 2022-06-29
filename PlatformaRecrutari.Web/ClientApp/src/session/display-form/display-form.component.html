@@ -2,7 +2,9 @@
   <div *ngIf="this.displayTitle" class="row">
     <div class="col"></div>
     <div class="col-8 titleWrapper">
-      <h2>{{ this.formInfo.title }}</h2>
+      <h2 style="border-bottom: 1px solid rgba(128, 128, 128, 0.15)">
+        {{ this.formInfo.title }}
+      </h2>
       <h6>{{ this.formInfo.description }}</h6>
     </div>
     <div class="col"></div>

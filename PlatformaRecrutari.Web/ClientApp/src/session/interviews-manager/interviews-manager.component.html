@@ -21,7 +21,11 @@
       </button>
     </div>
   </div>
-  <div class="row" style="margin-top: 20px">
+  <div
+    *ngIf="this.interviewsDates.length != 0"
+    class="row"
+    style="margin-top: 20px"
+  >
     <div class="col" style="margin-top: 5px" align="left">
       <button
         (click)="changePage(-1)"
@@ -49,7 +53,7 @@
       </button>
     </div>
   </div>
-  <div class="row table-responsive">
+  <div *ngIf="this.interviewsDates.length != 0" class="row table-responsive">
     <table class="table">
       <thead clas="tableHeader">
         <tr>
@@ -200,6 +204,10 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div *ngIf="this.interviewsDates.length == 0" class="row">
+    <div class="col"><h5>There are no interviews yet</h5></div>
   </div>
 </div>
 
@@ -963,7 +971,10 @@
       </div>
       <div class="row">
         <div class="col-12"><b>Feedback:</b></div>
-        <div class="col-12" style="word-break: break-all; overflow: hidden">
+        <div
+          class="col-12"
+          style="word-break: break-all; overflow: hidden; white-space: pre-wrap"
+        >
           {{ this.interviewsFeedbacks.get(this.displayInterview.id).feedback }}
         </div>
       </div>

@@ -1,5 +1,6 @@
 ﻿using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +18,6 @@ namespace PlatformaRecrutari.Core.Abstractions
         void DeleteFormAnswer(FormAnswers answerToBeDeleted);
         FormFeedback AddFormFeedback(FormFeedback feedback);
         string GetParticipantsStatus(string participantId);
+        Workshop GetParticipantsWorkshop(string participantId, int sessionId);
     }
 }

@@ -731,10 +731,17 @@
             </div>
           </div>
           <br />
-          <div class="row">
+          <div class="row" style="margin-bottom: 15px">
             <div class="col-12"><b>Feedback:</b></div>
-            <div class="col-12" style="word-break: break-all; overflow: hidden">
-              {{ this.viewedWorkshopFeedback.feedback }}
+            <div
+              class="col-12"
+              style="
+                word-break: break-all;
+                overflow: hidden;
+                white-space: pre-wrap;
+              "
+            >
+              <span>{{ this.viewedWorkshopFeedback.feedback }}</span>
             </div>
           </div>
           <div class="row">

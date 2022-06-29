@@ -1,6 +1,11 @@
 <div class="container">
   <div class="row justify-content-end" style="margin-bottom: 5px">
-    <button (click)="this.saveChanges()" type="button" class="btn btn-success">
+    <button
+      *ngIf="this.parentSaveChanges"
+      (click)="this.saveChanges()"
+      type="button"
+      class="btn btn-success"
+    >
       Save changes
     </button>
   </div>

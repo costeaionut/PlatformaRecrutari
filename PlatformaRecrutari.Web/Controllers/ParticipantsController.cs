@@ -7,6 +7,7 @@ using PlatformaRecrutari.Core.Abstractions;
 using PlatformaRecrutari.Core.BusinessObjects;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions;
 using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Participant_Status;
+using PlatformaRecrutari.Core.BusinessObjects.Recruitment_Sessions.Workshops;
 using PlatformaRecrutari.Dto.Responses.ParticipantStatus;
 using PlatformaRecrutari.Dto.Sessions;
 using PlatformaRecrutari.Dto.Sessions.FormAnswers;
@@ -124,6 +125,19 @@ namespace PlatformaRecrutari.Web.Controllers
             return Ok(participantsInfo); 
         }
     
+        [HttpGet("GetParticipant/{participantId}")]
+        public async Task<ParticipantDto> GetParticipantDto(string participantId)
+        {
+            var participantDto = new ParticipantDto();
+            var user = await _userManager.FindByIdAsync(participantId);
+            
+            var status = _participantsManager.GetParticipantsStatus(participantId);
+            participantDto.Status = status;
+            participantDto.User = _mapper.Map<UserDto>(user);
+
+            return participantDto;
+        }
+
         [HttpGet("FindParticipantAnswer/{userId}/{formId}")]
         public async Task<IActionResult> GetParticipantAnswers(string userId, int formId) {
 
@@ -188,5 +202,9 @@ namespace PlatformaRecrutari.Web.Controllers
 
             return Ok();
         }
+
+        [HttpGet("Workshop/{participantId}/{sessionId}")]
+        public ActionResult<Workshop> GetParticipantWorkshopById(string participantId, int sessionId) =>
+            _participantsManager.GetParticipantsWorkshop(participantId, sessionId);
     }
 }

@@ -624,7 +624,6 @@ namespace PlatformaRecrutari.Web.Controllers
         public ActionResult<List<Workshop>> GetWorkshopsBySessionId(int sessionId) 
             => this._workshopManager.getWorkshopRangeBySessionId(sessionId);
 
-
         [HttpGet("Workshop/{workshopId}")]
         public ActionResult<Workshop> GetWorkshopById(int workshopId) =>
             this._workshopManager.getWorkshopById(workshopId);

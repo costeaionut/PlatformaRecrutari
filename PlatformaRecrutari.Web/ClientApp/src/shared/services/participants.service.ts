@@ -6,6 +6,7 @@ import { ParticipantsDto } from "../dto/participant-dto";
 import { FormAnswer } from "../interfaces/form/answers/formAnswer";
 import { QuestionAnswer } from "../interfaces/form/answers/questionAnswer";
 import { UserInfo } from "../interfaces/user/userInfo";
+import { WorkshopInfo } from "../interfaces/workshop/workshop-info";
 import { ApiCallPaths } from "../paths/apiCallPaths";
 
 @Injectable({
@@ -22,6 +23,12 @@ export class ParticipantsService {
     return this.http.post(
       this.baseUrl + ApiCallPaths.addFormAnswrs,
       formAnswer
+    );
+  }
+
+  public getParticipant(participantId: string) {
+    return this.http.get<ParticipantsDto>(
+      this.baseUrl + ApiCallPaths.getParticipant + participantId
     );
   }
 
@@ -47,6 +54,14 @@ export class ParticipantsService {
   public getParticipantStatus(participantId: string) {
     return this.http.get<FormFeedbackResponse>(
       this.baseUrl + ApiCallPaths.getPaticipantStatus + participantId
+    );
+  }
+
+  public getParticipantWorkshop(participantId: string, sessionId: number) {
+    return this.http.get<WorkshopInfo>(
+      this.baseUrl +
+        ApiCallPaths.getParticipantWorkshop +
+        `${participantId}/${sessionId}`
     );
   }
 }
