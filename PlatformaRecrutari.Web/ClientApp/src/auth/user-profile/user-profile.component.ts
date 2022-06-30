@@ -271,7 +271,9 @@ export class UserProfileComponent implements OnInit {
     return new Date(this.activeForm.startDate) < new Date();
   }
 
-  changeInfo() {
+  editedUser: UserInfo;
+  changeInfo(editUserInfoModal) {
+    this.editedUser = this.profileUser;
     Swal.fire({
       title: "Do you want to edit your info?",
       icon: "question",
@@ -281,6 +283,12 @@ export class UserProfileComponent implements OnInit {
       cancelButtonColor: "red",
       confirmButtonText: "Yes",
       confirmButtonColor: "green",
+    }).then((res) => {
+      if (res.value)
+        this.modalService.open(editUserInfoModal, {
+          centered: true,
+          size: "lg",
+        });
     });
   }
 
@@ -474,5 +482,17 @@ export class UserProfileComponent implements OnInit {
 
   openModal(templateRef) {
     this.modalService.open(templateRef, { centered: true, size: "lg" });
+  }
+
+  saveProfileChanges() {
+    this.authService.updateUser(this.profileUser).subscribe((res) => {
+      this.profileUser = res;
+      Swal.fire({
+        title: "Changes saved successfully!",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    });
   }
 }

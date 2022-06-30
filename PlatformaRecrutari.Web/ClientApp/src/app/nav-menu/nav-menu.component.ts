@@ -51,9 +51,19 @@ export class NavMenuComponent implements OnInit, OnChanges {
     }
   }
 
-  isUserNotCandidateOrPm() {
+  isUserAdmin(): boolean {
+    if (this.isUserAuthenticated) {
+      if (this.user.role == "Admin") return true;
+      return false;
+    } else {
+      return false;
+    }
+  }
+
+  isUserNotCandidateOrPmOrAdmin() {
     if (this.isUserNotCandidate()) {
-      if (this.user.role != "ProjectManager") return true;
+      if (this.user.role != "ProjectManager" && this.user.role != "Admin")
+        return true;
     }
     return false;
   }
@@ -77,6 +87,7 @@ export class NavMenuComponent implements OnInit, OnChanges {
   }
 
   logout() {
+    this.user = undefined;
     this._authService.logoutUser();
   }
 }

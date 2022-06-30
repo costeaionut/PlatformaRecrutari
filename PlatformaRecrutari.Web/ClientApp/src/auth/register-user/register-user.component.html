@@ -131,6 +131,48 @@
         </div>
       </div>
       <div class="form-group row">
+        <label for="profile" class="col-form-label col-sm-2">Profile:</label>
+        <div class="col-md-5">
+          <select
+            type="profile"
+            id="profile"
+            formControlName="profile"
+            class="form-control"
+            style="height: 90%"
+          >
+            <option
+              *ngFor="let profile of ['CTI', 'Informatica', 'Matematica']"
+            >
+              {{ profile }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-5">
+          <em
+            *ngIf="
+              validateControl('profile') && hasError('profile', 'required')
+            "
+            >Profile is required</em
+          >
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="profile" class="col-form-label col-sm-2">Class:</label>
+        <div class="col-md-5">
+          <input
+            type="class"
+            id="class"
+            formControlName="class"
+            class="form-control"
+          />
+        </div>
+        <div class="col-md-5">
+          <em *ngIf="validateControl('class') && hasError('class', 'required')"
+            >Class is required</em
+          >
+        </div>
+      </div>
+      <div class="form-group row">
         <label for="password" class="col-form-label col-sm-2">Password:</label>
         <div class="col-md-5">
           <input

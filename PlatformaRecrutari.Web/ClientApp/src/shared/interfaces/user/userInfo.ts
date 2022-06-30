@@ -5,5 +5,7 @@ export interface UserInfo {
   phoneNumber: string;
   facebook: string;
   email: string;
+  profile: string;
+  class: string;
   role: string;
 }

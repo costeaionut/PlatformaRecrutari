@@ -43,6 +43,13 @@ export class AuthenticationService {
     );
   }
 
+  public updateUser(body: UserInfo) {
+    return this.http.post<UserInfo>(
+      this._baseUrl + ApiCallPaths.updateUserInfo,
+      body
+    );
+  }
+
   public logoutUser() {
     localStorage.removeItem("token");
     this.sendLoginNotificationToListeners(false);

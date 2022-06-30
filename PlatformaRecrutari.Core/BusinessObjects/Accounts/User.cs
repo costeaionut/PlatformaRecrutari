@@ -13,5 +13,7 @@ namespace PlatformaRecrutari.Core.BusinessObjects
         public string LastName { get; set; }
         public string Facebook { get; set; }
         public int RoleId { get; set; }
+        public string Profile { get; set; }
+        public string Class { get; set; }
     }
 }

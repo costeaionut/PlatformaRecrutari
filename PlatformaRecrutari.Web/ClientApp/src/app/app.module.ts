@@ -25,6 +25,8 @@ import { UserProfileComponent } from "src/auth/user-profile/user-profile.compone
 import { AuthenticatedGuard } from "src/shared/guards/authenticated.guard";
 import { NotParticipantGuard } from "src/shared/guards/not-participant.guard";
 import { FinalVoteComponent } from "src/session/final-vote/final-vote.component";
+import { AdminDashboardComponent } from "src/auth/admin-dashboard/admin-dashboard.component";
+import { AdminGuard } from "src/shared/guards/admin.guard";
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -87,6 +89,11 @@ export function tokenGetter() {
         path: "final-vote/:sessionId",
         component: FinalVoteComponent,
         canActivate: [NotParticipantGuard],
+      },
+      {
+        path: "admin-dashboard",
+        component: AdminDashboardComponent,
+        canActivate: [AdminGuard],
       },
     ]),
     BrowserAnimationsModule,

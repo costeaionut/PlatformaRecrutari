@@ -5,23 +5,26 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { SweetAlert2Module } from "@sweetalert2/ngx-sweetalert2";
 import { LoginUserComponent } from "./login-user/login-user.component";
 import { UserProfileComponent } from "./user-profile/user-profile.component";
-import { NgbDropdownModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgbDropdownModule, NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 import { DisplayFormComponent } from "src/session/display-form/display-form.component";
 import { SessionModule } from "src/session/session.module";
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 
 @NgModule({
   declarations: [
     RegisterUserComponent,
     LoginUserComponent,
     UserProfileComponent,
+    AdminDashboardComponent,
   ],
   imports: [
-    CommonModule,
     FormsModule,
-    ReactiveFormsModule,
+    CommonModule,
+    SessionModule,
+    NgbModalModule,
     SweetAlert2Module.forRoot(),
     NgbDropdownModule,
-    SessionModule,
+    ReactiveFormsModule,
   ],
   exports: [RegisterUserComponent, UserProfileComponent],
 })

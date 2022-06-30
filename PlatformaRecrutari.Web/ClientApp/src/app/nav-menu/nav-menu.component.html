@@ -39,7 +39,17 @@
           </li>
 
           <li
-            *ngIf="isUserNotCandidateOrPm()"
+            *ngIf="isUserAdmin()"
+            class="nav-item"
+            [routerLinkActive]="['link-active']"
+          >
+            <a class="nav-link text-dark" [routerLink]="['/admin-dashboard']"
+              >Admin Dashboard</a
+            >
+          </li>
+
+          <li
+            *ngIf="isUserNotCandidateOrPmOrAdmin()"
             class="nav-item"
             [routerLinkActive]="['link-active']"
           >

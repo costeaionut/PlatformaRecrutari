@@ -32,5 +32,11 @@ namespace PlatformaRecrutari.Dto.User
 
         [Required(ErrorMessage = "Must select a role for the user.")]
         public int RoleId { get; set; }
+
+        [Required]
+        public string Profile { get; set; }
+
+        [Required]
+        public string Class { get; set; }
     }
 }

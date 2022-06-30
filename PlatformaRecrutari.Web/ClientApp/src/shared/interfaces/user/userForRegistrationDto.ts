@@ -5,6 +5,8 @@ export interface UserForRegistrationDto {
   facebook: string;
   email: string;
   password: string;
+  profile: string;
+  class: string;
   confirmPassword: string;
   roleId: number;
 }

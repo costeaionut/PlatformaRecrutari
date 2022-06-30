@@ -69,6 +69,23 @@ namespace PlatformaRecrutari.Web.Controllers
             return Ok(new LoginResponseDto { IsAuthSuccessful = true, Token = token });
         }
 
+        [HttpPost("Update")]
+        public async Task<ActionResult<UserDto>> Update([FromBody] UserDto newUserInfo)
+        {
+            var user = await _userManager.FindByIdAsync(newUserInfo.Id);
+            user.FirstName = newUserInfo.FirstName;
+            user.LastName = newUserInfo.LastName;
+            user.Email = newUserInfo.Email;
+            user.Facebook = newUserInfo.Facebook;
+            user.PhoneNumber = newUserInfo.PhoneNumber;
+            user.Profile = newUserInfo.Profile;
+            user.Class = newUserInfo.Class;
+            var res = await _userManager.UpdateAsync(user);
+
+            if(res.Succeeded) return newUserInfo;
+            return StatusCode(500);
+        }
+
         [HttpGet("GetCurrentUser"), Authorize]
         public async Task<IActionResult> GetCurrentUser()
         {

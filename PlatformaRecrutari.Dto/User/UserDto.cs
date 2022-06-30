@@ -15,5 +15,7 @@ namespace PlatformaRecrutari.Dto.User
         public String Facebook { get; set; }
         public String Email { get; set; }
         public String Role { get; set; }
+        public string Profile { get; set; }
+        public string Class { get; set; }
     }
 }

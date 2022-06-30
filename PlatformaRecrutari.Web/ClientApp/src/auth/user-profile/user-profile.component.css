@@ -79,3 +79,15 @@
 .disabledOption:hover{
     background-color: inherit;
 }
+
+.editInput{
+    width: 75%;
+    border: 0;
+    outline: none;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+}
+
+.infoRow{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
