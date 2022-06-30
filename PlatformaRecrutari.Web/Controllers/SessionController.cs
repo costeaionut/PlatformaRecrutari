@@ -28,7 +28,7 @@ namespace PlatformaRecrutari.Web.Controllers
     public class SessionController : ControllerBase
     {
         private const string AnyOfVolunteerPMCDDD =
-            "ProjectManager,Volunteer,DepartmentDirector,BoardMemeber";
+            "ProjectManager,Volunteer,DepartmentDirector,BoardMember";
         private readonly IMapper _mapper;
         private readonly IFormManager _formManager;
         private readonly IRoleManager _roleManager;

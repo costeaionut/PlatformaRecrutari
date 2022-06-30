@@ -155,7 +155,8 @@
           <div
             *ngIf="
               this.profileUserStatus == 'Waiting for form feedback' &&
-              this.currentUser.role == 'ProjectManager'
+              this.currentUser.role == 'ProjectManager' &&
+              formHasEnded()
             "
             class="col-8 voteColumn"
           >

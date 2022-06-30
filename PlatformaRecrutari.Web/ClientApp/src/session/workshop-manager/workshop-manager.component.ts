@@ -201,7 +201,7 @@ export class WorkshopManagerComponent implements OnInit {
 
   parseDateForDisplay(workshop: WorkshopInfo): string {
     let displayDate: Date = new Date(workshop.workshopDate);
-    return `${displayDate.toDateString()},  ${displayDate.getHours()}:${displayDate.getMinutes()}`;
+    return displayDate.toLocaleString();
   }
 
   parseWorkshopStatus(workshop: WorkshopInfo): string {

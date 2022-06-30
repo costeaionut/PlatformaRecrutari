@@ -559,4 +559,11 @@ export class DisplaySessionsComponent implements OnInit {
       }
     );
   }
+
+  formHasEnded() {
+    return (
+      new Date(this.currentForm.endDate).setHours(23, 59, 59) <
+      new Date().getTime()
+    );
+  }
 }

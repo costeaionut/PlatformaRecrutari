@@ -217,7 +217,11 @@
   <div class="container" *ngIf="this.whatToDisplay == 'form'">
     <div style="text-align: end; margin-top: 10px">
       <button
-        *ngIf="!this.editingForm && this.currentUser.role == 'ProjectManager'"
+        *ngIf="
+          !this.editingForm &&
+          this.currentUser.role == 'ProjectManager' &&
+          !formHasEnded()
+        "
         type="button"
         class="btn btn-primary"
         (click)="this.editForm()"

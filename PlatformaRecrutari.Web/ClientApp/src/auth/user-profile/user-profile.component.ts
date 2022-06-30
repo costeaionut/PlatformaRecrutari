@@ -240,10 +240,11 @@ export class UserProfileComponent implements OnInit {
           if (this.profileUserStatus == "Ready for final vote") {
             allInterviews.forEach((intDto) => {
               intDto.interviewsFeedbacks.forEach((feedback) => {
-                if (
-                  feedback.interviewId == this.profileUserInterviewSchedule.id
-                )
-                  this.profileUserInterviewFeedback = feedback;
+                if (feedback != null)
+                  if (
+                    feedback.interviewId == this.profileUserInterviewSchedule.id
+                  )
+                    this.profileUserInterviewFeedback = feedback;
               });
             });
           }
@@ -436,6 +437,14 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
+  formHasEnded() {
+    console.log(new Date(this.activeForm.endDate));
+    return (
+      new Date(this.activeForm.endDate).setHours(23, 59, 59) <
+      new Date().getTime()
+    );
+  }
+
   scheduleUserInterview() {
     let interviewSchedule: InterviewSchedule = {
       interviewId: this.selectedInterview.id,
@@ -492,6 +501,8 @@ export class UserProfileComponent implements OnInit {
         icon: "success",
         timer: 1500,
         showConfirmButton: false,
+      }).then((_) => {
+        this.modalService.dismissAll();
       });
     });
   }
