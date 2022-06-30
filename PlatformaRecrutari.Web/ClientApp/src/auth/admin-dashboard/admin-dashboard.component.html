@@ -25,7 +25,7 @@
             <td align="right">
               <button
                 class="actionButton editButton"
-                *ngIf="this.currentUser.role == 'Admin'"
+                *ngIf="this.currentUser.role == 'Admin' && user.role != 'Admin'"
                 (click)="openUserEditModal(userIndex, profileInfoUpdate)"
               >
                 Edit</button
@@ -33,7 +33,9 @@
                 (click)="deleteAccount(user)"
                 class="actionButton deleteButton"
                 *ngIf="
-                  this.currentUser.role == 'Admin' && !user.scheduledForDeletion
+                  this.currentUser.role == 'Admin' &&
+                  !user.scheduledForDeletion &&
+                  user.role != 'Admin'
                 "
               >
                 Delete

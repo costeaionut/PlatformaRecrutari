@@ -27,6 +27,7 @@ import { NotParticipantGuard } from "src/shared/guards/not-participant.guard";
 import { FinalVoteComponent } from "src/session/final-vote/final-vote.component";
 import { AdminDashboardComponent } from "src/auth/admin-dashboard/admin-dashboard.component";
 import { AdminGuard } from "src/shared/guards/admin.guard";
+import { HomeRedirectGuard } from "src/shared/guards/home-redirect.guard";
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -55,7 +56,12 @@ export function tokenGetter() {
     }),
     SweetAlert2Module.forRoot(),
     RouterModule.forRoot([
-      { path: "", component: HomeComponent, pathMatch: "full" },
+      {
+        path: "",
+        component: HomeComponent,
+        pathMatch: "full",
+        canActivate: [HomeRedirectGuard],
+      },
       { path: "counter", component: CounterComponent },
       { path: "fetch-data", component: FetchDataComponent },
       { path: "register-user", component: RegisterUserComponent },

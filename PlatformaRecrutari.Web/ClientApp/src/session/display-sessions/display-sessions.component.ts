@@ -487,6 +487,7 @@ export class DisplaySessionsComponent implements OnInit {
 
   goToFinalVotePage() {
     let readyForFinalVote: boolean = true;
+    if (this.participants.length == 0) readyForFinalVote = false;
     this.participantsStatus.forEach((status) => {
       if (
         status != "Ready for final vote" &&

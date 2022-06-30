@@ -59,11 +59,17 @@ namespace PlatformaRecrutari.Web.Controllers
         {
             var user = await _userManager.FindByEmailAsync(userForAuthentication.Email);
 
+            if (user == null || !await _userManager.CheckPasswordAsync(user, userForAuthentication.Password))
+                return Unauthorized(new LoginResponseDto { ErrorMessage = "Invalid Authentication" });
+
             var users = _userManager.Users.ToList();
             foreach (var u in users)
             {
-                if (u.ScheduledForDeletion == true && u.DeletionDate < DateTime.Now) await _userManager.DeleteAsync(u);
-                if (u.Id == user.Id) user = null;
+                if (u.ScheduledForDeletion == true && u.DeletionDate < DateTime.Now)
+                {
+                    await _userManager.DeleteAsync(u);
+                    if (u.Id == user.Id) Unauthorized(new LoginResponseDto { ErrorMessage = "Invalid Authentication" });
+                }
             }
 
             if (user.ScheduledForDeletion == true)
@@ -72,9 +78,6 @@ namespace PlatformaRecrutari.Web.Controllers
                 user.DeletionDate = DateTime.MinValue;
                 await _userManager.UpdateAsync(user);
             }
-
-            if (user == null || !await _userManager.CheckPasswordAsync(user, userForAuthentication.Password))
-                return Unauthorized(new LoginResponseDto { ErrorMessage = "Invalid Authentication" });
             
             var signingCredentials = _jwtHandler.GetSigningCredentials();
             var claims = _jwtHandler.GetClaims(user);

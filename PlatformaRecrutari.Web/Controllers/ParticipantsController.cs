@@ -26,6 +26,7 @@ namespace PlatformaRecrutari.Web.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IFormManager _formManager;
+        private readonly IRoleManager _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly ISessionManager _sessionManager;
         private readonly IParticipantsManager _participantsManager;
@@ -33,6 +34,7 @@ namespace PlatformaRecrutari.Web.Controllers
         public ParticipantsController(
             IMapper mapper,
             IFormManager formManager,
+            IRoleManager roleManager,
             UserManager<User> userManager,
             ISessionManager sessionManager,
             IParticipantsManager participantsManager
@@ -40,6 +42,7 @@ namespace PlatformaRecrutari.Web.Controllers
         {
             _mapper = mapper;
             _formManager = formManager;
+            _roleManager = roleManager;
             _userManager = userManager;
             _sessionManager = sessionManager;
             _participantsManager = participantsManager;
@@ -130,10 +133,12 @@ namespace PlatformaRecrutari.Web.Controllers
         {
             var participantDto = new ParticipantDto();
             var user = await _userManager.FindByIdAsync(participantId);
-            
+            var userDto = _mapper.Map<UserDto>(user);
+            userDto.Role = _roleManager.GetRoleType(user.RoleId);
+
             var status = _participantsManager.GetParticipantsStatus(participantId);
             participantDto.Status = status;
-            participantDto.User = _mapper.Map<UserDto>(user);
+            participantDto.User = userDto;
 
             return participantDto;
         }
