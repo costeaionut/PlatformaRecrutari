@@ -1,0 +1,35 @@
+
+.editInput{
+    width: 75%;
+    border: 0;
+    outline: none;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+}
+
+.infoRow{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.actionButton{
+    border: none;
+    background-color: inherit;
+}
+
+.editButton{
+    color: rgba(0, 128, 0, 0.5);
+}
+
+.editButton:hover{
+    color: green;
+    text-decoration: underline;
+}
+
+.deleteButton{
+    color: rgba(255, 0, 0, 0.5);
+}
+
+.deleteButton:hover{
+    color: red;
+    text-decoration: underline;
+}

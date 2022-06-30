@@ -1,1 +1,166 @@
-<p>admin-dashboard works!</p>
+<div class="container" *ngIf="this.currentUser">
+  <div class="row">
+    <div class="col"><h4>Users:</h4></div>
+  </div>
+  <div class="row">
+    <div class="col table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <td scope="col">#</td>
+            <td scope="col">User</td>
+            <td scope="col">Role</td>
+            <td scope="col" align="right">Action</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of this.users; index as userIndex">
+            <td>{{ userIndex + 1 }}</td>
+            <td>
+              <a target="_blank" href="/user/{{ user.id }}"
+                >{{ user.firstName }} {{ user.lastName }}</a
+              >
+            </td>
+            <td>{{ user.role }}</td>
+            <td align="right">
+              <button
+                class="actionButton editButton"
+                *ngIf="this.currentUser.role == 'Admin'"
+                (click)="openUserEditModal(userIndex, profileInfoUpdate)"
+              >
+                Edit</button
+              ><button
+                class="actionButton deleteButton"
+                *ngIf="this.currentUser.role == 'Admin'"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<ng-template #profileInfoUpdate let-modal>
+  <div class="modal-header">
+    <div class="modal-title">
+      <h4>Edit my info:</h4>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="container">
+      <div class="row infoRow">
+        <div class="col-2" style="padding-top: 3px"><b>First Name</b>:</div>
+        <div class="col">
+          <input
+            class="editInput"
+            [(ngModel)]="this.editedUser.firstName"
+            type="text"
+          />
+        </div>
+      </div>
+      <div class="row infoRow">
+        <div class="col-2" style="padding-top: 3px"><b>Last Name</b>:</div>
+        <div class="col">
+          <input
+            class="editInput"
+            [(ngModel)]="this.editedUser.lastName"
+            type="text"
+          />
+        </div>
+      </div>
+      <div class="row infoRow">
+        <div class="col-2" style="padding-top: 3px"><b>Email</b>:</div>
+        <div class="col">
+          <input
+            class="editInput"
+            [(ngModel)]="this.editedUser.email"
+            type="text"
+          />
+        </div>
+      </div>
+      <div class="row infoRow">
+        <div class="col-2" style="padding-top: 3px"><b>Phone</b>:</div>
+        <div class="col">
+          <input
+            class="editInput"
+            [(ngModel)]="this.editedUser.phoneNumber"
+            type="text"
+          />
+        </div>
+      </div>
+      <div class="row infoRow">
+        <div class="col-2" style="padding-top: 3px"><b>Class</b>:</div>
+        <div class="col">
+          <input
+            class="editInput"
+            [(ngModel)]="this.editedUser.class"
+            type="text"
+          />
+        </div>
+      </div>
+      <div class="row infoRow">
+        <div class="col-2" style="padding-top: 3px"><b>Facebook</b>:</div>
+        <div class="col">
+          <input
+            class="editInput"
+            [(ngModel)]="this.editedUser.facebook"
+            type="text"
+          />
+        </div>
+      </div>
+      <div class="row infoRow">
+        <div class="col-2" style="padding-top: 3px"><b>Profile</b>:</div>
+        <div class="col">
+          <select
+            type="profile"
+            id="profile"
+            [(ngModel)]="this.editedUser.profile"
+            class="form-control"
+            style="height: 90%; width: 75%"
+          >
+            <option
+              *ngFor="let profile of ['CTI', 'Informatica', 'Matematica']"
+            >
+              {{ profile }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="row infoRow">
+        <div class="col-2" style="padding-top: 3px"><b>Role</b>:</div>
+        <div class="col">
+          <select
+            type="profile"
+            id="profile"
+            [(ngModel)]="this.editedUser.role"
+            class="form-control"
+            style="height: 90%; width: 75%"
+          >
+            <option
+              *ngFor="
+                let role of [
+                  'ProjectManager',
+                  'Candidate',
+                  'Volunteer',
+                  'Admin',
+                  'BoardMember',
+                  'DepartmentDirector'
+                ]
+              "
+            >
+              {{ role }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button (click)="saveProfileChanges()" class="btn btn-outline-success">
+      Save changes
+    </button>
+  </div>
+</ng-template>

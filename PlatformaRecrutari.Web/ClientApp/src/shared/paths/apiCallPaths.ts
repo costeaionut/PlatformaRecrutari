@@ -7,6 +7,8 @@ export enum ApiCallPaths {
   getCurrentUserPath = "api/Accounts/GetCurrentUser/",
   updateUserInfo = "api/Accounts/Update/",
 
+  adminGetAllUsers = "api/Admin/Users",
+
   getSessionById = "api/Session/",
   activeFormPath = "api/Session/ActiveForm/",
   UpdateFormInfo = "api/Session/UpdateForm/",

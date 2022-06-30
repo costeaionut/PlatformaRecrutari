@@ -18,6 +18,8 @@ namespace PlatformaRecrutari.Data.Managers
 
         public string GetRoleType(int roleId) 
             => _context.Roles.FirstOrDefault(r => r.Id == roleId).Type;
-        
+
+        public int GetRoleId(string role)
+            => _context.Roles.FirstOrDefault(r => r.Type == role).Id;
     }
 }

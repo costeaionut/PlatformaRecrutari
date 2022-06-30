@@ -8,6 +8,7 @@ namespace PlatformaRecrutari.Core.Abstractions
 {
     public interface IRoleManager
     {
+        int GetRoleId(string role);
         public string GetRoleType(int roleId);
     }
 }

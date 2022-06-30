@@ -8,7 +8,7 @@ import { UserProfileComponent } from "./user-profile/user-profile.component";
 import { NgbDropdownModule, NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 import { DisplayFormComponent } from "src/session/display-form/display-form.component";
 import { SessionModule } from "src/session/session.module";
-import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { AdminDashboardComponent } from "./admin-dashboard/admin-dashboard.component";
 
 @NgModule({
   declarations: [
@@ -26,6 +26,10 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
     NgbDropdownModule,
     ReactiveFormsModule,
   ],
-  exports: [RegisterUserComponent, UserProfileComponent],
+  exports: [
+    RegisterUserComponent,
+    UserProfileComponent,
+    AdminDashboardComponent,
+  ],
 })
 export class AuthModule {}

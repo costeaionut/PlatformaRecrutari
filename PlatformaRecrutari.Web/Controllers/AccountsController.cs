@@ -73,6 +73,7 @@ namespace PlatformaRecrutari.Web.Controllers
         public async Task<ActionResult<UserDto>> Update([FromBody] UserDto newUserInfo)
         {
             var user = await _userManager.FindByIdAsync(newUserInfo.Id);
+            user.RoleId = _roleManager.GetRoleId(newUserInfo.Role);
             user.FirstName = newUserInfo.FirstName;
             user.LastName = newUserInfo.LastName;
             user.Email = newUserInfo.Email;
