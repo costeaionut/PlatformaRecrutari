@@ -8,4 +8,5 @@ export interface UserInfo {
   profile: string;
   class: string;
   role: string;
+  scheduledForDeletion?: boolean;
 }

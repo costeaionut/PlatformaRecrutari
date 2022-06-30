@@ -17,4 +17,11 @@ export class AdminService {
       this._baseUrl + ApiCallPaths.adminGetAllUsers
     );
   }
+
+  scheduleDeletion(user: UserInfo) {
+    return this.http.post(
+      this._baseUrl + ApiCallPaths.adminScheduleDeletion,
+      user
+    );
+  }
 }

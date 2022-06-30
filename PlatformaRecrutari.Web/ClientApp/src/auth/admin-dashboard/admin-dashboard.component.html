@@ -30,8 +30,11 @@
               >
                 Edit</button
               ><button
+                (click)="deleteAccount(user)"
                 class="actionButton deleteButton"
-                *ngIf="this.currentUser.role == 'Admin'"
+                *ngIf="
+                  this.currentUser.role == 'Admin' && !user.scheduledForDeletion
+                "
               >
                 Delete
               </button>

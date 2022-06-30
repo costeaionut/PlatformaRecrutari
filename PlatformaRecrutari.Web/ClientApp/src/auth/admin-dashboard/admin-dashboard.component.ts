@@ -53,4 +53,45 @@ export class AdminDashboardComponent implements OnInit {
         });
     });
   }
+
+  addHoursToDate(date: Date, hours: number): Date {
+    return new Date(new Date(date).setHours(date.getHours() + hours));
+  }
+
+  deleteAccount(user: UserInfo) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "The user will be scheduled for deletion in 2 days. If the user logs into his account the deletion will be canceled",
+      icon: "warning",
+      showCancelButton: true,
+      cancelButtonColor: "red",
+      cancelButtonText: "No",
+      confirmButtonColor: "green",
+      confirmButtonText: "Yes",
+    }).then((res) => {
+      if (res.value)
+        this.adminService.scheduleDeletion(user).subscribe(
+          (res) => {
+            Swal.fire({
+              title: "User scheduled for deletion!",
+              text: `User is scheduled for deletion in ${this.addHoursToDate(
+                new Date(),
+                48
+              ).toLocaleString()}`,
+              icon: "success",
+            }).then(async (_) => {
+              await this.ngOnInit();
+            });
+          },
+          (err) => {
+            Swal.fire({
+              title: "Something went wrong...\nPlease try again",
+              icon: "error",
+              timer: 1500,
+              showConfirmButton: false,
+            });
+          }
+        );
+    });
+  }
 }

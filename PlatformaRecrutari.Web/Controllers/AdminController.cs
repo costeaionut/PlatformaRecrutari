@@ -42,5 +42,24 @@ namespace PlatformaRecrutari.Web.Controllers
             }
             return userDtoList;
         }
+    
+        [HttpPost("ScheduleDeletion")]
+        [Authorize(Roles = RoleType.Admin)]
+        public async Task<ActionResult> ScheduleForDeletionAsync([FromBody] UserDto userInfo) {
+            if (userInfo == null)
+                return BadRequest("MissingBodyUserInfo");
+            var user = await _userManager.FindByIdAsync(userInfo.Id);
+            
+            if (user == null)
+                return BadRequest("UserNotFound");
+            if (user.ScheduledForDeletion == true)
+                return BadRequest("AlreadyScheduledForDeletion");
+            
+            user.ScheduledForDeletion = true;
+            user.DeletionDate = DateTime.Now + new TimeSpan(48, 0, 0);
+            
+            await _userManager.UpdateAsync(user);
+            return Ok();
+        }
     }
 }
