@@ -58,17 +58,19 @@ namespace PlatformaRecrutari.Web.Controllers
         public async Task<IActionResult> Login([FromBody] UserForLoginDto userForAuthentication)
         {
             var user = await _userManager.FindByEmailAsync(userForAuthentication.Email);
-            if(user.ScheduledForDeletion == true)
-            {
-                user.ScheduledForDeletion = false;
-                user.DeletionDate = DateTime.MinValue;
-                await _userManager.UpdateAsync(user);
-            }
 
             var users = _userManager.Users.ToList();
             foreach (var u in users)
             {
                 if (u.ScheduledForDeletion == true && u.DeletionDate < DateTime.Now) await _userManager.DeleteAsync(u);
+                if (u.Id == user.Id) user = null;
+            }
+
+            if (user.ScheduledForDeletion == true)
+            {
+                user.ScheduledForDeletion = false;
+                user.DeletionDate = DateTime.MinValue;
+                await _userManager.UpdateAsync(user);
             }
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, userForAuthentication.Password))
